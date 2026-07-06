@@ -13,6 +13,9 @@ const phaseCards = [
   ["Phase 4", "Diff viewer, undo/redo commands, search/replace, batch operations."],
   ["Phase 5", "Plugin registry interfaces, presets, marketplace placeholder, parser/exporter extension surface."],
 ];
+const inspectorTabs = ["Layout", "Style", "Animation", "Interaction", "Code"];
+const canonicalNodes = ["Header & Navigation", "Hero Section", "About Us", "Our Work / Portfolio Grid", "Our Services", "Process / How We Work", "Testimonials", "Pricing Table", "FAQs Accordion", "Footer"];
+const previewSections = ["Header & Navigation", "Hero Section", "About Us", "Portfolio Grid", "Services", "Process", "Testimonials", "Pricing", "FAQs", "Footer"];
 
 export function StudioApp() {
   const [project, setProject] = useState<WPXProject>(defaultProject);
@@ -23,17 +26,21 @@ export function StudioApp() {
   const [mode, setMode] = useState<IngestionMode>("append");
   const [device, setDevice] = useState<DeviceMode>("desktop");
   const [status, setStatus] = useState("Ready. All source processing stays inside this browser tab.");
-  const [activeTab, setActiveTab] = useState("dashboard");
   const [query, setQuery] = useState("");
   const [replacement, setReplacement] = useState("");
   const [regex, setRegex] = useState(false);
   const [diff, setDiff] = useState<{ before: string; after: string; title: string } | null>(null);
+  const [hoveredNode, setHoveredNode] = useState(1);
+  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
 
   const selected = project.components.filter((component) => component.selected);
   const scopedCss = selected.map((component) => scopeCss(component.css, component.scopeId).css).join("\n");
   const previewHtml = selected.map((component) => project.safeAssetMode ? applySafeAssetMode(component.html) : component.html).join("\n");
   const matches = useMemo(() => searchProject(project, query, regex), [project, query, regex]);
   const bytes = projectSize(project);
+  const storagePct = Math.min(100, (bytes / MAX_PROJECT_SIZE) * 100);
 
   const updateProject = (patch: Partial<WPXProject>, label = "Update project") => {
     setProject((current) => ({ ...current, commandHistory: [...current.commandHistory.slice(-19), snapshot(label, current)], redoStack: [], ...patch, updatedAt: Date.now() }));
@@ -90,7 +97,7 @@ export function StudioApp() {
   const batchRemoveTrackers = () => updateProject({ components: project.components.map((component) => ({ ...component, html: component.html.replace(/<script[\s\S]*?<\/script>/gi, "") })) }, "Remove tracker scripts");
   const undo = () => { const last = project.commandHistory.at(-1); if (!last) return; setProject({ ...project, components: last.components, assets: last.assets, dependencyEdges: last.dependencyEdges, commandHistory: project.commandHistory.slice(0, -1), redoStack: [...project.redoStack, snapshot("Redo point", project)] }); };
   const redo = () => { const next = project.redoStack.at(-1); if (!next) return; setProject({ ...project, components: next.components, assets: next.assets, dependencyEdges: next.dependencyEdges, redoStack: project.redoStack.slice(0, -1), commandHistory: [...project.commandHistory, snapshot("Undo point", project)] }); };
-  const doReplace = () => { const before = project.components.map((c) => c.html).join("\n"); const next = replaceProject(project, query, replacement, regex); const after = next.components.map((c) => c.html).join("\n"); setDiff({ before, after, title: `Replace ${query}` }); updateProject({ components: next.components }, "Search and replace"); };
+  const doReplace = () => { const before = project.components.map((component) => component.html).join("\n"); const next = replaceProject(project, query, replacement, regex); const after = next.components.map((component) => component.html).join("\n"); setDiff({ before, after, title: `Replace ${query}` }); updateProject({ components: next.components }, "Search and replace"); };
   const persist = async () => { await saveProject(project); setProjects(await listProjects()); setStatus("Saved to IndexedDB object stores: projects, structures, stylesheets, assets."); };
   const exportZip = async () => { const blob = await createExportZip(project); saveAs(blob, `${slug(project.name)}.zip`); setStatus("ZIP package generated client-side with JSZip and FileSaver.js."); };
 
@@ -101,6 +108,12 @@ export function StudioApp() {
       <section className="space-y-4"><div className="rounded-2xl border border-white/10 bg-[#21262D] p-4"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-xl font-bold text-white">Sandbox Preview Canvas</h2><p className="text-sm text-[#8B949E]">{status}</p></div><div className="flex flex-wrap gap-2"><button className="btn-ghost" onClick={undo}>Undo</button><button className="btn-ghost" onClick={redo}>Redo</button>{(["desktop", "tablet", "mobile"] as DeviceMode[]).map((item) => <button key={item} onClick={() => setDevice(item)} className={device === item ? "btn-primary" : "btn-ghost"}>{item}</button>)}<button className="btn-secondary" onClick={persist}>Save</button><button className="btn-primary" onClick={exportZip}>Export ZIP</button></div></div></div>{activeTab === "dashboard" && <Dashboard project={project} projects={projects} bytes={bytes} restoreProject={restoreProject} importZip={importZip} />}{activeTab === "assets" && <Assets project={project} uploadAsset={uploadAsset} updateProject={updateProject} />}{activeTab === "diff" && <Diff diff={diff} />}{activeTab === "graph" && <Graph project={project} />}{activeTab === "plugins" && <Plugins project={project} />}{activeTab === "dashboard" && <div className="rounded-2xl border border-white/10 bg-[#21262D] p-4"><div className="mx-auto transition-all" style={{ width: device === "desktop" ? "100%" : device === "tablet" ? 768 : 390 }}><iframe title="WPX sandbox preview" sandbox={selected.some((component) => component.scriptsEnabled) ? "allow-scripts" : ""} className="h-[620px] w-full rounded-xl border border-[#8B5CF6]/40 bg-white" srcDoc={`<!doctype html><html><head><style>${scopedCss}</style></head><body>${previewHtml || "<main style='font-family:sans-serif;padding:32px'>Import HTML to preview components.</main>"}</body></html>`} /></div></div>}</section>
       <aside className="space-y-4 rounded-2xl border border-white/10 bg-[#21262D] p-4"><Panel title="Inspector Panel"><div className="mb-3 grid grid-cols-3 gap-2"><button className="btn-ghost" onClick={() => batchSelect("all")}>All</button><button className="btn-ghost" onClick={() => batchSelect("none")}>None</button><button className="btn-danger" onClick={batchRemoveTrackers}>Scripts</button></div><div className="space-y-3">{project.components.map((component) => <ComponentCard key={component.id} component={component} toggle={() => toggleComponent(component.id)} remove={() => removeComponent(component.id)} />)}</div></Panel><Panel title="Settings"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={project.safeAssetMode} onChange={(e) => updateProject({ safeAssetMode: e.target.checked }, "Toggle safe asset mode")} /> Safe Asset Mode</label><input className="field mt-2" value={project.name} onChange={(e) => updateProject({ name: e.target.value }, "Rename project")} /><button className="btn-danger mt-2 w-full" onClick={async () => { await deleteProject(project.id); setProjects(await listProjects()); }}>Delete IndexedDB Project</button></Panel></aside>
     </div>
+
+    <button className="glass-card fixed bottom-20 right-4 z-40 px-4 py-3 text-xs font-bold uppercase tracking-[0.24em] text-[var(--primary)] lg:hidden" onClick={() => setMobileSheetOpen(true)}>⌘ Menu</button>
+    {mobileSheetOpen && <MobileSheet close={() => setMobileSheetOpen(false)} exportZip={exportZip} ingestHtml={ingestHtml} ingestUrls={ingestUrls} />}
+    <ActionBar count={selectedCount} exportZip={exportZip} />
+    <Toast visible={toastVisible} />
+    <FooterBar />
   </main>;
 }
 
@@ -113,5 +126,6 @@ function Diff({ diff }: { diff: { before: string; after: string; title: string }
 function Graph({ project }: { project: WPXProject }) { return <div className="rounded-2xl border border-white/10 bg-[#21262D] p-4"><h2 className="font-bold text-white">Dependency Graph</h2><div className="mt-4 space-y-2">{project.dependencyEdges.map((edge, index) => <p key={`${edge.from}-${edge.to}-${index}`} className="rounded bg-[#0D1117] p-2 text-sm"><span className="text-[#8B5CF6]">{edge.from}</span> → <span className="text-[#10B981]">{edge.to}</span> · {edge.type} · {edge.label}</p>)}</div></div>; }
 function Plugins({ project }: { project: WPXProject }) { return <div className="rounded-2xl border border-white/10 bg-[#21262D] p-4"><h2 className="font-bold text-white">Plugin Manager & Marketplace Placeholder</h2><p className="text-sm text-[#8B949E]">Phase 5 exposes parser/exporter interfaces and local preset slots without loading untrusted remote code.</p><div className="mt-4 grid gap-3 md:grid-cols-2">{project.plugins.map((plugin) => <div key={plugin.id} className="rounded-xl border border-white/10 bg-[#0D1117] p-3"><p className="font-bold text-white">{plugin.name}</p><p className="text-xs text-[#8B949E]">{plugin.type} · v{plugin.version} · {plugin.status}</p></div>)}</div></div>; }
 
+const previewTemplate = `<main style="min-height:100%;background:#05080D;color:white;font-family:DM Sans,system-ui;padding:32px"><nav style="display:flex;justify-content:space-between;align-items:center"><strong style="font-size:28px">acme.</strong><span>Product&nbsp;&nbsp;Features&nbsp;&nbsp;Pricing</span><button style="background:#CCFF00;border:0;border-radius:10px;padding:10px 14px;font-weight:700">Get Started</button></nav><section style="padding:64px 0"><h1 style="font-size:64px;line-height:.9;margin:0">Build stunning<br/>websites <span style="color:#0A84FF">faster</span></h1><p style="max-width:520px;color:#90A4AE">The modern web development platform for teams who ship production-ready websites.</p></section><section style="display:grid;gap:16px;grid-template-columns:repeat(3,1fr)"><div style="border:1px solid #CCFF00;padding:24px;border-radius:16px">Features</div><div style="border:1px solid #B44FFF;padding:24px;border-radius:16px">Pricing</div><div style="border:1px solid #FF2D78;padding:24px;border-radius:16px">Footer</div></section></main>`;
 const sampleHtml = `<header class="site-header"><nav>WPX Navigation</nav></header><section class="hero"><h1>Client-side component studio</h1><p>Paste, sanitize, isolate, preview, and export.</p><img src="https://example.com/hero.jpg" alt="Hero"></section><section class="pricing"><h2>Pricing</h2><p>Package table content.</p></section><footer class="site-footer">Footer content</footer>`;
 const sampleCss = `.site-header{padding:24px;background:#111827;color:white}.hero{padding:64px;background:#312e81;color:white}.hero h1{font-size:48px}.pricing{padding:40px;background:#f8fafc;color:#111827}.site-footer{padding:24px;background:#020617;color:white}`;
