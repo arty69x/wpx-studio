@@ -152,3 +152,203 @@ Manual recovery commands for a maintainer with repository credentials:
 git remote add origin https://github.com/arty69x/wpx-studio.git
 git push -u origin feature/complete-wpx-studio
 ```
+
+## 2026-07-06 WPX Completion Verification
+
+Branch: `feature/complete-wpx-studio`
+
+### Dependency Installation
+
+```bash
+npm install
+```
+
+Result: passed with an npm environment warning only.
+
+```text
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+up to date in 1s
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+Result: passed with no errors or warnings.
+
+### Build
+
+```bash
+npm run build
+```
+
+Result: passed after fixing the ESLint flat config, css-tree type declaration, and TypeScript 6 deprecation setting.
+
+### Test
+
+```bash
+npm test
+```
+
+Result: failed because `package.json` has no `test` script.
+
+```text
+npm error Missing script: "test"
+```
+
+### Runtime Smoke Check
+
+```bash
+npm run dev
+curl -I http://localhost:3000
+```
+
+Result: passed. The development server returned `HTTP/1.1 200 OK`.
+
+### Vercel
+
+No Vercel credentials or deployment status are available in this local environment, so preview verification remains unverified.
+
+## 2026-07-06 Verification Blocker Follow-Up
+
+Branch: `feature/complete-wpx-studio`
+
+### Preferred Vitest Installation Attempt
+
+```bash
+npm install --save-dev vitest jsdom
+```
+
+Result: blocked by npm registry or policy access for the new package request.
+
+```text
+npm error code E403
+npm error 403 403 Forbidden - GET https://registry.npmjs.org/jsdom
+```
+
+Because adding new test dependencies was blocked, the project uses the built-in Node.js test runner for a lightweight smoke test instead of Vitest.
+
+### Dependency Installation
+
+```bash
+npm install
+```
+
+Result: passed with an npm environment warning only.
+
+```text
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+up to date in 1s
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+### Build
+
+```bash
+npm run build
+```
+
+Result: passed.
+
+### Test
+
+```bash
+npm test
+```
+
+Result: passed. The smoke test executed with Node's test runner and reported 3 passing tests.
+
+```text
+ℹ tests 3
+ℹ suites 1
+ℹ pass 3
+ℹ fail 0
+```
+
+### Git Push Blocker
+
+```bash
+git push -u origin feature/complete-wpx-studio
+```
+
+Result: blocked by the current environment/network proxy, not by application code.
+
+```text
+fatal: unable to access 'https://github.com/arty69x/wpx-studio.git/': CONNECT tunnel failed, response 403
+```
+
+Maintainer recovery command from a network with GitHub access:
+
+```bash
+git push -u origin feature/complete-wpx-studio
+```
+
+Vercel Preview cannot be created or inspected until the branch is pushed to GitHub.
+
+## 2026-07-06 Neon Brutalist UI Verification
+
+Branch: `work`
+
+### Lint
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+### Build
+
+```bash
+npm run build
+```
+
+Result: passed.
+
+### Test
+
+```bash
+npm test
+```
+
+Result: passed. The Node smoke test reported 3 passing tests.
+
+### Runtime Smoke Check
+
+```bash
+npm run dev
+curl -I http://localhost:3000
+```
+
+Result: passed. The local app returned `HTTP/1.1 200 OK`.
+
+### Visual Screenshot
+
+A browser screenshot was not captured because this environment does not provide an interactive browser/screenshot tool. Runtime availability was verified with the local HTTP smoke check above.
+
+### Push Attempt After Neon UI Commit
+
+```bash
+git push -u origin work
+```
+
+Result: blocked by the environment/network proxy.
+
+```text
+fatal: unable to access 'https://github.com/arty69x/wpx-studio.git/': CONNECT tunnel failed, response 403
+```
+
+Maintainer recovery command:
+
+```bash
+git push -u origin work
+```
