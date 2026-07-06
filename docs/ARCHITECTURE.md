@@ -55,4 +55,4 @@ Phase 1 implements only:
 - Append / basic merge
 - ZIP export
 
-IndexedDB, advanced CSS scoping, Asset Manager, Dependency Graph, Diff Viewer, and Plugin System must remain TODO placeholders in Phase 1.
+IndexedDB, advanced CSS scoping, Asset Manager, Dependency Graph, Diff Viewer, and Plugin System are intentionally deferred beyond Phase 1 and should be represented as documented future-phase capabilities rather than active MVP implementation.

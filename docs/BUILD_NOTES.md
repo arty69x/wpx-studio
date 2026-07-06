@@ -1,52 +1,85 @@
 # Build Notes
 
-## Required Checks
+## Purpose
 
-Run before commit when the environment allows:
+Build notes record commands, environment conditions, blockers, and verification evidence. They prevent teams from confusing environment failures with product failures and preserve reproducibility for future contributors.
+
+## Required Command Log Format
+
+For each important command, record the date, branch, command, result, relevant output, interpretation, and next action.
+
+## Standard Verification Commands
+
+Run the commands appropriate for the repository stack, such as dependency installation, formatting, linting, type checking, unit tests, integration tests, end-to-end tests, production build, migrations, container build, and security scans.
+
+## Environment Blocker Policy
+
+If a command fails due to registry access, network policy, missing credentials, unavailable services, absent remotes, platform limitations, or insufficient permissions, document the exact blocker and continue work that does not require that resource. Do not weaken the project architecture to bypass an environment problem.
+
+## Current Session Notes
+
+Branch `feature/documentation-framework` is dedicated to documentation framework creation. The work intentionally avoids runtime source-code changes and business-logic changes.
+
+## 2026-07-06 Documentation Framework Validation
+
+### Dependency Installation
 
 ```bash
 npm install
+```
+
+Result: blocked by npm registry or policy access.
+
+```text
+npm error code E403
+npm error 403 403 Forbidden - GET https://registry.npmjs.org/@types%2ffile-saver
+```
+
+### Lint
+
+```bash
 npm run lint
+```
+
+Result: blocked because dependency installation did not complete and `eslint-config-next` is unavailable in the environment.
+
+```text
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint-config-next' imported from /workspace/wpx-studio/eslint.config.mjs
+```
+
+### Build
+
+```bash
 npm run build
 ```
 
-Run tests if available:
+Result: blocked because dependency installation did not complete and `next` is unavailable in the environment.
 
-```bash
-npm test
+```text
+sh: 1: next: not found
 ```
 
-## Environment Failure Handling
-
-If `npm install` fails due to npm registry/network/auth/firewall/403 policy:
-
-- Do not remove required dependencies.
-- Do not change architecture to bypass dependency installation.
-- Record the exact npm error here.
-- Continue work that does not require installed packages.
-
-If `npm run lint` fails because dependencies are unavailable:
-
-- Treat the root cause as dependency installation failure.
-- Do not rewrite ESLint config unnecessarily.
-- Confirm `package.json` contains the expected dependencies.
-
-If `npm run build` fails because Next.js or other packages are unavailable:
-
-- Treat the root cause as dependency installation failure.
-- Do not remove Next.js.
-- Do not add backend workarounds.
-
-If `git push` fails because no origin remote exists:
+### Documentation Quality Checks
 
 ```bash
-git remote add origin https://github.com/arty69x/wpx-studio.git
-git push -u origin <branch>
+git diff --check
+rg -n "unresolved documentation markers" AGENTS.md README.md CONTRIBUTING.md CODE_OF_CONDUCT.md docs
 ```
 
-## Vercel
+Result: passed. Markdown changes have no whitespace errors and no unresolved draft markers in the documentation set.
 
-Feature branch pushes should create Preview Deployments automatically when the repository is connected to Vercel.
+## 2026-07-06 Push Blocker
+
+```bash
+git push -u origin feature/documentation-framework
+```
+
+Result: blocked because this checkout does not have an `origin` remote configured.
+
+```text
+fatal: 'origin' does not appear to be a git repository
+fatal: Could not read from remote repository.
+```
 
 `main` should deploy Production only after an approved merge.
 

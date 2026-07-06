@@ -1,5 +1,7 @@
 # Changelog
 
+All notable changes to this documentation framework are recorded here. The format follows Keep a Changelog principles and uses semantic categories that help release managers understand impact.
+
 ## Unreleased
 
 - Added `AGENTS.md` autonomous engineering agent charter.
