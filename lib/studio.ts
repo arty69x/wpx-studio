@@ -1,51 +1,67 @@
 import * as csstree from "css-tree";
-import { openDB } from "idb";
+import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 import JSZip from "jszip";
 
-export type StudioProject = {
-  name: string;
-  html: string;
-  css: string;
-  updatedAt: string;
+export type ComponentType = "Header" | "Navigation" | "Hero" | "About" | "Portfolio" | "Services" | "Process" | "Testimonials" | "Pricing" | "FAQ" | "Footer" | "Utility";
+export type DeviceMode = "desktop" | "tablet" | "mobile";
+export type IngestionMode = "append" | "merge";
+
+export type WPXComponent = { id: string; projectId: string; version: number; type: ComponentType; html: string; css: string; scopeId: string; source: string; selected: boolean; scriptsEnabled: boolean; createdAt: number; updatedAt: number; };
+export type WPXAsset = { id: string; projectId: string; originalUrl: string; localPath: string; mimeType: string; size: number; previewUrl?: string; placeholder?: boolean; };
+export type DependencyEdge = { from: string; to: string; type: "uses-css" | "uses-js" | "uses-asset" | "imports"; label?: string };
+export type WPXProject = { id: string; name: string; createdAt: number; updatedAt: number; sourceUrls: string[]; components: WPXComponent[]; assets: WPXAsset[]; stylesheets: Stylesheet[]; dependencyEdges: DependencyEdge[]; safeAssetMode: boolean; proxyUrl: string; commandHistory: CommandSnapshot[]; redoStack: CommandSnapshot[]; presets: WPXStructure[]; plugins: PluginStatus[]; };
+export type Stylesheet = { id: string; projectId: string; structureId: string; scopeId: string; rawCss: string; scopedCss: string; version: number };
+export type CommandSnapshot = { id: string; label: string; timestamp: number; components: WPXComponent[]; assets: WPXAsset[]; dependencyEdges: DependencyEdge[] };
+export type WPXStructure = { type: string; html: string; css: string; metadata: Record<string, unknown> };
+export type WPXParserPlugin = { id: string; name: string; version: string; parse(input: string): WPXStructure[] };
+export type WPXExporterPlugin = { id: string; name: string; version: string; export(project: WPXProject): Blob };
+export type PluginStatus = { id: string; name: string; version: string; enabled: boolean; type: "parser" | "exporter"; status: string };
+
+export const MAX_URLS = 20;
+export const MAX_COMPONENTS = 500;
+export const MAX_ASSET_SIZE = 15 * 1024 * 1024;
+export const MAX_PROJECT_SIZE = 150 * 1024 * 1024;
+export const MAX_CONCURRENT_DOWNLOADS = 5;
+
+const now = () => Date.now();
+const uid = (prefix: string) => `${prefix}-${Date.now().toString(36)}-${globalThis.crypto?.randomUUID?.().slice(0, 8) ?? Math.random().toString(36).slice(2, 10)}`;
+
+export const defaultProject: WPXProject = {
+  id: uid("project"), name: "WPX Studio Workspace", createdAt: now(), updatedAt: now(), sourceUrls: [], components: [], assets: [], stylesheets: [], dependencyEdges: [], safeAssetMode: true, proxyUrl: "", commandHistory: [], redoStack: [], presets: [],
+  plugins: [
+    { id: "core-dom-parser", name: "Core DOM Parser", version: "1.0.0", enabled: true, type: "parser", status: "Built-in client parser active" },
+    { id: "core-zip-exporter", name: "Core ZIP Exporter", version: "1.0.0", enabled: true, type: "exporter", status: "Built-in JSZip exporter active" },
+  ],
 };
 
-export const defaultProject: StudioProject = {
-  name: "WPX Starter Block",
-  html: `<section class="wpx-card">\n  <p class="wpx-kicker">WHISPERX | STUDIO</p>\n  <h1>Design a clean WordPress-ready section.</h1>\n  <p>All content is processed locally in your browser for MVP Phase 1.</p>\n</section>`,
-  css: `.wpx-card {\n  padding: 2rem;\n  border-radius: 1.5rem;\n  background: linear-gradient(135deg, #111827, #312e81);\n  color: white;\n}\n.wpx-kicker {\n  color: #22d3ee;\n  letter-spacing: 0.18em;\n  text-transform: uppercase;\n}`,
-  updatedAt: new Date().toISOString(),
-};
+interface WPXDB extends DBSchema { wpx_projects: { key: string; value: WPXProject }; wpx_structures: { key: string; value: WPXComponent; indexes: { "by-project": string } }; wpx_stylesheets: { key: string; value: Stylesheet; indexes: { "by-project": string } }; wpx_assets: { key: string; value: WPXAsset; indexes: { "by-project": string } }; }
+let dbCache: Promise<IDBPDatabase<WPXDB>> | null = null;
+const dbPromise = () => dbCache ??= openDB<WPXDB>("WPX_Studio_Vault", 1, { upgrade(db) { const p = db.createObjectStore("wpx_projects", { keyPath: "id" }); void p; db.createObjectStore("wpx_structures", { keyPath: "id" }).createIndex("by-project", "projectId"); db.createObjectStore("wpx_stylesheets", { keyPath: "id" }).createIndex("by-project", "projectId"); db.createObjectStore("wpx_assets", { keyPath: "id" }).createIndex("by-project", "projectId"); } });
 
-const dbPromise = () =>
-  openDB("wpx-studio", 1, {
-    upgrade(db) {
-      db.createObjectStore("projects");
-    },
-  });
+export async function saveProject(project: WPXProject) { const db = await dbPromise(); const tx = db.transaction(["wpx_projects", "wpx_structures", "wpx_stylesheets", "wpx_assets"], "readwrite"); await tx.objectStore("wpx_projects").put({ ...project, updatedAt: now() }); await Promise.all(project.components.map((c) => tx.objectStore("wpx_structures").put(c))); await Promise.all(project.stylesheets.map((s) => tx.objectStore("wpx_stylesheets").put(s))); await Promise.all(project.assets.map((a) => tx.objectStore("wpx_assets").put(a))); await tx.done; }
+export async function listProjects() { const db = await dbPromise(); return db.getAll("wpx_projects"); }
+export async function deleteProject(id: string) { const db = await dbPromise(); await db.delete("wpx_projects", id); }
 
-export async function saveProject(project: StudioProject) {
-  const db = await dbPromise();
-  await db.put("projects", project, "current");
-}
+export function normalizeUrls(input: string) { const rejected: string[] = []; const urls = input.split(/[\n,\s]+/).map((u) => u.trim()).filter(Boolean).map((raw) => { if (/^(javascript|data|file):/i.test(raw)) { rejected.push(raw); return ""; } const upgraded = raw.replace(/^http:\/\//i, "https://"); try { const url = new URL(upgraded.startsWith("https://") ? upgraded : `https://${upgraded}`); url.hash = ""; return url.toString().replace(/\/$/, ""); } catch { rejected.push(raw); return ""; } }).filter(Boolean); return { urls: Array.from(new Set(urls)).slice(0, MAX_URLS), rejected }; }
+export async function fetchHtmlFromUrls(urls: string[], proxyUrl = "") { const results: { url: string; html?: string; error?: string }[] = []; for (let i = 0; i < urls.length; i += MAX_CONCURRENT_DOWNLOADS) { const batch = urls.slice(i, i + MAX_CONCURRENT_DOWNLOADS); const settled = await Promise.all(batch.map(async (url) => { try { const target = proxyUrl ? `${proxyUrl.replace(/\/$/, "")}/fetch?url=${encodeURIComponent(url)}` : url; const response = await fetch(target); if (!response.ok) throw new Error(`HTTP ${response.status}`); if (proxyUrl) { const data = await response.json() as { body?: string }; return { url, html: data.body ?? "" }; } return { url, html: await response.text() }; } catch (error) { return { url, error: error instanceof Error ? error.message : "Fetch failed" }; } })); results.push(...settled); } return results; }
 
-export async function loadProject() {
-  const db = await dbPromise();
-  return (await db.get("projects", "current")) as StudioProject | undefined;
-}
+export function sanitizeHtml(DOMPurify: { sanitize: (input: string, cfg?: unknown) => string }, html: string) { return DOMPurify.sanitize(html, { USE_PROFILES: { html: true }, ADD_ATTR: ["data-wpx-scope"] }); }
+function classify(el: Element, index: number): ComponentType { const signal = `${el.tagName} ${el.id} ${el.className}`.toLowerCase(); if (el.tagName.toLowerCase() === "header" || /header|top-menu/.test(signal)) return "Header"; if (el.tagName.toLowerCase() === "nav" || /nav|navbar|navigation|menu-bar/.test(signal)) return "Navigation"; if (index === 0 || /hero|jumbotron|main-banner|focal-point/.test(signal)) return "Hero"; if (/pricing|price|subscription|tier|package-table/.test(signal)) return "Pricing"; if (/faq|accordion|question|q-and-a|knowledge-base/.test(signal)) return "FAQ"; if (el.tagName.toLowerCase() === "footer" || /footer|bottom-site|copyright-zone/.test(signal)) return "Footer"; if (/about/.test(signal)) return "About"; if (/portfolio|gallery|work/.test(signal)) return "Portfolio"; if (/service/.test(signal)) return "Services"; if (/process|step/.test(signal)) return "Process"; if (/testimonial|review/.test(signal)) return "Testimonials"; return "Utility"; }
+export function detectComponents(html: string, projectId: string, source: string, css = ""): WPXComponent[] { const doc = new DOMParser().parseFromString(html, "text/html"); const candidates = Array.from(doc.body.querySelectorAll("header,nav,main,section,article,footer,[id],[class]")).filter((el) => el.outerHTML.trim().length > 20); const roots = candidates.length ? candidates : Array.from(doc.body.children); return roots.slice(0, MAX_COMPONENTS).map((el, index) => { const id = uid("cmp"); const scopeId = `wpx-scope-${id.split("-").slice(-2).join("-")}`; el.setAttribute("data-wpx-scope", scopeId); return { id, projectId, version: 1, type: classify(el, index), html: el.outerHTML, css, scopeId, source, selected: true, scriptsEnabled: false, createdAt: now(), updatedAt: now() }; }); }
+export function mergeComponents(existing: WPXComponent[], incoming: WPXComponent[], mode: IngestionMode) { if (mode === "append") return [...existing, ...incoming].slice(0, MAX_COMPONENTS); const seen = new Map(existing.map((c) => [signature(c.html), c])); incoming.forEach((c) => seen.set(signature(c.html), c)); return Array.from(seen.values()).slice(0, MAX_COMPONENTS); }
+const signature = (html: string) => html.replace(/\s+/g, " ").replace(/data-wpx-scope="[^"]+"/g, "").trim().slice(0, 500);
 
-export function validateCss(css: string) {
-  try {
-    csstree.parse(css, { context: "stylesheet" });
-    return { ok: true, message: "CSS syntax is valid." };
-  } catch (error) {
-    return { ok: false, message: error instanceof Error ? error.message : "CSS syntax is invalid." };
-  }
-}
-
-export async function createExportZip(project: StudioProject, sanitizedHtml: string) {
-  const zip = new JSZip();
-  zip.file("README.txt", `Exported from WHISPERX | STUDIO\nProject: ${project.name}\nClient-side MVP export.`);
-  zip.file("block.html", sanitizedHtml);
-  zip.file("styles.css", project.css);
-  return zip.generateAsync({ type: "blob" });
-}
+export function scopeCss(css: string, scopeId: string) { try { const ast = csstree.parse(css, { context: "stylesheet" }); const keyframes = new Map<string, string>(); csstree.walk(ast, (node) => { if (node.type === "Atrule" && node.name === "keyframes" && node.prelude) { const name = csstree.generate(node.prelude).trim(); const scoped = `${name}-${scopeId}`; keyframes.set(name, scoped); node.prelude = csstree.parse(scoped, { context: "atrulePrelude" }); } if (node.type === "Rule" && node.prelude) { const selector = csstree.generate(node.prelude).split(",").map((part) => scopeSelector(part.trim(), scopeId)).join(", "); node.prelude = csstree.parse(selector, { context: "selectorList" }); } }); let out = csstree.generate(ast); keyframes.forEach((scoped, name) => { out = out.replace(new RegExp(`\\b${escapeRegExp(name)}\\b`, "g"), scoped); }); return { ok: true, css: out, message: "CSS scoped with css-tree." }; } catch (error) { return { ok: false, css, message: error instanceof Error ? error.message : "CSS parse failed." }; } }
+function scopeSelector(selector: string, scopeId: string) { if (!selector || selector.includes(`[data-wpx-scope="${scopeId}"]`)) return selector; if (/^(html|body|:root)$/.test(selector)) return `[data-wpx-scope="${scopeId}"]`; const pseudo = selector.match(/(::[\w-]+.*)$/); if (pseudo) return `${selector.slice(0, pseudo.index)}[data-wpx-scope="${scopeId}"]${pseudo[0]}`; return `${selector}[data-wpx-scope="${scopeId}"]`; }
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+export function rewriteLinks(html: string, baseUrl = "") { const doc = new DOMParser().parseFromString(html, "text/html"); const assets: WPXAsset[] = []; doc.querySelectorAll("img[src],source[src],video[src],link[href],script[src]").forEach((node, index) => { const attr = node.hasAttribute("href") ? "href" : "src"; const original = node.getAttribute(attr) ?? ""; if (/^(data|javascript|file):/i.test(original)) { node.removeAttribute(attr); return; } const abs = safeUrl(original, baseUrl); const ext = abs.pathname.split(".").pop() || "bin"; const folder = /css/.test(ext) ? "css" : /js/.test(ext) ? "js" : /woff|ttf|otf/.test(ext) ? "fonts" : "img"; const localPath = `assets/${folder}/asset-${index}.${ext}`; node.setAttribute(attr, localPath); assets.push({ id: uid("asset"), projectId: "", originalUrl: abs.toString(), localPath, mimeType: guessMime(ext), size: 0 }); }); return { html: doc.body.innerHTML, assets }; }
+function safeUrl(value: string, base: string) { try { return new URL(value, base || globalThis.location?.origin || "https://local.invalid"); } catch { return new URL("https://local.invalid/asset.bin"); } }
+function guessMime(ext: string) { if (/png|jpg|jpeg|gif|webp|svg/.test(ext)) return `image/${ext === "jpg" ? "jpeg" : ext}`; if (ext === "css") return "text/css"; if (ext === "js") return "text/javascript"; if (/woff|ttf|otf/.test(ext)) return "font/" + ext; return "application/octet-stream"; }
+export function applySafeAssetMode(html: string) { const doc = new DOMParser().parseFromString(html, "text/html"); doc.querySelectorAll("img,video,source").forEach((el) => { el.setAttribute("src", "assets/placeholders/wpx-placeholder.svg"); el.removeAttribute("srcset"); }); return doc.body.innerHTML; }
+export function buildDependencyGraph(components: WPXComponent[], assets: WPXAsset[]) { const edges: DependencyEdge[] = []; components.forEach((c) => { if (c.css) edges.push({ from: c.id, to: `${c.id}-css`, type: "uses-css", label: "scoped stylesheet" }); assets.forEach((a) => { if (c.html.includes(a.localPath) || c.html.includes(a.originalUrl)) edges.push({ from: c.id, to: a.id, type: "uses-asset", label: a.localPath }); }); if (/<script/i.test(c.html)) edges.push({ from: c.id, to: `${c.id}-script`, type: "uses-js", label: "script blocked by default" }); }); return edges; }
+export function projectSize(project: WPXProject) { return new Blob([JSON.stringify(project)]).size + project.assets.reduce((sum, a) => sum + a.size, 0); }
+export function snapshot(label: string, project: WPXProject): CommandSnapshot { return { id: uid("cmd"), label, timestamp: now(), components: structuredClone(project.components), assets: structuredClone(project.assets), dependencyEdges: structuredClone(project.dependencyEdges) }; }
+export function searchProject(project: WPXProject, query: string, regex = false) { if (!query) return []; const matcher = regex ? new RegExp(query, "g") : null; return project.components.flatMap((c) => { const matches = regex ? [...c.html.matchAll(matcher!)] : [...c.html.matchAll(new RegExp(escapeRegExp(query), "gi"))]; return matches.map((m) => ({ componentId: c.id, type: c.type, index: m.index ?? 0, excerpt: c.html.slice(Math.max(0, (m.index ?? 0) - 30), (m.index ?? 0) + query.length + 30) })); }); }
+export function replaceProject(project: WPXProject, query: string, replacement: string, regex = false) { const pattern = regex ? new RegExp(query, "g") : new RegExp(escapeRegExp(query), "gi"); return { ...project, components: project.components.map((c) => ({ ...c, html: c.html.replace(pattern, replacement), updatedAt: now() })), updatedAt: now() }; }
+export async function createExportZip(project: WPXProject) { const zip = new JSZip(); const root = zip.folder(slug(project.name))!; const selected = project.components.filter((c) => c.selected); const html = selected.map((c) => project.safeAssetMode ? applySafeAssetMode(c.html) : c.html).join("\n"); const css = selected.map((c) => scopeCss(c.css, c.scopeId).css).join("\n"); root.file("index.html", `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="assets/css/styles.css"><title>${project.name}</title></head><body>${html}</body></html>`); root.file("assets/css/styles.css", css); root.file("project.json", JSON.stringify(project, null, 2)); root.file("README.txt", `Exported from WHISPERX | STUDIO\nClient-side ZIP export\nComponents: ${selected.length}`); root.file("assets/placeholders/wpx-placeholder.svg", `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="#21262D"/><text x="50%" y="50%" fill="#C9D1D9" text-anchor="middle">WPX Safe Asset</text></svg>`); return zip.generateAsync({ type: "blob" }); }
+export const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "wpx-export";
