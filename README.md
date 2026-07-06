@@ -1,6 +1,10 @@
 # WHISPERX | STUDIO (WPX)
 
-WHISPERX | STUDIO is a client-side-only workspace for prototyping WordPress-ready HTML and CSS packages. MVP Phase 1 focuses on safe local editing, browser-only sanitization, CSS validation, IndexedDB persistence, and ZIP export.
+WHISPERX | STUDIO (WPX) is a client-side structural HTML collector, parser, previewer, component isolation workspace, and ZIP export tool.
+
+The application is designed as an **Offline Browser Engine**. All HTML parsing, DOM processing, component detection, preview rendering, CSS scoping, asset management, and ZIP export must run inside the browser.
+
+No backend code processing is allowed.
 
 ## Tech Stack
 
@@ -11,43 +15,136 @@ WHISPERX | STUDIO is a client-side-only workspace for prototyping WordPress-read
 - DOMPurify
 - JSZip
 - FileSaver.js
-- css-tree
+- csstree / css-tree
 - idb
 
-## Commands
+## Core Rule
+
+WPX must remain client-side only.
+
+Do not use:
+
+- API Routes
+- Server Actions
+- Backend HTML parsing
+- Server-side CSS processing
+- Cloud code processing
+
+A proxy may only be used for raw network fetching and must not process, parse, store, or transform user code.
+
+## Install
 
 ```bash
 npm install
+```
+
+## Development
+
+```bash
 npm run dev
+```
+
+## Lint
+
+```bash
 npm run lint
+```
+
+## Build
+
+```bash
 npm run build
 ```
 
 ## Folder Structure
 
 ```text
-app/                  Next.js App Router pages and global styles
-components/           Client UI components
-lib/                  Client-side studio utilities
-docs/                 Product, architecture, build, and change documentation
+src/
+  app/
+  components/
+  core/
+  hooks/
+  lib/
+  storage/
+  styles/
+  types/
+  utils/
+  assets/
+
+docs/
+  WPX_TECHNICAL_SPEC.md
+  ARCHITECTURE.md
+  MVP_PHASE_1.md
+  BUILD_NOTES.md
+  CHANGELOG.md
 ```
 
-## MVP Phases
+## MVP Phase 1 Scope
 
-1. **MVP Phase 1:** Local HTML/CSS studio, sanitization, CSS validation, IndexedDB save, ZIP export.
-2. **MVP Phase 2:** Import workflows and richer block templates. TODO: define only after Phase 1 approval.
-3. **MVP Phase 3:** Advanced validation and packaging guidance. TODO: define only after Phase 2 approval.
+Implement only:
 
-## Prohibited Features
+- Dark Tech Studio UI layout
+- Multiple URL input
+- HTML paste input
+- HTML file upload
+- DOMPurify sanitization
+- DOMParser component detection
+- Component checklist
+- Sandbox iframe preview
+- Append mode
+- Basic merge mode
+- Export ZIP using JSZip and FileSaver.js
+- TODO placeholders for IndexedDB, CSS scoping, plugin system, asset manager, and dependency graph
 
-- No backend processing.
-- No API routes.
-- No Server Actions.
-- No database or cloud persistence.
-- No direct production pushes unless explicitly instructed.
+## Prohibited in MVP Phase 1
+
+- No API routes
+- No Server Actions
+- No backend processing
+- No IndexedDB implementation yet
+- No plugin system implementation yet
+- No advanced CSS scoping yet
+- No marketplace implementation yet
 
 ## Vercel Deployment Workflow
 
-- Push feature branches to GitHub to create Vercel Preview Deployments.
-- Open a Pull Request for review and preview validation.
-- Merge to `main` only when instructed; `main` deploys to Production.
+- Every push to GitHub can trigger Vercel deployment automatically.
+- Feature branches should create Preview Deployments.
+- `main` should deploy to Production.
+- Always run lint and build before opening a Pull Request when the environment allows it.
+
+## Next Phases
+
+Phase 2:
+
+- IndexedDB persistence
+- Project Manager
+- Asset Manager
+- Save/load project state
+- Storage quota monitor
+
+Phase 3:
+
+- csstree CSS scoping
+- Link Rewriter
+- Script Handling Policy
+- Safe Asset Mode
+- Dependency Graph basics
+
+Phase 4:
+
+- Diff Viewer
+- Undo/Redo Command Pattern
+- Project-wide Search & Replace
+- Batch Operations
+
+Phase 5:
+
+- Plugin System
+- Template Marketplace
+- Presets
+- Custom Parser/Exporter interfaces
+
+## License
+
+TBD
