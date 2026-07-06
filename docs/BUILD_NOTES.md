@@ -81,6 +81,63 @@ fatal: 'origin' does not appear to be a git repository
 fatal: Could not read from remote repository.
 ```
 
+`main` should deploy Production only after an approved merge.
+
+## 2026-07-06 Environment Blocker
+
+Required validation was attempted for `feature/complete-wpx-studio` after implementing the client-side WPX Studio phases.
+
+### Commands Run
+
+```bash
+npm install
+```
+
+Result: failed because the configured npm registry/policy returned:
+
+```text
+npm error code E403
+npm error 403 403 Forbidden - GET https://registry.npmjs.org/@types%2ffile-saver
+npm error 403 In most cases, you or one of your dependencies are requesting
+npm error 403 a package version that is forbidden by your security policy, or
+npm error 403 on a server you do not have access to.
+```
+
+```bash
+npm run lint
+```
+
+Result: failed because dependencies were not installed after the registry 403:
+
+```text
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint-config-next' imported from /workspace/wpx-studio/eslint.config.mjs
+```
+
+```bash
+npm run build
+```
+
+Result: failed because dependencies were not installed after the registry 403:
+
+```text
+sh: 1: next: not found
+```
+
+No dependencies were removed and no backend workaround was introduced. The blocker is dependency installation access, not application architecture.
+
+### Git Push Blocker
+
+```bash
+git push -u origin feature/complete-wpx-studio
+```
+
+Result: failed because no `origin` remote is configured in this checkout:
+
+```text
+fatal: 'origin' does not appear to be a git repository
+fatal: Could not read from remote repository.
+```
+
 Repository inspection commands were run:
 
 ```bash
@@ -93,55 +150,5 @@ Manual recovery commands for a maintainer with repository credentials:
 
 ```bash
 git remote add origin https://github.com/arty69x/wpx-studio.git
-git push -u origin feature/documentation-framework
-```
-
-## 2026-07-06 Vercel Build Error Remediation
-
-### Reported Vercel Failure
-
-```text
-ESLint: Cannot find module '/vercel/path0/node_modules/eslint-config-next/core-web-vitals' imported from /vercel/path0/eslint.config.mjs Did you mean to import "eslint-config-next/core-web-vitals.js"?
-```
-
-Resolution: updated `eslint.config.mjs` to import `eslint-config-next/core-web-vitals.js` with the explicit module file extension required by the Vercel build runtime.
-
-```text
-./app/layout.tsx:2:8
-Type error: Cannot find module or type declarations for side-effect import of './globals.css'.
-```
-
-Resolution: added `types/css.d.ts` with a global CSS module declaration so TypeScript accepts side-effect CSS imports during production builds.
-
-### Local Validation After Remediation
-
-```bash
-npm install
-```
-
-Result: still blocked in this local environment by registry or policy access.
-
-```text
-npm error code E403
-npm error 403 403 Forbidden - GET https://registry.npmjs.org/@types%2ffile-saver
-```
-
-```bash
-npm run lint
-```
-
-Result: still blocked locally because dependency installation did not complete and `eslint-config-next` is unavailable in `node_modules`.
-
-```text
-Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint-config-next' imported from /workspace/wpx-studio/eslint.config.mjs
-```
-
-```bash
-npm run build
-```
-
-Result: still blocked locally because dependency installation did not complete and the `next` binary is unavailable.
-
-```text
-sh: 1: next: not found
+git push -u origin feature/complete-wpx-studio
 ```
