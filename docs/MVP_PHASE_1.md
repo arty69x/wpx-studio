@@ -17,7 +17,7 @@ Deliver the first client-side-only WPX Studio workspace.
 - Append mode
 - Basic merge mode
 - Export ZIP using JSZip and FileSaver.js
-- TODO placeholders for IndexedDB, CSS scoping, plugin system, asset manager, and dependency graph
+- Documented future-phase indicators for IndexedDB, CSS scoping, plugin system, asset manager, and dependency graph
 
 ## Out of Scope
 

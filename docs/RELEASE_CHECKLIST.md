@@ -1,0 +1,117 @@
+# Release Checklist
+
+Use this checklist to control versioning, validation, deployment, verification, and communication.
+
+## Verification Items
+
+- [ ] 1. Release scope is approved.
+- [ ] 2. Target version is selected.
+- [ ] 3. Release branch is correct.
+- [ ] 4. Git status is clean before release commit.
+- [ ] 5. Changelog is updated.
+- [ ] 6. Release notes are drafted.
+- [ ] 7. Breaking changes are highlighted.
+- [ ] 8. Migration notes are included.
+- [ ] 9. Rollback plan is documented.
+- [ ] 10. Owner approvals are recorded.
+- [ ] 11. Dependency installation succeeds.
+- [ ] 12. Lint succeeds.
+- [ ] 13. Type check succeeds.
+- [ ] 14. Unit tests succeed.
+- [ ] 15. Integration tests succeed.
+- [ ] 16. End-to-end tests succeed.
+- [ ] 17. Accessibility checks succeed.
+- [ ] 18. Security checks are reviewed.
+- [ ] 19. Performance checks are reviewed.
+- [ ] 20. Build succeeds.
+- [ ] 21. Artifacts are generated.
+- [ ] 22. Artifact checksums are recorded when applicable.
+- [ ] 23. Docker image is built when applicable.
+- [ ] 24. Container scan is reviewed.
+- [ ] 25. Environment variables are verified.
+- [ ] 26. Secrets are available in target environment.
+- [ ] 27. Database migrations are ready.
+- [ ] 28. Migration rollback is ready.
+- [ ] 29. Backup is verified before migration.
+- [ ] 30. Feature flags are configured.
+- [ ] 31. Release toggles have owners.
+- [ ] 32. Config changes are reviewed.
+- [ ] 33. Infrastructure changes are reviewed.
+- [ ] 34. Monitoring dashboard is ready.
+- [ ] 35. Alert routing is ready.
+- [ ] 36. On-call schedule is ready.
+- [ ] 37. Support team is informed.
+- [ ] 38. Customer communication is prepared.
+- [ ] 39. Documentation is updated.
+- [ ] 40. API docs are updated.
+- [ ] 41. Runbooks are updated.
+- [ ] 42. Known issues are updated.
+- [ ] 43. Troubleshooting is updated.
+- [ ] 44. Version number is committed.
+- [ ] 45. Tag name is correct.
+- [ ] 46. Tag message is meaningful.
+- [ ] 47. Tag points to approved commit.
+- [ ] 48. GitHub Release body is accurate.
+- [ ] 49. Assets are attached when needed.
+- [ ] 50. Deployment target is confirmed.
+- [ ] 51. Deployment window is approved.
+- [ ] 52. Maintenance notice is prepared when needed.
+- [ ] 53. Canary strategy is defined when applicable.
+- [ ] 54. Blue-green strategy is defined when applicable.
+- [ ] 55. Vercel preview is verified when applicable.
+- [ ] 56. Production deployment command is known.
+- [ ] 57. Deployment credentials are valid.
+- [ ] 58. Deployment logs are monitored.
+- [ ] 59. Smoke tests are defined.
+- [ ] 60. Smoke tests are executed after deployment.
+- [ ] 61. Login flow is verified.
+- [ ] 62. Primary user flow is verified.
+- [ ] 63. Critical API is verified.
+- [ ] 64. Background jobs are verified.
+- [ ] 65. Webhook delivery is verified when applicable.
+- [ ] 66. Import flow is verified.
+- [ ] 67. Export flow is verified.
+- [ ] 68. Storage behavior is verified.
+- [ ] 69. Admin flow is verified.
+- [ ] 70. Error tracking receives events.
+- [ ] 71. Metrics update after deployment.
+- [ ] 72. Logs are searchable.
+- [ ] 73. Trace data is available.
+- [ ] 74. No critical alerts are firing.
+- [ ] 75. Traffic levels are normal.
+- [ ] 76. Latency is within budget.
+- [ ] 77. Error rate is within budget.
+- [ ] 78. Database health is normal.
+- [ ] 79. Queue health is normal.
+- [ ] 80. Cache health is normal.
+- [ ] 81. CDN health is normal.
+- [ ] 82. Third-party integrations are normal.
+- [ ] 83. Rollback trigger thresholds are defined.
+- [ ] 84. Rollback decision owner is assigned.
+- [ ] 85. Rollback command is tested or documented.
+- [ ] 86. Post-release monitoring window is scheduled.
+- [ ] 87. Release announcement is sent.
+- [ ] 88. Stakeholders are updated.
+- [ ] 89. Support handoff is complete.
+- [ ] 90. Incident channel is ready.
+- [ ] 91. Security exceptions are approved.
+- [ ] 92. Compliance evidence is archived.
+- [ ] 93. Build notes include command output.
+- [ ] 94. Release notes include verification summary.
+- [ ] 95. PR is linked to release.
+- [ ] 96. Issues are linked to release.
+- [ ] 97. Milestone is updated.
+- [ ] 98. Version badge is updated when applicable.
+- [ ] 99. Package registry publish is verified when applicable.
+- [ ] 100. Mobile store submission is verified when applicable.
+- [ ] 101. Desktop signing is verified when applicable.
+- [ ] 102. Auto-update channel is verified when applicable.
+- [ ] 103. Documentation site deploy is verified when applicable.
+- [ ] 104. Release retrospective is scheduled.
+- [ ] 105. Follow-up tasks are created.
+- [ ] 106. Old feature flags are reviewed.
+- [ ] 107. Release is marked complete.
+
+## Completion Rule
+
+The checklist is complete only when every applicable item is checked, every exception has an owner and risk acceptance, and the final approval is recorded in the release notes.
