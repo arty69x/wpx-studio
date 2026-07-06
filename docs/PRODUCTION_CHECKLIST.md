@@ -1,0 +1,120 @@
+# Production Checklist
+
+Use this checklist before exposing software to production users or production data.
+
+## Verification Items
+
+- [ ] 1. Product scope matches the approved specification.
+- [ ] 2. All acceptance criteria are traceable to verification evidence.
+- [ ] 3. Production branch protection is enabled.
+- [ ] 4. Deployment target is documented.
+- [ ] 5. Rollback owner is assigned.
+- [ ] 6. Rollback procedure is tested.
+- [ ] 7. Environment variables are documented.
+- [ ] 8. Secrets are stored outside source control.
+- [ ] 9. Required domains are configured.
+- [ ] 10. TLS is enabled.
+- [ ] 11. Error pages are user-safe.
+- [ ] 12. Health check endpoint or equivalent signal exists.
+- [ ] 13. Monitoring dashboard is available.
+- [ ] 14. Alert routing is configured.
+- [ ] 15. Logs include correlation identifiers.
+- [ ] 16. Logs exclude secrets.
+- [ ] 17. Backups are enabled.
+- [ ] 18. Restore process is documented.
+- [ ] 19. Database migrations are reviewed.
+- [ ] 20. Migration rollback strategy is documented.
+- [ ] 21. Feature flags have owners.
+- [ ] 22. Feature flags have removal criteria.
+- [ ] 23. Rate limits are defined.
+- [ ] 24. Abuse controls are enabled.
+- [ ] 25. Authentication flow is verified.
+- [ ] 26. Authorization rules are verified.
+- [ ] 27. Admin access is restricted.
+- [ ] 28. Least privilege access is applied.
+- [ ] 29. Dependency licenses are acceptable.
+- [ ] 30. Dependency vulnerabilities are reviewed.
+- [ ] 31. Build artifacts are reproducible.
+- [ ] 32. Static assets are cache-configured.
+- [ ] 33. CDN behavior is documented.
+- [ ] 34. Robots and indexing rules are intentional.
+- [ ] 35. Sitemap behavior is intentional.
+- [ ] 36. Analytics configuration is approved.
+- [ ] 37. Cookie consent is compliant.
+- [ ] 38. Privacy policy alignment is verified.
+- [ ] 39. Terms alignment is verified.
+- [ ] 40. Accessibility baseline is verified.
+- [ ] 41. Keyboard navigation is verified.
+- [ ] 42. Screen reader labels are verified.
+- [ ] 43. Color contrast is verified.
+- [ ] 44. Responsive layouts are verified.
+- [ ] 45. High zoom layout is verified.
+- [ ] 46. Reduced motion preference is respected.
+- [ ] 47. Localization readiness is verified.
+- [ ] 48. Date and timezone behavior is verified.
+- [ ] 49. Currency and number formats are verified.
+- [ ] 50. Email templates are verified.
+- [ ] 51. Notification templates are verified.
+- [ ] 52. Import workflows are verified.
+- [ ] 53. Export workflows are verified.
+- [ ] 54. File size limits are enforced.
+- [ ] 55. Storage quota behavior is handled.
+- [ ] 56. Empty states are present.
+- [ ] 57. Loading states are present.
+- [ ] 58. Error states are present.
+- [ ] 59. Permission-denied states are present.
+- [ ] 60. Offline or degraded states are handled.
+- [ ] 61. Concurrency behavior is reviewed.
+- [ ] 62. Duplicate submission protection exists.
+- [ ] 63. Idempotency is defined for critical actions.
+- [ ] 64. Data retention policy is implemented.
+- [ ] 65. Data deletion process is defined.
+- [ ] 66. Audit logging exists for sensitive actions.
+- [ ] 67. Incident response contacts are listed.
+- [ ] 68. Support escalation path is documented.
+- [ ] 69. Runbook exists for common failures.
+- [ ] 70. SLOs or service targets are defined.
+- [ ] 71. Performance budgets are defined.
+- [ ] 72. Load testing evidence is reviewed.
+- [ ] 73. Memory usage is acceptable.
+- [ ] 74. CPU usage is acceptable.
+- [ ] 75. Bundle size is acceptable.
+- [ ] 76. Database query cost is reviewed.
+- [ ] 77. Cache invalidation is defined.
+- [ ] 78. Queue retry behavior is defined.
+- [ ] 79. Timeouts are configured.
+- [ ] 80. Third-party outage behavior is handled.
+- [ ] 81. Payment or billing behavior is verified when applicable.
+- [ ] 82. Webhooks are signed when applicable.
+- [ ] 83. Webhook retries are idempotent.
+- [ ] 84. API versioning is documented.
+- [ ] 85. API error shape is stable.
+- [ ] 86. Client compatibility is reviewed.
+- [ ] 87. Browser support matrix is verified.
+- [ ] 88. Mobile support matrix is verified.
+- [ ] 89. Desktop support matrix is verified.
+- [ ] 90. Legal review is complete when required.
+- [ ] 91. Security review is complete.
+- [ ] 92. QA signoff is complete.
+- [ ] 93. Product owner signoff is complete.
+- [ ] 94. Release notes are complete.
+- [ ] 95. Changelog is updated.
+- [ ] 96. Known issues are updated.
+- [ ] 97. Troubleshooting guide is updated.
+- [ ] 98. On-call coverage is scheduled.
+- [ ] 99. Deployment window is communicated.
+- [ ] 100. Post-deployment smoke tests are defined.
+- [ ] 101. Post-deployment monitoring period is defined.
+- [ ] 102. Customer communication is prepared.
+- [ ] 103. Data migration dry run is complete when applicable.
+- [ ] 104. Feature documentation is published.
+- [ ] 105. Training materials are updated when applicable.
+- [ ] 106. Operational metrics have baselines.
+- [ ] 107. Cost impact is reviewed.
+- [ ] 108. Scaling limits are documented.
+- [ ] 109. Disaster recovery target is defined.
+- [ ] 110. Production checklist approval is recorded.
+
+## Completion Rule
+
+The checklist is complete only when every applicable item is checked, every exception has an owner and risk acceptance, and the final approval is recorded in the release notes.

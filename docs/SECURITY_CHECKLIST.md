@@ -1,0 +1,121 @@
+# Security Checklist
+
+Use this checklist to evaluate application, infrastructure, dependency, privacy, and operational security before release.
+
+## Verification Items
+
+- [ ] 1. Threat model is documented.
+- [ ] 2. Authentication requirements are defined.
+- [ ] 3. Authorization matrix is documented.
+- [ ] 4. Least privilege is applied.
+- [ ] 5. Secrets are stored in a managed secret store.
+- [ ] 6. Secrets are not committed.
+- [ ] 7. Secret rotation procedure exists.
+- [ ] 8. Password policy is documented.
+- [ ] 9. Session expiration is configured.
+- [ ] 10. Refresh token handling is secure.
+- [ ] 11. Multi-factor authentication is required for admins.
+- [ ] 12. Service accounts are inventoried.
+- [ ] 13. API keys have owners.
+- [ ] 14. API keys have scopes.
+- [ ] 15. CORS policy is restrictive.
+- [ ] 16. CSRF protection is implemented where needed.
+- [ ] 17. Input validation covers all trust boundaries.
+- [ ] 18. Output encoding prevents injection.
+- [ ] 19. SQL injection defenses are verified.
+- [ ] 20. NoSQL injection defenses are verified.
+- [ ] 21. Command injection defenses are verified.
+- [ ] 22. Path traversal defenses are verified.
+- [ ] 23. File upload validation is enforced.
+- [ ] 24. File type validation is enforced.
+- [ ] 25. File size validation is enforced.
+- [ ] 26. Malware scanning is considered for uploads.
+- [ ] 27. XSS defenses are verified.
+- [ ] 28. Content Security Policy is configured.
+- [ ] 29. Clickjacking protection is configured.
+- [ ] 30. Security headers are configured.
+- [ ] 31. TLS is required.
+- [ ] 32. HSTS is configured when appropriate.
+- [ ] 33. Cookies are Secure.
+- [ ] 34. Cookies are HttpOnly when appropriate.
+- [ ] 35. Cookies use SameSite intentionally.
+- [ ] 36. Sensitive data is encrypted in transit.
+- [ ] 37. Sensitive data is encrypted at rest.
+- [ ] 38. PII inventory is complete.
+- [ ] 39. Data minimization is applied.
+- [ ] 40. Data retention is defined.
+- [ ] 41. Data deletion is supported.
+- [ ] 42. Audit logging covers sensitive actions.
+- [ ] 43. Audit logs are tamper-resistant.
+- [ ] 44. Logs redact secrets.
+- [ ] 45. Logs redact PII where required.
+- [ ] 46. Error messages avoid sensitive detail.
+- [ ] 47. Dependency vulnerability scan is reviewed.
+- [ ] 48. Dependency licenses are reviewed.
+- [ ] 49. Dependency update process exists.
+- [ ] 50. Container images are scanned.
+- [ ] 51. Base images are maintained.
+- [ ] 52. Infrastructure access is restricted.
+- [ ] 53. Cloud IAM policies are reviewed.
+- [ ] 54. Database permissions are least privilege.
+- [ ] 55. Network segmentation is defined.
+- [ ] 56. Admin interfaces are protected.
+- [ ] 57. Rate limiting is configured.
+- [ ] 58. Brute-force protection exists.
+- [ ] 59. Account lockout policy is defined.
+- [ ] 60. Abuse monitoring is configured.
+- [ ] 61. Webhooks are signed.
+- [ ] 62. Webhook replay protection exists.
+- [ ] 63. API idempotency prevents replay harm.
+- [ ] 64. OAuth redirect URIs are restricted.
+- [ ] 65. JWT algorithms are pinned.
+- [ ] 66. JWT expiration is enforced.
+- [ ] 67. JWT audience is validated.
+- [ ] 68. JWT issuer is validated.
+- [ ] 69. Password reset is secure.
+- [ ] 70. Email verification is secure.
+- [ ] 71. Invitation flow is secure.
+- [ ] 72. User enumeration is prevented.
+- [ ] 73. Authorization is server-enforced.
+- [ ] 74. Client-side checks are not trusted.
+- [ ] 75. Tenant isolation is tested.
+- [ ] 76. Object-level authorization is tested.
+- [ ] 77. Privilege escalation paths are tested.
+- [ ] 78. Security unit tests exist.
+- [ ] 79. Security integration tests exist.
+- [ ] 80. DAST or manual security testing is performed.
+- [ ] 81. SAST or code scanning is enabled.
+- [ ] 82. Supply chain provenance is reviewed.
+- [ ] 83. Build pipeline secrets are protected.
+- [ ] 84. Branch protection is enabled.
+- [ ] 85. Code owner review is enabled for sensitive areas.
+- [ ] 86. Production access is logged.
+- [ ] 87. Break-glass access is documented.
+- [ ] 88. Incident response plan exists.
+- [ ] 89. Security contact is published internally.
+- [ ] 90. Vulnerability intake process exists.
+- [ ] 91. Backup access is restricted.
+- [ ] 92. Backup encryption is enabled.
+- [ ] 93. Restore process preserves security controls.
+- [ ] 94. Third-party processors are reviewed.
+- [ ] 95. Data processing agreements are complete when needed.
+- [ ] 96. Compliance requirements are mapped.
+- [ ] 97. Privacy notices are accurate.
+- [ ] 98. Cookie usage is documented.
+- [ ] 99. Tracking scripts are approved.
+- [ ] 100. Payment data handling follows applicable standards.
+- [ ] 101. Mobile app permissions are minimal.
+- [ ] 102. Desktop app update channel is secure.
+- [ ] 103. Electron renderer isolation is enabled when applicable.
+- [ ] 104. IPC payloads are validated.
+- [ ] 105. Server-side request forgery defenses exist.
+- [ ] 106. Outbound network allowlist is considered.
+- [ ] 107. Open redirect defenses are verified.
+- [ ] 108. Deserialization risks are reviewed.
+- [ ] 109. Cryptography uses standard libraries.
+- [ ] 110. Random identifiers use secure randomness.
+- [ ] 111. Security exceptions are documented.
+
+## Completion Rule
+
+The checklist is complete only when every applicable item is checked, every exception has an owner and risk acceptance, and the final approval is recorded in the release notes.

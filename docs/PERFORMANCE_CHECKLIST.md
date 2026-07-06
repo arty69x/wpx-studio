@@ -1,0 +1,117 @@
+# Performance Checklist
+
+Use this checklist to verify speed, scalability, memory, CPU, network, database, and cost characteristics.
+
+## Verification Items
+
+- [ ] 1. Performance budgets are documented.
+- [ ] 2. Core user flows have timing targets.
+- [ ] 3. Startup time is measured.
+- [ ] 4. First contentful paint is measured when applicable.
+- [ ] 5. Largest contentful paint is measured when applicable.
+- [ ] 6. Interaction latency is measured.
+- [ ] 7. Cumulative layout shift is measured when applicable.
+- [ ] 8. Server response time is measured.
+- [ ] 9. API latency percentiles are measured.
+- [ ] 10. Database query time is measured.
+- [ ] 11. Slow query log is reviewed.
+- [ ] 12. N+1 query risks are reviewed.
+- [ ] 13. Indexes support common queries.
+- [ ] 14. Pagination is implemented for large lists.
+- [ ] 15. Infinite scroll has limits.
+- [ ] 16. Search queries have limits.
+- [ ] 17. Bulk operations have batching.
+- [ ] 18. CPU-heavy work is profiled.
+- [ ] 19. Memory-heavy work is profiled.
+- [ ] 20. Memory leaks are checked.
+- [ ] 21. Event listeners are cleaned up.
+- [ ] 22. Subscriptions are cleaned up.
+- [ ] 23. Timers are cleaned up.
+- [ ] 24. Workers are terminated when unused.
+- [ ] 25. Large files are streamed or chunked.
+- [ ] 26. Upload limits are enforced.
+- [ ] 27. Download limits are enforced.
+- [ ] 28. Image sizes are optimized.
+- [ ] 29. Image formats are appropriate.
+- [ ] 30. Lazy loading is applied where useful.
+- [ ] 31. Critical CSS strategy is reviewed.
+- [ ] 32. Unused CSS is minimized.
+- [ ] 33. JavaScript bundle size is reviewed.
+- [ ] 34. Code splitting is used where appropriate.
+- [ ] 35. Tree shaking is effective.
+- [ ] 36. Duplicate dependencies are checked.
+- [ ] 37. Polyfills are justified.
+- [ ] 38. Source maps are configured appropriately.
+- [ ] 39. Cache headers are configured.
+- [ ] 40. CDN usage is verified.
+- [ ] 41. Compression is enabled.
+- [ ] 42. Brotli or gzip is enabled.
+- [ ] 43. HTTP keep-alive is used.
+- [ ] 44. Connection pooling is configured.
+- [ ] 45. Timeouts are configured.
+- [ ] 46. Retries use backoff.
+- [ ] 47. Retries have caps.
+- [ ] 48. Circuit breakers are considered.
+- [ ] 49. Queue throughput is measured.
+- [ ] 50. Queue backlog alarms exist.
+- [ ] 51. Background jobs are idempotent.
+- [ ] 52. Database pool size is tuned.
+- [ ] 53. Thread or worker pools are tuned.
+- [ ] 54. Mobile battery impact is considered.
+- [ ] 55. Mobile network constraints are considered.
+- [ ] 56. Offline cache size is controlled.
+- [ ] 57. Local storage usage is measured.
+- [ ] 58. IndexedDB usage is measured when applicable.
+- [ ] 59. Garbage collection pressure is reviewed.
+- [ ] 60. Large object allocation is reduced.
+- [ ] 61. Synchronous main-thread work is minimized.
+- [ ] 62. Layout thrashing is avoided.
+- [ ] 63. Animations are GPU-friendly.
+- [ ] 64. Reduced motion is respected.
+- [ ] 65. Virtualization is used for large lists.
+- [ ] 66. Debouncing is applied to rapid input.
+- [ ] 67. Throttling is applied to high-frequency events.
+- [ ] 68. WebSocket message volume is bounded.
+- [ ] 69. Polling interval is justified.
+- [ ] 70. Cache invalidation is defined.
+- [ ] 71. Cache hit ratio is measured.
+- [ ] 72. Cold cache behavior is acceptable.
+- [ ] 73. Warm cache behavior is acceptable.
+- [ ] 74. Error retries do not create storms.
+- [ ] 75. Rate limits protect dependencies.
+- [ ] 76. Third-party script cost is measured.
+- [ ] 77. Third-party API latency is tracked.
+- [ ] 78. Feature flags do not add excessive overhead.
+- [ ] 79. Logging volume is controlled.
+- [ ] 80. Metrics cardinality is controlled.
+- [ ] 81. Trace sampling is configured.
+- [ ] 82. Build output size is tracked.
+- [ ] 83. Docker image size is reviewed.
+- [ ] 84. Serverless cold start is measured when applicable.
+- [ ] 85. Edge runtime limits are respected when applicable.
+- [ ] 86. Flutter frame timing is reviewed when applicable.
+- [ ] 87. Electron memory usage is reviewed when applicable.
+- [ ] 88. Laravel query count is reviewed when applicable.
+- [ ] 89. NestJS provider scope is reviewed when applicable.
+- [ ] 90. Python dependency import time is reviewed when applicable.
+- [ ] 91. Angular change detection cost is reviewed when applicable.
+- [ ] 92. Vue reactive dependency cost is reviewed when applicable.
+- [ ] 93. React render frequency is reviewed.
+- [ ] 94. React memoization is justified.
+- [ ] 95. Hydration cost is reviewed when applicable.
+- [ ] 96. SSR caching is reviewed when applicable.
+- [ ] 97. Database migration performance is tested.
+- [ ] 98. Backfill performance is tested.
+- [ ] 99. Load test scenario is documented.
+- [ ] 100. Stress test scenario is documented.
+- [ ] 101. Soak test scenario is documented.
+- [ ] 102. Performance regression threshold is defined.
+- [ ] 103. Performance dashboard is available.
+- [ ] 104. Alert thresholds are configured.
+- [ ] 105. Capacity plan is documented.
+- [ ] 106. Cost impact is reviewed.
+- [ ] 107. Known performance risks are documented.
+
+## Completion Rule
+
+The checklist is complete only when every applicable item is checked, every exception has an owner and risk acceptance, and the final approval is recorded in the release notes.

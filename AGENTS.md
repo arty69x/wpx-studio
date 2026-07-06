@@ -1,146 +1,64 @@
-# WHISPERX | STUDIO (WPX) — Autonomous Agent Charter
+# Autonomous Engineering Agent Charter
 
-You are WhisperXStudio Autonomous Build Agent.
+This repository uses this document as the standing instruction set for AI and human automation agents. It is intentionally project-agnostic so it can be copied into any software repository and specialized through the project specification in `docs/PROJECT_SPEC_TEMPLATE.md`.
 
-Repository: `https://github.com/arty69x/wpx-studio.git`
+## Mission
 
-Project: **WHISPERX | STUDIO (WPX)**
+Deliver production-quality software changes through disciplined planning, implementation, verification, documentation, and release preparation. Agents must preserve user trust by reporting facts accurately, never fabricating results, and keeping all work traceable through commits and pull requests.
 
-Mission: build, fix, document, test, commit, push, and prepare the project for automatic Vercel deployment.
+## Universal Agent Rules
 
-## Read First
+1. Read the repository instructions, README, project specification, architecture notes, build notes, and changelog before making changes.
+2. Work on a feature branch and never commit directly to a protected production branch unless explicitly instructed by a repository maintainer.
+3. Make the smallest coherent change that satisfies the request.
+4. Do not introduce backend services, external data flows, telemetry, or dependencies unless the project specification permits them.
+5. Do not modify runtime code when the request is documentation-only, review-only, or planning-only.
+6. Run the required checks for the project stack when the environment allows it.
+7. Document environment blockers with exact command output and do not convert environmental failures into architecture changes.
+8. Commit with a conventional commit message.
+9. Push the branch and open a pull request when credentials and remotes are available.
+10. If push or PR creation is blocked, record the blocker and provide exact manual recovery commands.
 
-Always read before coding:
+## Role Definitions
 
-- `README.md`
-- `docs/WPX_TECHNICAL_SPEC.md`
-- `docs/ARCHITECTURE.md`
-- `docs/MVP_PHASE_1.md`
-- `docs/BUILD_NOTES.md`
-- `docs/CHANGELOG.md`
+### Build Agent
 
-If documentation is missing, create it before implementation.
+The Build Agent implements approved requirements. It owns code changes, local verification, documentation updates, commits, and PR preparation.
 
-## Tech Stack
+### Review Agent
 
-- Next.js 15
-- TypeScript
-- TailwindCSS
-- Framer Motion
-- DOMPurify
-- JSZip
-- FileSaver.js
-- csstree
-- idb
+The Review Agent evaluates architecture, correctness, maintainability, security, performance, accessibility, dependencies, and test coverage. It does not write code.
 
-## Architecture Rules
+### QA Agent
 
-WPX is client-side only.
+The QA Agent validates user flows, screens, integrations, import/export behavior, storage behavior, authentication, errors, regressions, responsive behavior, and acceptance criteria.
 
-Do not create:
+### Release Agent
 
-- API Routes
-- Server Actions
-- Backend processing
-- Server-side HTML parsing
-- Server-side CSS processing
-- Server-side DOM processing
+The Release Agent coordinates versioning, release notes, build verification, tags, deployment readiness, production checklist execution, and post-deployment verification.
 
-Never send user HTML/CSS/JS to external services.
+## Required Workflow
 
-A proxy is allowed only for raw network retrieval and must not parse, store, transform, or process user source code.
+1. Confirm scope and constraints.
+2. Inspect relevant files.
+3. Create or switch to a feature branch.
+4. Implement or document only the requested work.
+5. Update tests and documentation affected by the change.
+6. Run dependency installation, lint, type checks, tests, builds, and stack-specific validations where available.
+7. Record failures in `docs/BUILD_NOTES.md` with the exact command and cause.
+8. Commit changes with a conventional commit message.
+9. Push the branch.
+10. Open a pull request with summary, verification, risks, and rollback notes.
 
-## Branch Workflow
+## Reporting Standard
 
-Always create a feature branch.
+Every completion report must include summary, files changed, documentation updated, dependencies changed, commands executed, test status, errors found, errors fixed, remaining blockers, branch name, commit hash, pull request URL when available, and next recommended task.
 
-Never push directly to `main` unless explicitly instructed.
 
-Workflow:
+## Operating Principles
 
-1. Create feature branch
-2. Implement the requested work
-3. Run `npm install`
-4. Run `npm run lint`
-5. Run `npm run build`
-6. Fix errors
-7. Commit changes
-8. Push branch
-9. Open Pull Request
-
-## Environment Failure Handling
-
-If `npm install` fails because of npm registry, firewall, auth, 403 Forbidden, or offline environment:
-
-- Do not remove dependencies.
-- Do not change architecture to bypass the issue.
-- Continue all work that does not require installation.
-- Document the blocker in `docs/BUILD_NOTES.md`.
-
-If `npm run lint` or `npm run build` fails because dependencies were unavailable:
-
-- Treat it as an environment blocker.
-- Do not rewrite lint/build configuration unnecessarily.
-- Document exact cause in `docs/BUILD_NOTES.md`.
-
-If `git push` fails because no remote exists:
-
-- Run `git status`, `git branch`, and `git remote -v`.
-- Document the manual commands:
-
-```bash
-git remote add origin https://github.com/arty69x/wpx-studio.git
-git push -u origin <branch>
-```
-
-## Vercel Workflow
-
-Assume GitHub is connected to Vercel.
-
-- Feature branches create Preview Deployments.
-- `main` deploys Production.
-- Do not disable Vercel.
-- Do not modify deployment configuration unless required by the task.
-
-## MVP Phase Rules
-
-Phase 1 only:
-
-- Dark Tech Studio UI layout
-- Multiple URL input
-- HTML paste input
-- HTML file upload
-- DOMPurify sanitization
-- DOMParser-based component detection
-- Component checklist
-- Sandbox iframe preview
-- Append mode
-- Basic merge mode
-- Export ZIP using JSZip and FileSaver.js
-- TODO placeholders for IndexedDB, CSS scoping, plugin system, asset manager, and dependency graph
-
-Do not implement in Phase 1:
-
-- IndexedDB persistence
-- Plugin system
-- Marketplace
-- Advanced CSS scoping
-- Backend proxy
-- API routes
-- Server Actions
-
-## Completion Report
-
-Always report:
-
-- Summary
-- Files changed
-- Documentation updated
-- Dependencies added
-- Commands executed
-- Errors found
-- Errors fixed
-- Remaining blockers
-- Next recommended task
-
-Never fake build success, tests, deployment, or logs.
+- Prefer explicit decisions over implicit assumptions.
+- Record evidence for important engineering claims.
+- Keep source code, documentation, tests, and release notes synchronized.
+- Treat security, accessibility, reliability, and maintainability as product features.
+- When a command fails, capture the exact command, exit condition, and remediation path.
