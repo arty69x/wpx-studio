@@ -3,17 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --background: #05080d;
-  --surface: #05080d;
-  --primary: #ccff00;
-  --accent: #ff2d78;
-  --secondary: #ccff00;
-  --alert: #ff2d78;
-  --interactive: #001e3c;
-  --creative: #b44fff;
-  --neutral: #90a4ae;
-  --text-main: #f8fbff;
-  --text-sub: #90a4ae;
+  --background: #0d1117;
+  --surface: #21262d;
+  --primary: #8b5cf6;
+  --secondary: #10b981;
+  --alert: #ef4444;
+  --text-main: #c9d1d9;
+  --text-sub: #8b949e;
 }
 
 html,
@@ -27,125 +23,12 @@ body {
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-textarea,
-input,
-button,
-select {
-  font: inherit;
-}
-
-button,
-summary,
-input[type="checkbox"] {
-  cursor: pointer;
-}
-
-.font-syne {
-  font-family: "Syne", "DM Sans", ui-sans-serif, system-ui, sans-serif;
-}
-
-.font-mono {
-  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-}
-
-.wpx-shell {
-  font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-}
-
-.glass-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(145deg, rgba(5, 8, 13, 0.88), rgba(0, 30, 60, 0.28));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 28px rgba(204, 255, 0, 0.035), 0 20px 40px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(24px);
-}
-
-.glass-card::before {
-  pointer-events: none;
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.03;
-  mix-blend-mode: multiply;
-  background-image: linear-gradient(45deg, #fff 1px, transparent 1px), linear-gradient(-45deg, #fff 1px, transparent 1px);
-  background-size: 6px 6px;
-}
-
-.glass-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.field {
-  width: 100%;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(5, 8, 13, 0.78);
-  padding: 0.7rem;
-  color: var(--text-main);
-  outline: none;
-  transition: all 300ms ease-out;
-}
-
-.field:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(204, 255, 0, 0.16), 0 0 24px rgba(180, 79, 255, 0.22);
-}
-
-.btn-primary,
-.btn-secondary,
-.btn-danger,
-.btn-ghost {
-  border-radius: 12px;
-  padding: 0.58rem 0.9rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  transition: all 300ms ease-out;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: #05080d;
-  box-shadow: 0 0 24px rgba(204, 255, 0, 0.25);
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, var(--primary), #0a84ff 54%, var(--creative));
-  color: #05080d;
-}
-
-.btn-danger {
-  background: var(--accent);
-  color: white;
-}
-
-.btn-ghost {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-main);
-}
-
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-danger:hover,
-.btn-ghost:hover {
-  transform: translateY(-2px);
-  border-color: var(--primary);
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-@keyframes wpx-progress {
-  from { width: 0%; }
-  to { width: 100%; }
-}
+body { margin: 0; }
+textarea, input, button, select { font: inherit; }
+.field { width: 100%; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,.1); background: rgba(13,17,23,.86); padding: .75rem; color: var(--text-main); outline: none; }
+.field:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(139,92,246,.18); }
+.btn-primary { border-radius: 999px; background: var(--primary); padding: .55rem .9rem; color: white; font-weight: 700; }
+.btn-secondary { border-radius: 999px; background: var(--secondary); padding: .55rem .9rem; color: #04130e; font-weight: 700; }
+.btn-danger { border-radius: 999px; background: var(--alert); padding: .55rem .9rem; color: white; font-weight: 700; }
+.btn-ghost { border-radius: 999px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); padding: .55rem .9rem; color: var(--text-main); font-weight: 700; }
+button:disabled { cursor: not-allowed; opacity: .45; }
