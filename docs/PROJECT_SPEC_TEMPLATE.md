@@ -1,65 +1,147 @@
-# Universal Project Specification Template
+# Project Technical Specification Template
 
-## Executive Summary
+Use this template for any new project before asking an agent to build the application.
 
-Describe the product, the problem it solves, the audience it serves, and the business outcome it must produce. State the product category, primary platform, operational model, and release target.
+## 1. Project Identity
 
-## Business Context
+- Project name:
+- Repository:
+- Product owner:
+- Target users:
+- Business goal:
+- Current version:
 
-Define the market need, business owner, funding model, success metrics, revenue or cost objective, compliance environment, and constraints that shape product decisions.
+## 2. Core Rules
 
-## Goals and Non-Goals
+Define non-negotiable architecture rules.
 
-List measurable product goals and explicitly excluded work. Non-goals prevent scope drift and help reviewers reject attractive but unauthorized features.
+Example:
 
-## Users and Roles
+- Client-side only / backend allowed / hybrid
+- Allowed services
+- Prohibited services
+- Data privacy constraints
+- Deployment constraints
 
-Define each user role, permissions, responsibilities, common tasks, technical ability, accessibility needs, and support expectations.
+## 3. Tech Stack
 
-## User Flows
+- Framework:
+- Language:
+- UI library:
+- Styling:
+- State management:
+- Database/storage:
+- Testing:
+- Deployment:
 
-Document primary, secondary, exception, onboarding, authentication, recovery, import, export, administration, and account-management flows. Include entry points, decision points, success criteria, and failure handling.
+## 4. User Roles
 
-## Screens and Interfaces
+List all users and permissions.
 
-Describe every screen, route, view, command, background job, notification, modal, email, and external integration surface. Define required states for loading, empty, success, error, disabled, permission-denied, and offline conditions.
+| Role | Description | Permissions |
+|---|---|---|
+| Admin | | |
+| User | | |
 
-## Data and Database
+## 5. Main User Flows
 
-Define entities, fields, relationships, indexes, retention, migration strategy, backup expectations, audit needs, privacy classification, and ownership rules.
+```text
+Flow name:
+Step 1 -> Step 2 -> Step 3 -> Result
+```
 
-## API and Integration Requirements
+## 6. Screens / Pages
 
-Describe internal APIs, external APIs, webhooks, event streams, authentication mechanisms, rate limits, idempotency, error contracts, retry behavior, and compatibility requirements.
+| Screen | Purpose | Main Components |
+|---|---|---|
+| Dashboard | | |
+| Settings | | |
 
-## Architecture
+## 7. Data Models
 
-State runtime boundaries, deployment topology, data flow, service ownership, module boundaries, dependencies, scaling strategy, observability, failure modes, and prohibited patterns.
+```ts
+interface ExampleModel {
+  id: string;
+  createdAt: number;
+  updatedAt: number;
+}
+```
 
-## UI and Design System
+## 8. Core Features
 
-Define layout principles, design tokens, typography, color, spacing, components, responsive behavior, accessibility targets, motion rules, and content style.
+- Feature 1
+- Feature 2
+- Feature 3
 
-## Security and Privacy
+## 9. Import / Export Requirements
 
-Define threat model, authentication, authorization, secrets handling, encryption, input validation, audit logging, data retention, privacy rights, third-party risk, and incident response expectations.
+- Import formats:
+- Export formats:
+- File naming:
+- Folder structure:
 
-## Performance and Reliability
+## 10. Validation Rules
 
-Define budgets for startup time, response time, memory, CPU, database queries, bundle size, offline behavior, uptime, recovery time, and graceful degradation.
+- Input validation
+- File validation
+- URL validation
+- Size limits
+- Permission checks
 
-## Testing Strategy
+## 11. Error Handling
 
-Define unit, integration, end-to-end, accessibility, performance, security, compatibility, migration, import/export, and regression testing requirements.
+| Error | Cause | Recovery |
+|---|---|---|
+| EXAMPLE_ERROR | | |
 
-## Deployment and Operations
+## 12. Security Requirements
 
-Define environments, configuration, CI/CD flow, release approvals, rollback process, monitoring, alerting, logs, backups, and operational ownership.
+- Input sanitization
+- Auth rules
+- Secret handling
+- Sandbox rules
+- CSP rules
+- Data protection rules
 
-## Acceptance Criteria
+## 13. Performance Limits
 
-List objective conditions that must be true before the work is considered complete. Include behavior, quality, documentation, tests, security, performance, and release readiness.
+- Max users:
+- Max file size:
+- Max records:
+- Max request size:
+- Target page load:
 
-## Risks and Mitigations
+## 14. Testing Plan
 
-Identify product, technical, security, operational, compliance, schedule, dependency, and adoption risks with mitigation owners and verification methods.
+- Unit tests
+- Integration tests
+- Build test
+- Lint test
+- Manual QA
+
+## 15. Deployment Workflow
+
+- Hosting:
+- Branch strategy:
+- Preview deployment:
+- Production deployment:
+
+## 16. MVP Phasing
+
+| Phase | Scope | Acceptance |
+|---|---|---|
+| Phase 1 | | |
+| Phase 2 | | |
+| Phase 3 | | |
+
+## 17. Acceptance Criteria
+
+A feature is done when:
+
+- Code is implemented.
+- Type checks pass.
+- Lint passes.
+- Build passes.
+- Tests pass where available.
+- Documentation is updated.
+- No prohibited architecture is introduced.
