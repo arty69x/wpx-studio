@@ -10,3 +10,6 @@ All notable changes to this documentation framework are recorded here. The forma
 - Updated architecture notes, MVP Phase 1 scope, and build failure handling.
 - Implemented the complete client-side WPX Studio workbench across phases 1-5: ingestion, IndexedDB workspace, CSS scoping/link rewriting, workbench utilities, and plugin/preset interfaces.
 - Documented npm registry E403 dependency installation blocker and downstream lint/build dependency failures in build notes.
+- Fixed Next.js ESLint flat config loading for `eslint-config-next` and restored the App Router global stylesheet.
+- Completed build verification fixes for TypeScript, css-tree declarations, fetch queue retry/timeout behavior, project restore, ZIP re-import, export manifest, and safe asset export paths.
+- Added a real `npm test` script backed by a Node.js smoke test and documented the GitHub push/Vercel Preview network blocker.

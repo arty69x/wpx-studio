@@ -2,14 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: dark; --background: #0D1117; --foreground: #C9D1D9; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #0D1117; color: var(--foreground); }
+:root {
+  --background: #0d1117;
+  --surface: #21262d;
+  --primary: #8b5cf6;
+  --secondary: #10b981;
+  --alert: #ef4444;
+  --text-main: #c9d1d9;
+  --text-sub: #8b949e;
+}
+
+html,
+body {
+  min-height: 100%;
+  background: var(--background);
+  color: var(--text-main);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body { margin: 0; }
 textarea, input, button, select { font: inherit; }
-.field { width: 100%; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,.1); background: rgba(13,17,23,.86); padding: .75rem; color: #C9D1D9; outline: none; }
-.field:focus { border-color: #8B5CF6; box-shadow: 0 0 0 2px rgba(139,92,246,.18); }
-.btn-primary { border-radius: 999px; background: #8B5CF6; padding: .55rem .9rem; color: white; font-weight: 700; }
-.btn-secondary { border-radius: 999px; background: #10B981; padding: .55rem .9rem; color: #04130e; font-weight: 700; }
-.btn-danger { border-radius: 999px; background: #EF4444; padding: .55rem .9rem; color: white; font-weight: 700; }
-.btn-ghost { border-radius: 999px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); padding: .55rem .9rem; color: #C9D1D9; font-weight: 700; }
+.field { width: 100%; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,.1); background: rgba(13,17,23,.86); padding: .75rem; color: var(--text-main); outline: none; }
+.field:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(139,92,246,.18); }
+.btn-primary { border-radius: 999px; background: var(--primary); padding: .55rem .9rem; color: white; font-weight: 700; }
+.btn-secondary { border-radius: 999px; background: var(--secondary); padding: .55rem .9rem; color: #04130e; font-weight: 700; }
+.btn-danger { border-radius: 999px; background: var(--alert); padding: .55rem .9rem; color: white; font-weight: 700; }
+.btn-ghost { border-radius: 999px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); padding: .55rem .9rem; color: var(--text-main); font-weight: 700; }
 button:disabled { cursor: not-allowed; opacity: .45; }
