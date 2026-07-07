@@ -11,7 +11,7 @@ export function MarketplaceCard({ item }: { item: ComponentItem }) {
     <motion.article
       whileHover={{ y: -6, scale: 1.012 }}
       transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
-      className="group overflow-hidden rounded-[28px] border border-white/10 bg-[#18181B]/85 shadow-2xl shadow-black/20 transition-colors hover:border-[#4F7CFF]/70"
+      className="group overflow-hidden rounded-[28px] border border-white/10 bg-[#0D1320]/85 shadow-2xl shadow-black/20 transition-colors hover:border-[#4F7CFF]/70"
     >
       <div className="relative h-56">
         <ComponentPreview item={item} state="Motion" />
@@ -49,7 +49,7 @@ export function MarketplaceCard({ item }: { item: ComponentItem }) {
         </div>
 
         <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
-          <Link href={`/marketplace/${item.slug}`} className="flex-1 rounded-xl bg-[#4F7CFF] px-3 py-2 text-center text-xs font-semibold text-white">
+          <Link href={`/marketplace/${item.slug}`} className="flex-1 rounded-xl bg-[#CCFF00] px-3 py-2 text-center text-xs font-semibold text-black">
             Preview
           </Link>
           <button className="rounded-xl border border-white/10 px-3 py-2 text-xs text-zinc-200 hover:border-cyan-300/50">Save</button>

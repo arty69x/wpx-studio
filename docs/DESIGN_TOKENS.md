@@ -30,3 +30,7 @@ Implementation is accepted only when the documented route, UI, catalog, structur
 
 ## Definition of Done
 WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+## Production Polish Token Update
+
+The active project-specific tokens use `--bg: #05070D`, `--surface: #090D16`, `--card: #0D1320`, `--blue: #0A4CFF`, `--pink: #FF2D78`, `--cyan: #45D6FF`, and `--lime: #CCFF00` to align the prototype with the WPX visual engineering studio direction.

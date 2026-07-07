@@ -2,48 +2,71 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { marketplaceItems } from '@/data/marketplace';
+import { NeonMascot } from '@/components/brand/NeonMascot';
 import { ComponentPreview } from '@/components/marketplace/ComponentPreview';
+import { marketplaceItems } from '@/data/marketplace';
+
+const productWords = ['Extract.', 'Compose.', 'Ship.'];
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden py-24 md:py-32">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.04)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40" />
-      <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-[#4F7CFF]/20 blur-3xl" />
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-[#45D6FF]">WPX Studio</p>
-          <h1 className="max-w-4xl text-5xl font-semibold tracking-[-0.05em] text-white md:text-7xl">
+    <section className="relative overflow-hidden py-20 md:py-28">
+      <div className="absolute inset-0 wpx-grid-bg opacity-80" />
+      <div className="absolute left-1/2 top-10 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#0A4CFF]/18 blur-3xl" />
+      <div className="relative mx-auto grid max-w-7xl gap-8 px-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
+        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="wpx-panel rounded-[36px] p-6 md:p-8">
+          <p className="mb-4 text-sm uppercase tracking-[0.34em] text-[#CCFF00]">Visual Engineering Studio</p>
+          <div className="mb-8 text-6xl font-black tracking-[-0.12em] text-white md:text-8xl">
+            WP<span className="text-[#CCFF00]">X</span>
+          </div>
+          <div className="space-y-1 text-4xl font-black uppercase leading-none tracking-[-0.04em] md:text-5xl">
+            {productWords.map((word, index) => (
+              <p key={word} className={index === 0 ? 'text-[#CCFF00]' : index === 1 ? 'text-[#FF2D78]' : 'text-[#45D6FF]'}>
+                {word}
+              </p>
+            ))}
+          </div>
+          <h1 className="mt-8 max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
             Build, preview, save, and export production-ready website components.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
-            A focused frontend prototype for browsing Framer-like components with local mock data, locked structure validation, and premium preview motion.
+          <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-300">
+            A focused frontend marketplace prototype with reconstructed component previews, locked structure validation, and premium studio-grade motion.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link className="rounded-full bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200" href="/marketplace">
+            <Link className="rounded-full bg-[#CCFF00] px-5 py-3 font-bold text-black shadow-[0_0_28px_rgba(204,255,0,.28)] transition hover:bg-white" href="/marketplace">
               Explore Marketplace
             </Link>
-            <a className="rounded-full border border-white/10 px-5 py-3 font-semibold text-white transition hover:border-white/30" href="#structure">
+            <a className="rounded-full border border-white/10 px-5 py-3 font-semibold text-white transition hover:border-[#45D6FF]/50 hover:text-[#45D6FF]" href="#structure">
               View Structure System
             </a>
           </div>
         </motion.div>
-        <div className="relative">
-          <motion.div animate={{ y: [0, -12, 0] }} transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }} className="rounded-[36px] border border-white/10 bg-white/[0.04] p-3 shadow-2xl shadow-blue-950/30 backdrop-blur">
-            <ComponentPreview item={marketplaceItems[0]} state="Motion" />
-          </motion.div>
-          <FloatingCard className="-left-6 top-10 hidden md:block" label="Structure Valid" />
-          <FloatingCard className="-right-4 bottom-10 hidden md:block" label="Export UI Ready" />
+
+        <div className="relative grid gap-4">
+          <div className="wpx-panel relative overflow-hidden rounded-[36px] p-4">
+            <div className="absolute right-8 top-8 z-10 hidden md:block">
+              <NeonMascot />
+            </div>
+            <div className="rounded-[28px] border border-[#0A4CFF]/40 bg-black/30 p-3 shadow-[0_0_48px_rgba(10,76,255,.18)]">
+              <ComponentPreview item={marketplaceItems[2]} state="Motion" />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <Metric label="Catalog Items" value="37" />
+            <Metric label="Routes" value="3" />
+            <Metric label="Structure" value="Valid" tone="lime" />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function FloatingCard({ label, className }: { label: string; className: string }) {
+function Metric({ label, value, tone = 'default' }: { label: string; value: string; tone?: 'default' | 'lime' }) {
   return (
-    <div className={`absolute rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-zinc-200 shadow-2xl backdrop-blur ${className}`}>
-      {label}
+    <div className="wpx-panel rounded-3xl p-5">
+      <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{label}</p>
+      <p className={`mt-3 text-2xl font-black ${tone === 'lime' ? 'text-[#CCFF00]' : 'text-white'}`}>{value}</p>
     </div>
   );
 }

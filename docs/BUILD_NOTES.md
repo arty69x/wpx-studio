@@ -303,3 +303,29 @@ npm test
 ```
 
 Result: passed. Node test runner reported 3 passing smoke tests.
+
+## 2026-07-07 Image-Informed Production Polish Verification
+
+### Lint
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+### Build
+
+```bash
+npm run build
+```
+
+Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
+
+### Smoke Tests
+
+```bash
+npm test
+```
+
+Result: passed. Node test runner reported 3 passing smoke tests.

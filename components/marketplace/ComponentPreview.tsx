@@ -10,7 +10,7 @@ export function ComponentPreview({ item, state = 'Default' }: { item: ComponentI
   const previewState = state as PreviewState;
 
   return (
-    <div className="relative h-full min-h-52 overflow-hidden rounded-[28px] border border-white/10 bg-[#111214] p-4">
+    <div className="relative h-full min-h-52 overflow-hidden rounded-[28px] border border-white/10 bg-[#090D16] p-4">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(79,124,255,.26),transparent_34%),radial-gradient(circle_at_80%_20%,rgba(224,82,255,.18),transparent_28%)]" />
       <motion.div
         animate={getFrameAnimation(previewState)}

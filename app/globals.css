@@ -3,25 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --background: #09090b;
-  --surface-old: #111214;
-  --primary: #4f7cff;
+  --background: #05070d;
+  --surface-old: #090d16;
+  --primary: #ccff00;
   --secondary: #45d6ff;
-  --alert: #ff9e44;
-  --text-main: #fafafa;
-  --text-sub: #a1a1aa;
-  --bg: #09090b;
-  --surface: #111214;
-  --card: #18181b;
-  --border: #27272a;
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --blue: #4f7cff;
-  --purple: #7c5cff;
-  --pink: #e052ff;
+  --alert: #ff2d78;
+  --text-main: #f8fbff;
+  --text-sub: #a7b0c0;
+  --bg: #05070d;
+  --surface: #090d16;
+  --card: #0d1320;
+  --border: #223047;
+  --text-primary: #f8fbff;
+  --text-secondary: #a7b0c0;
+  --text-muted: #667085;
+  --blue: #0a4cff;
+  --purple: #844fff;
+  --pink: #ff2d78;
   --cyan: #45d6ff;
   --orange: #ff9e44;
+  --lime: #ccff00;
 }
 
 * {
@@ -34,7 +35,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% -10%, rgba(204, 255, 0, 0.12), transparent 30%),
+    radial-gradient(circle at 80% 10%, rgba(10, 76, 255, 0.18), transparent 35%),
+    var(--bg);
   color: var(--text-primary);
 }
 
@@ -52,6 +57,26 @@ button {
 button:disabled {
   cursor: not-allowed;
   opacity: 0.45;
+}
+
+::selection {
+  background: rgba(204, 255, 0, 0.28);
+  color: white;
+}
+
+.wpx-panel {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(13, 19, 32, 0.88), rgba(5, 7, 13, 0.82));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+}
+
+.wpx-grid-bg {
+  background-image:
+    linear-gradient(rgba(69, 214, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(69, 214, 255, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, rgba(204, 255, 0, 0.12), transparent 36%);
+  background-size: 44px 44px, 44px 44px, 100% 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {

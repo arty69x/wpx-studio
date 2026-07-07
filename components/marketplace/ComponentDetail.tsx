@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { BrandMark } from '@/components/brand/BrandMark';
 import { useMemo, useState } from 'react';
 import type { ComponentItem } from '@/lib/types';
 import { validateStructure } from '@/lib/structure-validator';
@@ -24,7 +25,7 @@ export function ComponentDetail({ item }: { item: ComponentItem }) {
   const validation = useMemo(() => validateStructure(item.structure), [item.structure]);
 
   return (
-    <main className="min-h-screen bg-[#09090B] text-white">
+    <main className="min-h-screen bg-[#05070D] text-white">
       <DetailTopBar />
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="space-y-8">
@@ -75,12 +76,12 @@ export function ComponentDetail({ item }: { item: ComponentItem }) {
 
 function DetailTopBar() {
   return (
-    <div className="sticky top-0 z-30 border-b border-white/10 bg-[#09090B]/80 backdrop-blur-xl">
+    <div className="sticky top-0 z-30 border-b border-white/10 bg-[#05070D]/82 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-        <Link href="/marketplace" className="text-sm text-zinc-400 transition hover:text-white">← Marketplace</Link>
+        <div className="flex items-center gap-4"><BrandMark compact /><Link href="/marketplace" className="text-sm text-zinc-400 transition hover:text-white">← Marketplace</Link></div>
         <div className="flex gap-2">
           <button className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black">Save</button>
-          <button className="rounded-full bg-[#4F7CFF] px-4 py-2 text-sm font-semibold text-white">Export</button>
+          <button className="rounded-full bg-[#CCFF00] px-4 py-2 text-sm font-semibold text-black">Export</button>
         </div>
       </div>
     </div>
@@ -89,7 +90,7 @@ function DetailTopBar() {
 
 function PreviewSection({ item, device, state, onDevice, onState }: { item: ComponentItem; device: { label: string; width: string }; state: string; onDevice: (device: { label: string; width: string }) => void; onState: (state: string) => void }) {
   return (
-    <section className="rounded-[32px] border border-white/10 bg-[#111214] p-4 shadow-2xl shadow-black/20">
+    <section className="rounded-[32px] border border-white/10 bg-[#090D16] p-4 shadow-2xl shadow-black/20">
       <div className="mb-4 flex flex-wrap justify-between gap-3">
         <SegmentedControl values={devices.map((item) => item.label)} active={device.label} onChange={(value) => onDevice(devices.find((item) => item.label === value) ?? devices[0])} />
         <SegmentedControl values={states} active={state} onChange={onState} />
@@ -115,7 +116,7 @@ function SegmentedControl({ values, active, onChange }: { values: string[]; acti
 
 function ContentSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-[32px] border border-white/10 bg-[#111214] p-6">
+    <section className="rounded-[32px] border border-white/10 bg-[#090D16] p-6">
       <h2 className="mb-5 text-xl font-semibold text-white">{title}</h2>
       {children}
     </section>
@@ -125,7 +126,7 @@ function ContentSection({ title, children }: { title: string; children: React.Re
 function MetadataPanel({ item }: { item: ComponentItem }) {
   return (
     <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-      <div className="rounded-3xl border border-white/10 bg-[#18181B] p-6">
+      <div className="rounded-3xl border border-white/10 bg-[#0D1320] p-6">
         <div className="mb-5 flex flex-wrap gap-2">
           <Badge tone="blue">{item.category}</Badge>
           <Badge tone="purple">{item.subCategory}</Badge>
@@ -134,11 +135,11 @@ function MetadataPanel({ item }: { item: ComponentItem }) {
         <h1 className="text-3xl font-semibold tracking-tight text-white">{item.name}</h1>
         <p className="mt-4 text-sm leading-6 text-zinc-400">Creator: {item.creator}</p>
       </div>
-      <div className="rounded-3xl border border-white/10 bg-[#18181B] p-6">
+      <div className="rounded-3xl border border-white/10 bg-[#0D1320] p-6">
         <h2 className="mb-4 font-semibold text-white">Save UI</h2>
         <SavePanel />
       </div>
-      <div className="rounded-3xl border border-white/10 bg-[#18181B] p-6">
+      <div className="rounded-3xl border border-white/10 bg-[#0D1320] p-6">
         <h2 className="mb-4 font-semibold text-white">Variants</h2>
         <div className="flex flex-wrap gap-2">
           {item.variants.map((variant) => <Badge key={variant}>{variant}</Badge>)}
