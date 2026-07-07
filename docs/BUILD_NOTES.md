@@ -375,3 +375,27 @@ npm test
 ```
 
 Result: passed. Node test runner reported 3 passing smoke tests.
+
+## 2026-07-07 Obsolete Component Removal Verification
+
+The previous `StudioApp` placeholder/stub was removed entirely because the WPX Studio prototype now uses the new landing, marketplace, and detail component system directly.
+
+### Obsolete Component Removal Results
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+```bash
+npm run build
+```
+
+Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
+
+```bash
+npm test
+```
+
+Result: passed. Node test runner reported 3 passing smoke tests.
