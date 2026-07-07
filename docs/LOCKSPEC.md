@@ -27,6 +27,13 @@ Every interactive UI must represent idle, hover, focus, active, selected, disabl
 ## Locked Motion Presets
 Required presets are fadeIn, fadeUp, fadeDown, slideLeft, slideRight, scaleIn, blurIn, revealMask, staggerChildren, cardLift, glowHover, and previewMorph. Motion must prefer transform and opacity and respect reduced motion.
 
+
+## Standalone WPX Product Artifact
+
+The repository now includes `wpx-product.html` as a complete standalone HTML/CSS/JS product surface for WPX product demonstrations. The artifact remains frontend-only, uses no backend services, and has no external runtime dependencies. It must preserve mobile-first responsiveness, accessible focus states, visible idle/hover/focus/active/selected/disabled/loading states, animated SVG connections, background effects, simulated save/export actions, and reduced-motion support.
+
+The standalone artifact is allowed to simulate workflow, validation, save, and export states in browser JavaScript only. It must not introduce telemetry, API calls, authentication, external data flows, databases, or real export execution.
+
 ## Workflow
 WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
 
