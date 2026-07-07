@@ -1,23 +1,30 @@
-# WHISPERX | STUDIO (WPX)
+# WPX Studio
 
-WPX is a client-side-only Next.js workbench for importing HTML from URLs or local files, sanitizing and detecting reusable components, previewing them in a sandboxed iframe, storing workspaces in IndexedDB, and exporting clean ZIP packages.
+WPX Studio is a focused frontend-only Next.js App Router prototype for a premium visual component marketplace. It demonstrates how users browse, preview, save, and inspect export UI for production-ready website components using local mock data only.
 
-## Architecture Rules
+## Current Scope
 
-- All parsing, DOM processing, CSS scoping, link rewriting, dependency graph generation, IndexedDB persistence, ZIP import, and ZIP export run in the browser.
-- The application does not define API routes, Server Actions, Node backends, Express/Nest services, or server-side source processing.
-- A user-supplied proxy endpoint may be configured only for raw network retrieval with `GET /fetch?url={encodedUrl}`.
+The prototype is intentionally limited to:
 
-## Implemented Workbench Modules
+- Landing page at `/`.
+- Marketplace list page at `/marketplace`.
+- Marketplace detail page at `/marketplace/[slug]`.
+- Preview, save, and export UI surfaces.
+- Local marketplace catalog using the provided component reference names.
+- Locked structure system and visible structure validation.
+- Locked interaction and motion system.
 
-- Dashboard and Project Manager with storage quota display and restore controls.
-- URL Import Panel with HTTPS normalization, unsafe-scheme rejection, deduplication, max-20 URL batches, retry and timeout fetch queue, and optional raw proxy support.
-- HTML paste/upload panel with DOMPurify sanitization and DOMParser component detection.
-- Component checklist, append mode, basic merge mode, batch operations, search/replace, and undo/redo snapshots.
-- Sandboxed desktop/tablet/mobile iframe preview with external scripts blocked by default and script-enable status surfaced per component.
-- Inspector Panel, Asset Manager, Diff Viewer, Settings, Plugin Manager, preset/marketplace placeholder, and dependency graph screen.
-- IndexedDB vault named `WPX_Studio_Vault` with `wpx_projects`, `wpx_structures`, `wpx_stylesheets`, and `wpx_assets` stores.
-- css-tree-based CSS scoping, safe asset mode, link rewriting, JSZip export, FileSaver download, and WPX ZIP re-import from `project.json`.
+## Out of Scope
+
+The prototype does not include backend services, API routes, Server Actions, databases, authentication, CMS, dashboard, team features, billing, analytics, deployment automation, real save behavior, or real export generation.
+
+## Tech Stack
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Local mock data
 
 ## Verification
 
@@ -30,4 +37,4 @@ npm run build
 npm test
 ```
 
-`npm test` is currently expected to fail until a test script is added; this is documented in `docs/BUILD_NOTES.md`.
+The active scripts are `dev`, `build`, `start`, `lint`, and `test`.
