@@ -1,0 +1,13 @@
+export const transition={duration:.24,ease:[.2,.8,.2,1]};
+export const fadeIn={initial:{opacity:0},animate:{opacity:1,transition}};
+export const fadeUp={initial:{opacity:0,y:18},whileInView:{opacity:1,y:0,transition},viewport:{once:true,margin:'-80px'}};
+export const fadeDown={initial:{opacity:0,y:-18},animate:{opacity:1,y:0,transition}};
+export const slideLeft={initial:{opacity:0,x:24},animate:{opacity:1,x:0,transition}};
+export const slideRight={initial:{opacity:0,x:-24},animate:{opacity:1,x:0,transition}};
+export const scaleIn={initial:{opacity:0,scale:.96},animate:{opacity:1,scale:1,transition}};
+export const blurIn={initial:{opacity:0,filter:'blur(12px)'},animate:{opacity:1,filter:'blur(0px)',transition}};
+export const revealMask={initial:{clipPath:'inset(0 100% 0 0)'},animate:{clipPath:'inset(0 0% 0 0)',transition:{duration:.4,ease:[.16,1,.3,1]}}};
+export const staggerChildren={animate:{transition:{staggerChildren:.06}}};
+export const cardLift={whileHover:{y:-6,scale:1.015,transition}};
+export const glowHover={whileHover:{boxShadow:'0 0 42px rgba(79,124,255,.24)',borderColor:'rgba(79,124,255,.55)'}};
+export const previewMorph={animate:{scale:[1,.985,1],opacity:[.86,1,1],transition:{duration:.4,ease:[.16,1,.3,1]}}};
