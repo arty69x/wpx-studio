@@ -2,17 +2,31 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import type { ComponentItem } from '@/lib/types';
+import type { ComponentItem, PreviewPattern } from '@/lib/types';
 import { Badge } from './Badge';
 import { ComponentPreview } from './ComponentPreview';
+
+const patternAccent: Record<PreviewPattern, string> = {
+  carousel: 'from-[#0A4CFF]/40 via-[#844FFF]/20 to-transparent',
+  navigation: 'from-[#45D6FF]/35 via-[#0A4CFF]/18 to-transparent',
+  typography: 'from-[#FF2D78]/35 via-[#844FFF]/18 to-transparent',
+  layout: 'from-[#CCFF00]/25 via-[#45D6FF]/14 to-transparent',
+  background: 'from-[#844FFF]/35 via-[#FF2D78]/16 to-transparent',
+  interaction: 'from-[#CCFF00]/30 via-[#0A4CFF]/16 to-transparent',
+};
 
 export function MarketplaceCard({ item }: { item: ComponentItem }) {
   return (
     <motion.article
-      whileHover={{ y: -6, scale: 1.012 }}
+      whileHover={{ y: -8, scale: 1.014 }}
       transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
-      className="group overflow-hidden rounded-[28px] border border-white/10 bg-[#0D1320]/85 shadow-2xl shadow-black/20 transition-colors hover:border-[#4F7CFF]/70"
+      className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-[#0D1320]/85 shadow-2xl shadow-black/20 transition-colors hover:border-[#CCFF00]/45"
     >
+      <div className={`absolute inset-x-0 top-0 h-32 bg-gradient-to-b ${patternAccent[item.previewPattern]} opacity-80`} />
+      <div className="absolute right-4 top-4 z-10 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-zinc-300 backdrop-blur">
+        {item.previewPattern}
+      </div>
+
       <div className="relative h-56">
         <ComponentPreview item={item} state="Motion" />
         <div className="absolute inset-0 flex items-center justify-center bg-black/45 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
@@ -22,7 +36,7 @@ export function MarketplaceCard({ item }: { item: ComponentItem }) {
         </div>
       </div>
 
-      <div className="space-y-4 p-5">
+      <div className="relative space-y-4 p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="text-base font-semibold text-white">{item.name}</h3>
@@ -41,7 +55,7 @@ export function MarketplaceCard({ item }: { item: ComponentItem }) {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-[11px] text-zinc-400">
+        <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-black/20 p-3 text-[11px] text-zinc-400">
           <span>Interaction: {item.interactionType.split(',')[1]?.trim() ?? 'hover'}</span>
           <span>Motion: {item.motionType.split(',')[0]}</span>
           <span>Creator: {item.creator}</span>

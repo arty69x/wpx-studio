@@ -1,2 +1,13 @@
-import type {ReactNode} from 'react';
-export function Row({children,className=''}:{children:ReactNode;className?:string}){return <div className={`flex flex-wrap gap-6 ${className}`}>{children}</div>}
+import type { ElementType, ReactNode } from 'react';
+
+export function Row({
+  children,
+  className = '',
+  as: Component = 'div',
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: ElementType;
+}) {
+  return <Component className={`flex flex-wrap gap-6 ${className}`}>{children}</Component>;
+}

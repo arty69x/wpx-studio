@@ -353,3 +353,25 @@ npm test
 ```
 
 Result: passed. Node test runner reported 3 passing smoke tests.
+
+## 2026-07-07 Full Component Usage Polish Verification
+
+The local layout primitives, marketplace card system, catalog-derived landing sections, preview families, and catalog-wide UI inventory were polished so existing program components participate across the prototype instead of remaining unused or generic.
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+```bash
+npm run build
+```
+
+Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
+
+```bash
+npm test
+```
+
+Result: passed. Node test runner reported 3 passing smoke tests.
