@@ -251,3 +251,32 @@ npm test
 ```
 
 Result: passed. Node test runner reported 3 passing smoke tests.
+
+## 2026-07-07 WPX Product Standalone Verification
+
+Branch: `feature/wpx-product-standalone`
+
+### Static Artifact Checks
+
+```bash
+python - <<'PY'
+from pathlib import Path
+html = Path('wpx-product.html').read_text()
+checks = {
+    'doctype': '<!doctype html>' in html.lower(),
+    'viewport': 'name="viewport"' in html,
+    'inline_css': '<style>' in html and '</style>' in html,
+    'inline_js': '<script>' in html and '</script>' in html,
+    'svg_connections': '<svg class="connections"' in html,
+    'reduced_motion': 'prefers-reduced-motion' in html,
+    'no_console_calls': 'console.' not in html,
+    'no_placeholders': 'placeholder' not in html.lower() and 'lorem' not in html.lower(),
+}
+failed = [name for name, ok in checks.items() if not ok]
+print(checks)
+if failed:
+    raise SystemExit(f'failed checks: {failed}')
+PY
+```
+
+Result: passed. The standalone artifact contains a full document, inline styles and scripts, animated SVG wiring, reduced-motion support, and no console calls or placeholder markers.
