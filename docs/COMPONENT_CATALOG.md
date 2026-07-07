@@ -35,3 +35,7 @@ All provided component names appear in the catalog and render as marketplace car
 ## Definition of Done
 
 The catalog builds all static detail paths and passes lint, build, and tests.
+
+## System-Wide Usage
+
+The catalog exports aggregate statistics, category groupings, preview-pattern groupings, and featured item ordering. These derived exports are used across landing, marketplace, detail, preview, structure, motion, export, and footer UI so every catalog item participates in the prototype experience.

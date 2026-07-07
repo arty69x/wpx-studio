@@ -1245,3 +1245,27 @@ export const marketplaceItems: ComponentItem[] = [
 export function getItem(slug: string) {
   return marketplaceItems.find((item) => item.slug === slug);
 }
+
+export const catalogStats = {
+  totalItems: marketplaceItems.length,
+  totalCategories: categories.length,
+  premiumItems: marketplaceItems.filter((item) => item.priceType === 'Premium').length,
+  freeItems: marketplaceItems.filter((item) => item.priceType === 'Free').length,
+  exportFormats: Array.from(new Set(marketplaceItems.flatMap((item) => item.exportFormats))),
+  previewPatterns: Array.from(new Set(marketplaceItems.map((item) => item.previewPattern))),
+};
+
+export const itemsByCategory = categories.map((category) => ({
+  category,
+  items: marketplaceItems.filter((item) => item.category === category),
+}));
+
+export const previewPatternGroups = catalogStats.previewPatterns.map((pattern) => ({
+  pattern,
+  items: marketplaceItems.filter((item) => item.previewPattern === pattern),
+}));
+
+export const featuredCatalogItems = [
+  ...marketplaceItems.filter((item) => item.priceType === 'Premium'),
+  ...marketplaceItems.filter((item) => item.priceType === 'Free'),
+];

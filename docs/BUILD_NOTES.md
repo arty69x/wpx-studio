@@ -329,3 +329,27 @@ npm test
 ```
 
 Result: passed. Node test runner reported 3 passing smoke tests.
+
+## 2026-07-07 Catalog-Wide Integration Verification
+
+The marketplace catalog was connected to landing metrics, catalog rail, category cards, structure representatives, motion inventory, export inventory, marketplace list, detail pages, and footer summary. Required validation commands were rerun after integration.
+
+### Catalog-Wide Integration Results
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+```bash
+npm run build
+```
+
+Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
+
+```bash
+npm test
+```
+
+Result: passed. Node test runner reported 3 passing smoke tests.

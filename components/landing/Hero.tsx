@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { NeonMascot } from '@/components/brand/NeonMascot';
 import { ComponentPreview } from '@/components/marketplace/ComponentPreview';
-import { marketplaceItems } from '@/data/marketplace';
+import { catalogStats, marketplaceItems } from '@/data/marketplace';
 
 const productWords = ['Extract.', 'Compose.', 'Ship.'];
 
@@ -52,8 +52,8 @@ export function Hero() {
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            <Metric label="Catalog Items" value="37" />
-            <Metric label="Routes" value="3" />
+            <Metric label="Catalog Items" value={String(catalogStats.totalItems)} />
+            <Metric label="Patterns" value={String(catalogStats.previewPatterns.length)} />
             <Metric label="Structure" value="Valid" tone="lime" />
           </div>
         </div>

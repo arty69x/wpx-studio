@@ -35,3 +35,7 @@ Marketplace list feels like a product marketplace and detail pages feel like com
 ## Definition of Done
 
 Search, filters, responsive grid, cards, and detail routes work with the full local catalog.
+
+## Catalog-Wide Installation Update
+
+All marketplace-facing sections consume `data/marketplace.ts`: landing metrics, category cards, catalog rail, motion inventory, structure representatives, export format inventory, marketplace list, detail pages, and related components. This keeps the prototype visually consistent and prevents disconnected mock UI.

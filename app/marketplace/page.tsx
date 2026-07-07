@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { BrandMark } from '@/components/brand/BrandMark';
 import { useMemo, useState } from 'react';
-import { categories, marketplaceItems } from '@/data/marketplace';
+import { catalogStats, categories, marketplaceItems, previewPatternGroups } from '@/data/marketplace';
 import { CategoryTabs } from '@/components/marketplace/CategoryTabs';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
 import { MarketplaceFilters } from '@/components/marketplace/MarketplaceFilters';
@@ -27,7 +27,7 @@ export default function MarketplacePage() {
       <nav className="sticky top-0 z-40 border-b border-white/10 bg-[#05070D]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <BrandMark compact />
-          <span className="text-sm text-zinc-400">{marketplaceItems.length} local components</span>
+          <span className="text-sm text-zinc-400">{catalogStats.totalItems} local components</span>
         </div>
       </nav>
 
@@ -41,6 +41,7 @@ export default function MarketplacePage() {
             </div>
             <div className="flex flex-wrap gap-2 text-xs text-zinc-400">
               {categories.slice(0, 4).map((item) => <span key={item} className="rounded-full border border-white/10 px-3 py-1">{item}</span>)}
+              {previewPatternGroups.map((group) => <span key={group.pattern} className="rounded-full border border-[#CCFF00]/20 bg-[#CCFF00]/5 px-3 py-1 text-[#CCFF00]">{group.pattern}: {group.items.length}</span>)}
             </div>
           </div>
           <div className="mt-6 flex flex-col gap-3 md:flex-row">
