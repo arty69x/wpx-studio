@@ -1,0 +1,2 @@
+import { marketplaceItems } from '@/data/marketplace';import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
+export function MarketplacePreview(){return <section className="mx-auto max-w-7xl px-4 py-20"><h2 className="mb-8 text-3xl font-semibold text-white">Marketplace preview</h2><div className="grid gap-6 md:grid-cols-3">{marketplaceItems.slice(0,3).map(i=><MarketplaceCard item={i} key={i.id}/>)}</div></section>}

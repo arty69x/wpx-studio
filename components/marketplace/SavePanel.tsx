@@ -1,0 +1,1 @@
+export function SavePanel(){return <div className="grid grid-cols-2 gap-3">{['Save to Library','Add to Collection','Favorite','Duplicate'].map(x=><button className="rounded-2xl border border-white/10 bg-white/[.04] px-4 py-3 text-sm text-zinc-200 hover:border-[#4F7CFF] focus:outline-none focus:ring-2 focus:ring-[#4F7CFF]" key={x}>{x}</button>)}</div>}

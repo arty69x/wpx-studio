@@ -1,0 +1,1 @@
+export function ExportPanel({formats}:{formats:string[]}){return <div className="grid grid-cols-2 gap-3 md:grid-cols-3">{formats.map(x=><button className="rounded-2xl border border-white/10 bg-[#18181B] px-4 py-3 text-sm hover:border-[#E052FF] disabled:opacity-50" key={x}>{x}</button>)}</div>}
