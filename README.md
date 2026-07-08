@@ -1,27 +1,25 @@
 # WHISPERX | STUDIO (WPX)
 
-WPX is a client-side-only Next.js workbench for importing HTML from URLs or local files, sanitizing and detecting reusable components, previewing them in a sandboxed iframe, storing workspaces in IndexedDB, and exporting clean ZIP packages.
+WPX is a client-side-first Next.js design platform for premium AI interface systems. It includes a cinematic landing experience, marketplace, component library, builder canvas, motion lab, AI studio, asset manager, design tokens, theme lab, and settings.
 
 ## Architecture Rules
 
-- All parsing, DOM processing, CSS scoping, link rewriting, dependency graph generation, IndexedDB persistence, ZIP import, and ZIP export run in the browser.
-- The application does not define API routes, Server Actions, Node backends, Express/Nest services, or server-side source processing.
-- A user-supplied proxy endpoint may be configured only for raw network retrieval with `GET /fetch?url={encodedUrl}`.
+- Runtime surfaces are client-side first and avoid backend processing of user project content.
+- Local preferences and API-key placeholders are stored only in `localStorage`.
+- Marketplace, component, template, motion, asset, theme, and AI prompt records are rendered from central typed state in `data/platform.ts`.
+- Existing import/export workbench code remains in `lib/studio.ts` and related modules for client-side parsing, sanitizing, IndexedDB persistence, and ZIP export.
 
-## Implemented Workbench Modules
+## Implemented Platform Modules
 
-- Dashboard and Project Manager with storage quota display and restore controls.
-- URL Import Panel with HTTPS normalization, unsafe-scheme rejection, deduplication, max-20 URL batches, retry and timeout fetch queue, and optional raw proxy support.
-- HTML paste/upload panel with DOMPurify sanitization and DOMParser component detection.
-- Component checklist, append mode, basic merge mode, batch operations, search/replace, and undo/redo snapshots.
-- Sandboxed desktop/tablet/mobile iframe preview with external scripts blocked by default and script-enable status surfaced per component.
-- Inspector Panel, Asset Manager, Diff Viewer, Settings, Plugin Manager, preset/marketplace placeholder, and dependency graph screen.
-- IndexedDB vault named `WPX_Studio_Vault` with `wpx_projects`, `wpx_structures`, `wpx_stylesheets`, and `wpx_assets` stores.
-- css-tree-based CSS scoping, safe asset mode, link rewriting, JSZip export, FileSaver download, and WPX ZIP re-import from `project.json`.
+- Landing with A4 editorial frame, cinematic background, report header, carousel, metadata, and product surface links.
+- Marketplace with search, filter chips, result counter, FLIP-style reflow, empty state, and 60 component records.
+- Component Library with reusable cards, preview frames, interaction states, tabs, skeleton, modal, drawer, toast, and command palette primitives.
+- Builder Canvas with draggable node cards and inspector panel.
+- Motion Lab with shared motion duration/easing/spring tokens.
+- AI Studio with production prompt cards.
+- Asset Manager, Design Tokens, Theme Lab, and Settings pages.
 
 ## Verification
-
-Run:
 
 ```bash
 npm install
@@ -30,4 +28,4 @@ npm run build
 npm test
 ```
 
-`npm test` is currently expected to fail until a test script is added; this is documented in `docs/BUILD_NOTES.md`.
+Some optional production package installation may be blocked by registry policy in restricted environments; record exact blockers in `docs/BUILD_NOTES.md`.

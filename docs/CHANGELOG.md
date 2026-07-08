@@ -4,6 +4,10 @@ All notable changes to this documentation framework are recorded here. The forma
 
 ## Unreleased
 
+- Rewrote the application surface as a WHISPERX | STUDIO production design platform with landing, marketplace, component library, builder canvas, motion lab, AI studio, asset manager, design tokens, theme lab, and settings routes.
+- Added central typed platform dataset for 60 components, 20 templates, 20 motion presets, 20 assets, 10 themes, and 10 AI prompts.
+- Added shared cinematic UI primitives, A4 editorial frame, carousel, filters, command palette, drawer, modal, toast, builder nodes, inspector, prompt cards, asset cards, theme cards, and token swatches.
+
 - Added `AGENTS.md` autonomous engineering agent charter.
 - Updated README with WPX client-side architecture rules and Vercel workflow.
 - Added WPX Technical Specification Manifest v2026.7.5.

@@ -251,3 +251,44 @@ npm test
 ```
 
 Result: passed. Node test runner reported 3 passing smoke tests.
+
+## 2026-07-08 Production Rewrite Validation
+
+Branch: `work`
+
+### Optional Package Installation Attempt
+
+```bash
+npm install lucide-react clsx tailwind-merge class-variance-authority zod react-hook-form @hookform/resolvers @tanstack/react-query embla-carousel-react react-intersection-observer react-hot-toast react-use next-themes lenis usehooks-ts date-fns
+```
+
+Result: blocked by npm registry or policy access before package changes were written.
+
+```text
+npm error code E403
+npm error 403 403 Forbidden - GET https://registry.npmjs.org/@hookform%2fresolvers
+```
+
+Interpretation: the requested optional production packages could not be installed in this environment. The rewrite uses existing installed project dependencies and preserves the client-side architecture.
+
+### Verification
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+```bash
+npm run build
+```
+
+Result: passed. Next.js generated the landing, marketplace, component library, builder, motion lab, AI studio, assets, design tokens, theme lab, and settings routes.
+
+```bash
+npm test
+```
+
+Initial result: failed because the rewritten stylesheet omitted legacy smoke-test CSS variables such as `--background`.
+
+Final result: passed after restoring the required legacy CSS variables alongside the new WHISPERX tokens. Repository smoke tests reported 3/3 passing.
