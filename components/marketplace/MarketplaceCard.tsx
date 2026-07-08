@@ -2,72 +2,54 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import type { ComponentItem, PreviewPattern } from '@/lib/types';
-import { Badge } from './Badge';
+import type { ComponentItem } from '@/lib/types';
 import { ComponentPreview } from './ComponentPreview';
 
-const patternAccent: Record<PreviewPattern, string> = {
-  carousel: 'from-[#0A4CFF]/40 via-[#844FFF]/20 to-transparent',
-  navigation: 'from-[#45D6FF]/35 via-[#0A4CFF]/18 to-transparent',
-  typography: 'from-[#FF2D78]/35 via-[#844FFF]/18 to-transparent',
-  layout: 'from-[#CCFF00]/25 via-[#45D6FF]/14 to-transparent',
-  background: 'from-[#844FFF]/35 via-[#FF2D78]/16 to-transparent',
-  interaction: 'from-[#CCFF00]/30 via-[#0A4CFF]/16 to-transparent',
-};
-
-export function MarketplaceCard({ item }: { item: ComponentItem }) {
+export function MarketplaceCard({ item, index = 0 }: { item: ComponentItem; index?: number }) {
   return (
     <motion.article
-      whileHover={{ y: -8, scale: 1.014 }}
-      transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
-      className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-[#0D1320]/85 shadow-2xl shadow-black/20 transition-colors hover:border-[#CCFF00]/45"
+      layout
+      initial={{ opacity: 0, y: 30, scale: 0.97, filter: 'blur(10px)' }}
+      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+      exit={{ opacity: 0, y: -18, scale: 0.96, filter: 'blur(8px)' }}
+      transition={{ duration: 0.55, delay: Math.min(index * 0.025, 0.18), ease: [0.16, 1, 0.3, 1], layout: { duration: 0.65, ease: [0.16, 1, 0.3, 1] } }}
+      whileHover={{ y: -10, rotateX: 1.5, rotateY: -1.5 }}
+      className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#14120f]/85 shadow-2xl shadow-black/30 backdrop-blur-xl"
     >
-      <div className={`absolute inset-x-0 top-0 h-32 bg-gradient-to-b ${patternAccent[item.previewPattern]} opacity-80`} />
-      <div className="absolute right-4 top-4 z-10 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-zinc-300 backdrop-blur">
-        {item.previewPattern}
+      <div className="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#c7b27a] to-transparent" />
+        <div className="absolute -right-24 -top-24 h-56 w-56 rounded-full bg-[#c7b27a]/20 blur-3xl" />
       </div>
-
-      <div className="relative h-56">
-        <ComponentPreview item={item} state="Motion" />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/45 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
-          <Link className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black" href={`/marketplace/${item.slug}`}>
-            Quick preview
-          </Link>
+      <div className="relative h-72 overflow-hidden bg-black md:h-80">
+        <ComponentPreview item={item} />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#080705] via-transparent to-transparent" />
+        <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[10px] uppercase tracking-[.24em] text-stone-200 backdrop-blur">{item.priceType}</div>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/35 opacity-0 backdrop-blur-sm transition duration-500 group-hover:opacity-100">
+          <Link className="rounded-full bg-stone-100 px-5 py-3 text-xs font-semibold uppercase tracking-[.2em] text-black transition hover:bg-[#c7b27a]" href={`/marketplace/${item.slug}`}>View cut</Link>
         </div>
       </div>
-
       <div className="relative space-y-4 p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-base font-semibold text-white">{item.name}</h3>
-            <p className="mt-1 text-xs text-zinc-500">
-              {item.category} / {item.subCategory}
-            </p>
+            <p className="text-[10px] uppercase tracking-[.28em] text-[#c7b27a]">{item.category} / {item.subCategory}</p>
+            <h3 className="mt-2 font-serif text-3xl leading-none tracking-[-.04em] text-stone-100">{item.name}</h3>
           </div>
-          <Badge tone={item.priceType === 'Premium' ? 'purple' : 'cyan'}>{item.priceType}</Badge>
+          <span className="font-serif text-3xl text-white/20">{String(index + 1).padStart(2, '0')}</span>
         </div>
-
-        <p className="line-clamp-2 min-h-10 text-sm leading-5 text-zinc-400">{item.description}</p>
-
+        <p className="line-clamp-2 text-sm leading-relaxed text-stone-400">{item.description}</p>
         <div className="flex flex-wrap gap-2">
-          {item.tags.slice(0, 3).map((tag) => (
-            <Badge key={tag}>{tag}</Badge>
-          ))}
+          {item.tags.slice(0, 3).map((tag) => <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1 text-[11px] text-stone-300" key={tag}>{tag}</span>)}
         </div>
-
-        <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-black/20 p-3 text-[11px] text-zinc-400">
-          <span>Interaction: {item.interactionType.split(',')[1]?.trim() ?? 'hover'}</span>
-          <span>Motion: {item.motionType.split(',')[0]}</span>
-          <span>Creator: {item.creator}</span>
-          <span>Responsive ready</span>
+        <div className="grid grid-cols-2 gap-2 border-t border-white/10 pt-4 text-[11px] uppercase tracking-[.18em] text-stone-500">
+          <span>{item.interactionType.split(' ')[0]} interaction</span>
+          <span>{item.motionType.split(' ')[0]} motion</span>
+          <span>{item.creator}</span>
+          <span>Responsive</span>
         </div>
-
-        <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
-          <Link href={`/marketplace/${item.slug}`} className="flex-1 rounded-xl bg-[#CCFF00] px-3 py-2 text-center text-xs font-semibold text-black">
-            Preview
-          </Link>
-          <button className="rounded-xl border border-white/10 px-3 py-2 text-xs text-zinc-200 hover:border-cyan-300/50">Save</button>
-          <button className="rounded-xl border border-white/10 px-3 py-2 text-xs text-zinc-200 hover:border-purple-300/50">Export</button>
+        <div className="flex gap-2 opacity-100 md:opacity-0 md:transition-opacity md:duration-500 md:group-hover:opacity-100">
+          <Link href={`/marketplace/${item.slug}`} className="flex-1 rounded-full bg-stone-100 px-3 py-3 text-center text-xs font-semibold uppercase tracking-[.18em] text-black">Preview</Link>
+          <button className="rounded-full border border-white/10 px-4 py-3 text-xs uppercase tracking-[.18em] text-stone-200 transition hover:border-[#c7b27a]">Save</button>
+          <button className="rounded-full border border-white/10 px-4 py-3 text-xs uppercase tracking-[.18em] text-stone-200 transition hover:border-[#c7b27a]">Export</button>
         </div>
       </div>
     </motion.article>

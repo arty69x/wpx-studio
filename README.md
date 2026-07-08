@@ -1,34 +1,24 @@
 # WPX Studio
 
-WPX Studio is a focused frontend-only Next.js App Router prototype for a premium visual component marketplace. It demonstrates how users browse, preview, save, and inspect export UI for production-ready website components using local mock data only.
+WPX is the official public website for WHISPERX | STUDIO: a premium creative technology platform expressed as a cinematic, interactive product experience.
 
 ## Current Scope
 
-The prototype is intentionally limited to:
+- Runtime surfaces are client-side first and avoid backend processing of user project content.
+- Local preferences and API-key placeholders are stored only in `localStorage`.
+- Visual system, template, motion, asset, theme, and creative prompt records are rendered from central typed state in `data/platform.ts`.
+- Existing import/export workbench code remains in `lib/studio.ts` and related modules for client-side parsing, sanitizing, IndexedDB persistence, and ZIP export.
 
-- Landing page at `/`.
-- Marketplace list page at `/marketplace`.
-- Marketplace detail page at `/marketplace/[slug]`.
-- Preview, save, and export UI surfaces.
-- Local marketplace catalog using the provided component reference names.
-- Locked structure system and visible structure validation.
-- Locked interaction and motion system.
+## Implemented Platform Modules
 
-## Out of Scope
-
-The prototype does not include backend services, API routes, Server Actions, databases, authentication, CMS, dashboard, team features, billing, analytics, deployment automation, real save behavior, or real export generation.
-
-## Tech Stack
-
-- Next.js App Router
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- Local mock data
+- Landing with A4 editorial frame, cinematic background, report header, carousel, metadata, and product surface links.
+- Hero-led product visualization where the workspace, carousel, intelligent prompt layer, inspector, command palette, and animated preview exist inside one cinematic scene.
+- Editorial story flow: Discover, Build, Animate, Create, and Deploy.
+- Immersive gallery, design language, trust/technology, final CTA, and footer sections built from the same reusable production components.
+- SEO support through Metadata API, generated sitemap, and robots routes.
+- Local-only settings controls for theme preference and API-key placeholder storage.
 
 ## Verification
-
-Run:
 
 ```bash
 npm install
@@ -37,4 +27,4 @@ npm run build
 npm test
 ```
 
-The active scripts are `dev`, `build`, `start`, `lint`, and `test`.
+Some optional production package installation may be blocked by registry policy in restricted environments; record exact blockers in `docs/BUILD_NOTES.md`.

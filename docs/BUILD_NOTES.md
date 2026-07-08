@@ -252,150 +252,31 @@ npm test
 
 Result: passed. Node test runner reported 3 passing smoke tests.
 
-## 2026-07-07 Prototype Polish Verification Plan
+## 2026-07-07 WPX Product Standalone Verification
 
-Branch: `feature/wpx-marketplace-prototype`
+Branch: `feature/wpx-product-standalone`
 
-### Current package.json Scripts
+### Static Artifact Checks
 
-```json
-{
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint .",
-  "test": "node --test tests/smoke.test.mjs"
+```bash
+python - <<'PY'
+from pathlib import Path
+html = Path('wpx-product.html').read_text()
+checks = {
+    'doctype': '<!doctype html>' in html.lower(),
+    'viewport': 'name="viewport"' in html,
+    'inline_css': '<style>' in html and '</style>' in html,
+    'inline_js': '<script>' in html and '</script>' in html,
+    'svg_connections': '<svg class="connections"' in html,
+    'reduced_motion': 'prefers-reduced-motion' in html,
+    'no_console_calls': 'console.' not in html,
+    'no_placeholders': 'placeholder' not in html.lower() and 'lorem' not in html.lower(),
 }
+failed = [name for name, ok in checks.items() if not ok]
+print(checks)
+if failed:
+    raise SystemExit(f'failed checks: {failed}')
+PY
 ```
 
-### Required Validation Commands
-
-```bash
-npm run lint
-npm run build
-npm test
-```
-
-These commands match the current `package.json` scripts and are the required verification set for this frontend-only prototype.
-
-## 2026-07-07 Prototype Polish Verification Results
-
-### Lint
-
-```bash
-npm run lint
-```
-
-Result: passed.
-
-### Build
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
-
-### Smoke Tests
-
-```bash
-npm test
-```
-
-Result: passed. Node test runner reported 3 passing smoke tests.
-
-## 2026-07-07 Image-Informed Production Polish Verification
-
-### Lint
-
-```bash
-npm run lint
-```
-
-Result: passed.
-
-### Build
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
-
-### Smoke Tests
-
-```bash
-npm test
-```
-
-Result: passed. Node test runner reported 3 passing smoke tests.
-
-## 2026-07-07 Catalog-Wide Integration Verification
-
-The marketplace catalog was connected to landing metrics, catalog rail, category cards, structure representatives, motion inventory, export inventory, marketplace list, detail pages, and footer summary. Required validation commands were rerun after integration.
-
-### Catalog-Wide Integration Results
-
-```bash
-npm run lint
-```
-
-Result: passed.
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
-
-```bash
-npm test
-```
-
-Result: passed. Node test runner reported 3 passing smoke tests.
-
-## 2026-07-07 Full Component Usage Polish Verification
-
-The local layout primitives, marketplace card system, catalog-derived landing sections, preview families, and catalog-wide UI inventory were polished so existing program components participate across the prototype instead of remaining unused or generic.
-
-```bash
-npm run lint
-```
-
-Result: passed.
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
-
-```bash
-npm test
-```
-
-Result: passed. Node test runner reported 3 passing smoke tests.
-
-## 2026-07-07 Obsolete Component Removal Verification
-
-The previous `StudioApp` placeholder/stub was removed entirely because the WPX Studio prototype now uses the new landing, marketplace, and detail component system directly.
-
-### Obsolete Component Removal Results
-
-```bash
-npm run lint
-```
-
-Result: passed.
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated `/`, `/marketplace`, and 37 static marketplace detail paths.
-
-```bash
-npm test
-```
-
-Result: passed. Node test runner reported 3 passing smoke tests.
+Result: passed. The standalone artifact contains a full document, inline styles and scripts, animated SVG wiring, reduced-motion support, and no console calls or placeholder markers.

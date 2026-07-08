@@ -20,6 +20,13 @@ Every page is composed of sections. Every section must contain a container. Comp
 
 The locked hierarchy is Website → Page → Section → Container → Grid → Row → Column → Stack → Component → Node → Element → Micro Div. Grid is not Stack. Column is not automatically Stack. Row and Column preserve layout hierarchy.
 
+
+## Standalone WPX Product Artifact
+
+The repository now includes `wpx-product.html` as a complete standalone HTML/CSS/JS product surface for WPX product demonstrations. The artifact remains frontend-only, uses no backend services, and has no external runtime dependencies. It must preserve mobile-first responsiveness, accessible focus states, visible idle/hover/focus/active/selected/disabled/loading states, animated SVG connections, background effects, simulated save/export actions, and reduced-motion support.
+
+The standalone artifact is allowed to simulate workflow, validation, save, and export states in browser JavaScript only. It must not introduce telemetry, API calls, authentication, external data flows, databases, or real export execution.
+
 ## Workflow
 
 Documentation is updated before implementation when behavior changes. Implementation then follows this file and the supporting specs.
