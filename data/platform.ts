@@ -61,6 +61,23 @@ export const platformItems: PlatformItem[] = [
   ...Array.from({ length: 10 }, (_, index) => item(index, 'prompt', ['Builder', 'Accessibility', 'Motion', 'SEO', 'Export'][index % 5])),
 ];
 
+
+export const platformDatasetSummary = {
+  components: platformItems.filter((item) => item.type === 'component').length,
+  templates: platformItems.filter((item) => item.type === 'template').length,
+  motionPresets: platformItems.filter((item) => item.type === 'motion').length,
+  assets: platformItems.filter((item) => item.type === 'asset').length,
+  themes: platformItems.filter((item) => item.type === 'theme').length,
+  prompts: platformItems.filter((item) => item.type === 'prompt').length,
+};
+
+export const platformDatasetValid = platformDatasetSummary.components === 60
+  && platformDatasetSummary.templates === 20
+  && platformDatasetSummary.motionPresets === 20
+  && platformDatasetSummary.assets === 20
+  && platformDatasetSummary.themes === 10
+  && platformDatasetSummary.prompts === 10;
+
 export const themeTokens: ThemeToken[] = [
   { id: 'color-cinema', name: 'Cinema Black', value: '#050505', usage: 'Primary dark canvas' },
   { id: 'color-paper', name: 'Editorial Paper', value: '#f4efe4', usage: 'Light mode surface' },

@@ -18,6 +18,8 @@ WPX is a client-side-first Next.js design platform for premium AI interface syst
 - Motion Lab with shared motion duration/easing/spring tokens.
 - AI Studio with production prompt cards.
 - Asset Manager, Design Tokens, Theme Lab, and Settings pages.
+- SEO support through Metadata API, generated sitemap, and robots routes.
+- Local-only settings controls for theme preference and API-key placeholder storage.
 
 ## Verification
 

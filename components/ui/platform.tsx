@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { marketplaceCategories, motionTokens, platformItems, productPages, themeTokens } from '@/data/platform';
 import type { LibraryType, PlatformItem } from '@/types/platform';
 
@@ -115,8 +115,8 @@ export function PreviewFrame({ item, compact = false }: { item: PlatformItem; co
   );
 }
 
-function SearchInput({ value, setValue }: { value: string; setValue: (value: string) => void }) {
-  return <label className="block"><span className="sr-only">Search library</span><input value={value} onChange={(event) => setValue(event.target.value)} placeholder="Search WHISPERX systems..." className="min-h-14 w-full rounded-full border border-white/15 bg-black/35 px-5 text-white outline-none transition placeholder:text-white/35 focus:border-[#45d6ff] focus:ring-4 focus:ring-[#45d6ff]/20" /></label>;
+function SearchInput({ value, setValue, placeholder = 'Search WHISPERX systems...' }: { value: string; setValue: (value: string) => void; placeholder?: string }) {
+  return <label className="block"><span className="sr-only">Search library</span><input value={value} onChange={(event) => setValue(event.target.value)} placeholder={placeholder} className="min-h-14 w-full rounded-full border border-white/15 bg-black/35 px-5 text-white outline-none transition placeholder:text-white/35 focus:border-[#45d6ff] focus:ring-4 focus:ring-[#45d6ff]/20" /></label>;
 }
 
 function FilterBar({ active, setActive }: { active: string; setActive: (value: string) => void }) {
@@ -137,12 +137,19 @@ function SkeletonCard() {
 
 function Carousel({ items }: { items: PlatformItem[] }) {
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const reduce = useReducedMotion();
-  const next = () => setIndex((current) => (current + 1) % items.length);
-  const previous = () => setIndex((current) => (current - 1 + items.length) % items.length);
+  const next = useCallback(() => setIndex((current) => (current + 1) % items.length), [items.length]);
+  const previous = useCallback(() => setIndex((current) => (current - 1 + items.length) % items.length), [items.length]);
+
+  useEffect(() => {
+    if (paused || reduce) return undefined;
+    const timer = window.setInterval(next, 4200);
+    return () => window.clearInterval(timer);
+  }, [next, paused, reduce]);
 
   return (
-    <div onMouseEnter={() => undefined} className="rounded-[2rem] border border-white/10 bg-white/[.04] p-4" onKeyDown={(event) => { if (event.key === 'ArrowRight') next(); if (event.key === 'ArrowLeft') previous(); }} tabIndex={0} aria-label="Featured carousel">
+    <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} className="rounded-[2rem] border border-white/10 bg-white/[.04] p-4" onKeyDown={(event) => { if (event.key === 'ArrowRight') next(); if (event.key === 'ArrowLeft') previous(); }} tabIndex={0} aria-label="Featured carousel">
       <div className="flex items-center justify-between gap-3"><Button variant="ghost" onClick={previous}>Previous</Button><p className="font-mono text-xs text-white/60">{String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</p><Button variant="ghost" onClick={next}>Next</Button></div>
       <div className="mt-4 grid gap-4 md:grid-cols-3">
         {[-1, 0, 1].map((offset) => {
@@ -160,13 +167,18 @@ function Tabs({ active, setActive }: { active: LibraryType; setActive: (type: Li
 }
 
 function Modal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
+    if (!open) return undefined;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeRef.current?.focus();
     const close = (event: KeyboardEvent) => event.key === 'Escape' && onClose();
     window.addEventListener('keydown', close);
-    return () => window.removeEventListener('keydown', close);
-  }, [onClose]);
+    return () => { window.removeEventListener('keydown', close); previous?.focus(); };
+  }, [onClose, open]);
 
-  return <AnimatePresence>{open ? <motion.div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="System modal"><GlassPanel className="max-w-xl"><h2 className="font-serif text-4xl">Command confirmed.</h2><p className="mt-3 text-white/65">This modal supports Escape close, focus-visible controls, and production state language.</p><div className="mt-6"><Button onClick={onClose}>Close</Button></div></GlassPanel></motion.div> : null}</AnimatePresence>;
+  return <AnimatePresence>{open ? <motion.div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="System modal"><GlassPanel className="max-w-xl"><h2 className="font-serif text-4xl">Command confirmed.</h2><p className="mt-3 text-white/65">This modal supports Escape close, focus-visible controls, restored focus, and production state language.</p><div className="mt-6"><motion.button ref={closeRef} onClick={onClose} whileHover={{ y: -3 }} className="min-h-12 rounded-full border border-[#d9ff3f] bg-[#d9ff3f] px-5 text-sm font-semibold uppercase tracking-[.18em] text-black outline-none focus-visible:ring-4 focus-visible:ring-[#45d6ff]/40">Close</motion.button></div></GlassPanel></motion.div> : null}</AnimatePresence>;
 }
 
 function Drawer({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -178,7 +190,14 @@ function Toast({ show }: { show: boolean }) {
 }
 
 function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
-  return <AnimatePresence>{open ? <motion.div className="fixed inset-0 z-50 bg-black/75 p-4 pt-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Command palette"><div className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[#0b0b0b] p-4"><SearchInput value="" setValue={() => undefined} />{productPages.map((page) => <Link onClick={onClose} href={page.href} key={page.href} className="mt-2 block rounded-2xl p-4 hover:bg-white/10">{page.label}<span className="block text-xs text-white/45">{page.kicker}</span></Link>)}</div></motion.div> : null}</AnimatePresence>;
+  const [query, setQuery] = useState('');
+  const matches = productPages.filter((page) => `${page.label} ${page.kicker}`.toLowerCase().includes(query.toLowerCase()));
+
+  useEffect(() => {
+    if (!open) setQuery('');
+  }, [open]);
+
+  return <AnimatePresence>{open ? <motion.div className="fixed inset-0 z-50 bg-black/75 p-4 pt-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Command palette"><div className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[#0b0b0b] p-4"><SearchInput value={query} setValue={setQuery} placeholder="Search routes and commands..." />{matches.length === 0 ? <p className="p-4 text-sm text-white/50">No command matches that signal.</p> : matches.map((page) => <Link onClick={onClose} href={page.href} key={page.href} className="mt-2 block rounded-2xl p-4 hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-[#45d6ff]/30">{page.label}<span className="block text-xs text-white/45">{page.kicker}</span></Link>)}</div></motion.div> : null}</AnimatePresence>;
 }
 
 function CodeBlock({ code }: { code: string }) {
@@ -246,6 +265,7 @@ function PageContent({ kind }: { kind: PageKind }) {
   const [modal, setModal] = useState(false);
   const [toast, setToast] = useState(false);
   const [theme, setTheme] = useLocalPreference('wpx-theme', 'cinema');
+  const [apiKey, setApiKey] = useLocalPreference('wpx-api-key', '');
   const copy = {
     landing: ['Landing', 'Editorial launch surface for the WHISPERX visual operating system.'],
     marketplace: ['Marketplace', 'Search, filter, count, and FLIP-reflow 60 production component systems.'],
@@ -261,7 +281,7 @@ function PageContent({ kind }: { kind: PageKind }) {
 
   if (kind === 'landing') return <Landing />;
 
-  return <><ReportHeader eyebrow="WHISPERX | STUDIO" title={copy[kind][0]} description={copy[kind][1]} /><div className="mt-8"><MetadataBar items={[`Theme ${theme}`, 'Client-side first', 'No server processing']} /></div><section className="mt-8 space-y-8">{kind === 'marketplace' ? <LibraryGrid marketplace /> : null}{kind === 'components' ? <LibraryGrid type="component" /> : null}{kind === 'builder' ? <BuilderCanvas /> : null}{kind === 'motion' ? <div className="grid gap-4 md:grid-cols-3">{Object.entries(motionTokens).map(([key, value]) => <GlassPanel key={key}><h3 className="font-serif text-3xl">{key}</h3><p className="font-mono text-xs text-[#d9ff3f]">{typeof value === 'string' ? value : JSON.stringify(value)}</p></GlassPanel>)}</div> : null}{kind === 'ai' ? <div className="grid gap-5 md:grid-cols-2">{platformItems.filter((item) => item.type === 'prompt').map((item) => <PromptCard key={item.id} item={item} />)}</div> : null}{kind === 'assets' ? <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">{platformItems.filter((item) => item.type === 'asset').map((item) => <AssetCard key={item.id} item={item} />)}</div> : null}{kind === 'tokens' ? <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">{themeTokens.map((token) => <TokenSwatch key={token.id} {...token} />)}</div> : null}{kind === 'themes' ? <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{platformItems.filter((item) => item.type === 'theme').map((item) => <ThemeCard key={item.id} item={item} />)}</div> : null}{kind === 'settings' ? <GlassPanel><SectionNumber n="10" label="Local preferences" /><div className="grid gap-4 md:grid-cols-3">{['cinema', 'paper', 'glass', 'high-contrast'].map((option) => <Button key={option} variant={theme === option ? 'primary' : 'ghost'} onClick={() => { setTheme(option); setToast(true); window.setTimeout(() => setToast(false), 1800); }}>{option}</Button>)}</div><div className="mt-6 flex flex-wrap gap-3"><Button onClick={() => setModal(true)}>Open Modal</Button><Button variant="ghost">Disabled Demo</Button></div></GlassPanel> : null}</section><Modal open={modal} onClose={() => setModal(false)} /><Toast show={toast} /></>;
+  return <><ReportHeader eyebrow="WHISPERX | STUDIO" title={copy[kind][0]} description={copy[kind][1]} /><div className="mt-8"><MetadataBar items={[`Theme ${theme}`, 'Client-side first', 'No server processing']} /></div><section className="mt-8 space-y-8">{kind === 'marketplace' ? <LibraryGrid marketplace /> : null}{kind === 'components' ? <LibraryGrid type="component" /> : null}{kind === 'builder' ? <BuilderCanvas /> : null}{kind === 'motion' ? <div className="grid gap-4 md:grid-cols-3">{Object.entries(motionTokens).map(([key, value]) => <GlassPanel key={key}><h3 className="font-serif text-3xl">{key}</h3><p className="font-mono text-xs text-[#d9ff3f]">{typeof value === 'string' ? value : JSON.stringify(value)}</p></GlassPanel>)}</div> : null}{kind === 'ai' ? <div className="grid gap-5 md:grid-cols-2">{platformItems.filter((item) => item.type === 'prompt').map((item) => <PromptCard key={item.id} item={item} />)}</div> : null}{kind === 'assets' ? <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">{platformItems.filter((item) => item.type === 'asset').map((item) => <AssetCard key={item.id} item={item} />)}</div> : null}{kind === 'tokens' ? <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">{themeTokens.map((token) => <TokenSwatch key={token.id} {...token} />)}</div> : null}{kind === 'themes' ? <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{platformItems.filter((item) => item.type === 'theme').map((item) => <ThemeCard key={item.id} item={item} />)}</div> : null}{kind === 'settings' ? <GlassPanel><SectionNumber n="10" label="Local preferences" /><div className="grid gap-4 md:grid-cols-3">{['cinema', 'paper', 'glass', 'high-contrast'].map((option) => <Button key={option} variant={theme === option ? 'primary' : 'ghost'} onClick={() => { setTheme(option); setToast(true); window.setTimeout(() => setToast(false), 1800); }}>{option}</Button>)}</div><label className="mt-6 block"><span className="font-mono text-xs uppercase tracking-[.22em] text-white/55">Local API key placeholder</span><input value={apiKey} onChange={(event) => setApiKey(event.target.value)} type="password" placeholder="Stored only in localStorage" className="mt-2 min-h-12 w-full rounded-2xl border border-white/15 bg-black/35 px-4 text-white outline-none focus:border-[#45d6ff] focus:ring-4 focus:ring-[#45d6ff]/20" /></label><div className="mt-6 flex flex-wrap gap-3"><Button onClick={() => setModal(true)}>Open Modal</Button><Button variant="ghost" disabled>Disabled Demo</Button></div></GlassPanel> : null}</section><Modal open={modal} onClose={() => setModal(false)} /><Toast show={toast} /></>;
 }
 
 export function PlatformPage({ kind }: { kind: PageKind }) {

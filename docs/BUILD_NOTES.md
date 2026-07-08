@@ -292,3 +292,37 @@ npm test
 Initial result: failed because the rewritten stylesheet omitted legacy smoke-test CSS variables such as `--background`.
 
 Final result: passed after restoring the required legacy CSS variables alongside the new WHISPERX tokens. Repository smoke tests reported 3/3 passing.
+
+## 2026-07-08 Fix Pass Validation
+
+Branch: `work`
+
+### Fix Scope
+
+Addressed review follow-up by tightening interactive behavior after the platform rewrite: command palette search is now controlled, carousel auto-advances and pauses on hover, modal restores focus after Escape/close, Settings stores a local-only API key placeholder, dataset counts are exported for validation, and SEO robots/sitemap routes are generated.
+
+### Verification
+
+```bash
+npm run lint
+```
+
+Result: passed with no errors.
+
+```bash
+npm run build
+```
+
+Result: passed. Next.js generated 52 routes including `/robots.txt` and `/sitemap.xml`.
+
+```bash
+npm test
+```
+
+Result: passed. Repository smoke tests reported 3/3 passing.
+
+```bash
+git diff --check
+```
+
+Result: passed.

@@ -4,6 +4,7 @@ All notable changes to this documentation framework are recorded here. The forma
 
 ## Unreleased
 
+- Hardened the WHISPERX platform rewrite with controlled command-palette search, carousel pause/auto-advance behavior, modal focus restoration, local-only API-key settings storage, dataset count exports, and sitemap/robots metadata routes.
 - Rewrote the application surface as a WHISPERX | STUDIO production design platform with landing, marketplace, component library, builder canvas, motion lab, AI studio, asset manager, design tokens, theme lab, and settings routes.
 - Added central typed platform dataset for 60 components, 20 templates, 20 motion presets, 20 assets, 10 themes, and 10 AI prompts.
 - Added shared cinematic UI primitives, A4 editorial frame, carousel, filters, command palette, drawer, modal, toast, builder nodes, inspector, prompt cards, asset cards, theme cards, and token swatches.
