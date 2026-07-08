@@ -252,111 +252,31 @@ npm test
 
 Result: passed. Node test runner reported 3 passing smoke tests.
 
-## 2026-07-08 Production Rewrite Validation
+## 2026-07-07 WPX Product Standalone Verification
 
-Branch: `work`
+Branch: `feature/wpx-product-standalone`
 
-### Optional Package Installation Attempt
-
-```bash
-npm install lucide-react clsx tailwind-merge class-variance-authority zod react-hook-form @hookform/resolvers @tanstack/react-query embla-carousel-react react-intersection-observer react-hot-toast react-use next-themes lenis usehooks-ts date-fns
-```
-
-Result: blocked by npm registry or policy access before package changes were written.
-
-```text
-npm error code E403
-npm error 403 403 Forbidden - GET https://registry.npmjs.org/@hookform%2fresolvers
-```
-
-Interpretation: the requested optional production packages could not be installed in this environment. The rewrite uses existing installed project dependencies and preserves the client-side architecture.
-
-### Verification
+### Static Artifact Checks
 
 ```bash
-npm run lint
+python - <<'PY'
+from pathlib import Path
+html = Path('wpx-product.html').read_text()
+checks = {
+    'doctype': '<!doctype html>' in html.lower(),
+    'viewport': 'name="viewport"' in html,
+    'inline_css': '<style>' in html and '</style>' in html,
+    'inline_js': '<script>' in html and '</script>' in html,
+    'svg_connections': '<svg class="connections"' in html,
+    'reduced_motion': 'prefers-reduced-motion' in html,
+    'no_console_calls': 'console.' not in html,
+    'no_placeholders': 'placeholder' not in html.lower() and 'lorem' not in html.lower(),
+}
+failed = [name for name, ok in checks.items() if not ok]
+print(checks)
+if failed:
+    raise SystemExit(f'failed checks: {failed}')
+PY
 ```
 
-Result: passed.
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated the landing, marketplace, component library, builder, motion lab, AI studio, assets, design tokens, theme lab, and settings routes.
-
-```bash
-npm test
-```
-
-Initial result: failed because the rewritten stylesheet omitted legacy smoke-test CSS variables such as `--background`.
-
-Final result: passed after restoring the required legacy CSS variables alongside the new WHISPERX tokens. Repository smoke tests reported 3/3 passing.
-
-## 2026-07-08 Fix Pass Validation
-
-Branch: `work`
-
-### Fix Scope
-
-Addressed review follow-up by tightening interactive behavior after the platform rewrite: command palette search is now controlled, carousel auto-advances and pauses on hover, modal restores focus after Escape/close, Settings stores a local-only API key placeholder, dataset counts are exported for validation, and SEO robots/sitemap routes are generated.
-
-### Verification
-
-```bash
-npm run lint
-```
-
-Result: passed with no errors.
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated 52 routes including `/robots.txt` and `/sitemap.xml`.
-
-```bash
-npm test
-```
-
-Result: passed. Repository smoke tests reported 3/3 passing.
-
-```bash
-git diff --check
-```
-
-Result: passed.
-
-## 2026-07-08 Public Website Rewrite Validation
-
-Branch: `work`
-
-### Fix Scope
-
-Replaced the prior platform-style homepage with the official WHISPERX | STUDIO public website experience. The homepage now follows the locked sequence: Opening, Hero, Editorial Story, Interactive Product Moment, Visual Experience, Creative Workflow, Immersive Gallery, Design Language, Trust & Technology, Final CTA, and Footer. Public copy avoids product-dashboard terminology and presents the system through cinematic product moments rather than feature grids.
-
-### Verification
-
-```bash
-npm run lint
-```
-
-Result: passed.
-
-```bash
-npm run build
-```
-
-Result: passed. Next.js generated 52 routes including sitemap and robots outputs.
-
-```bash
-npm test
-```
-
-Result: passed. Repository smoke tests reported 3/3 passing.
-
-```bash
-git diff --check
-```
-
-Result: passed.
+Result: passed. The standalone artifact contains a full document, inline styles and scripts, animated SVG wiring, reduced-motion support, and no console calls or placeholder markers.
