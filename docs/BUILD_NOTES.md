@@ -326,3 +326,37 @@ git diff --check
 ```
 
 Result: passed.
+
+## 2026-07-08 Public Website Rewrite Validation
+
+Branch: `work`
+
+### Fix Scope
+
+Replaced the prior platform-style homepage with the official WHISPERX | STUDIO public website experience. The homepage now follows the locked sequence: Opening, Hero, Editorial Story, Interactive Product Moment, Visual Experience, Creative Workflow, Immersive Gallery, Design Language, Trust & Technology, Final CTA, and Footer. Public copy avoids product-dashboard terminology and presents the system through cinematic product moments rather than feature grids.
+
+### Verification
+
+```bash
+npm run lint
+```
+
+Result: passed.
+
+```bash
+npm run build
+```
+
+Result: passed. Next.js generated 52 routes including sitemap and robots outputs.
+
+```bash
+npm test
+```
+
+Result: passed. Repository smoke tests reported 3/3 passing.
+
+```bash
+git diff --check
+```
+
+Result: passed.

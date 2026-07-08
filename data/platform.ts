@@ -15,18 +15,18 @@ export const motionTokens = {
 
 export const productPages = [
   { href: '/', label: 'Landing', kicker: 'Opening sequence' },
-  { href: '/marketplace', label: 'Marketplace', kicker: 'Component economy' },
-  { href: '/components', label: 'Component Library', kicker: 'Reusable systems' },
-  { href: '/builder', label: 'Builder Canvas', kicker: 'Visual operating system' },
-  { href: '/motion-lab', label: 'Motion Lab', kicker: 'Cinematic tokens' },
-  { href: '/ai-studio', label: 'AI Studio', kicker: 'Prompt operations' },
-  { href: '/assets', label: 'Asset Manager', kicker: 'Media control' },
+  { href: '/marketplace', label: 'Visual Systems', kicker: 'Curated interface archive' },
+  { href: '/components', label: 'Design Language', kicker: 'Reusable systems' },
+  { href: '/builder', label: 'Interactive Workspace', kicker: 'Visual operating system' },
+  { href: '/motion-lab', label: 'Motion Engine', kicker: 'Cinematic tokens' },
+  { href: '/ai-studio', label: 'Creative Intelligence', kicker: 'Prompt operations' },
+  { href: '/assets', label: 'Immersive Gallery', kicker: 'Media control' },
   { href: '/design-tokens', label: 'Design Tokens', kicker: 'Brand grammar' },
   { href: '/theme-lab', label: 'Theme Lab', kicker: 'Dark/light surfaces' },
-  { href: '/settings', label: 'Settings', kicker: 'Local preferences' },
+  { href: '/settings', label: 'Private Controls', kicker: 'Local preferences' },
 ];
 
-const componentCategories = ['Premium', 'Hover', 'VFX', 'Directors', 'Hero', 'Dashboard', 'Form', 'Card', 'Navigation', 'Modal', 'Table', 'Chart', 'AI', 'Asset', 'Motion', 'Layout', 'Gallery', 'Marketing', 'Government', 'Ecommerce'];
+const componentCategories = ['Premium', 'Hover', 'VFX', 'Directors', 'Hero', 'Workspace', 'Form', 'Card', 'Navigation', 'Modal', 'Table', 'Chart', 'AI', 'Asset', 'Motion', 'Layout', 'Gallery', 'Marketing', 'Government', 'Ecommerce'];
 const titleRoots = ['Quiet Ledger', 'Cinematic Atlas', 'Holographic Brief', 'Signal Cabinet', 'A4 Intelligence', 'Glass Command', 'Editorial Stack', 'Invisible Console', 'Premium Switchboard', 'Motion Registry'];
 const styles = ['acid-lime glass', 'cyan scanline', 'pink reflection', 'paper brutalist', 'black chrome', 'holographic grid'];
 const presets = ['lift', 'tilt', 'glow', 'reflection', 'border shift', 'hard shadow', 'light sweep', 'svg draw'];
@@ -54,11 +54,11 @@ function item(index: number, type: LibraryType, category: string): PlatformItem 
 
 export const platformItems: PlatformItem[] = [
   ...Array.from({ length: 60 }, (_, index) => item(index, 'component', componentCategories[index % componentCategories.length])),
-  ...Array.from({ length: 20 }, (_, index) => item(index, 'template', ['Landing', 'Portfolio', 'Commerce', 'Dashboard', 'Government'][index % 5])),
+  ...Array.from({ length: 20 }, (_, index) => item(index, 'template', ['Landing', 'Portfolio', 'Commerce', 'Workspace', 'Government'][index % 5])),
   ...Array.from({ length: 20 }, (_, index) => item(index, 'motion', ['Reveal', 'Carousel', 'Parallax', 'SVG Draw', 'Magnetic'][index % 5])),
   ...Array.from({ length: 20 }, (_, index) => item(index, 'asset', ['Texture', 'Icon', 'Gradient', 'Device', 'Mockup'][index % 5])),
   ...Array.from({ length: 10 }, (_, index) => item(index, 'theme', ['Cinema Black', 'Editorial Paper', 'Glass', 'High Contrast', 'Holographic'][index % 5])),
-  ...Array.from({ length: 10 }, (_, index) => item(index, 'prompt', ['Builder', 'Accessibility', 'Motion', 'SEO', 'Export'][index % 5])),
+  ...Array.from({ length: 10 }, (_, index) => item(index, 'prompt', ['Composer', 'Accessibility', 'Motion', 'SEO', 'Export'][index % 5])),
 ];
 
 
