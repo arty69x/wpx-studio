@@ -1,2 +1,13 @@
-import type {ReactNode} from 'react';
-export function Stack({children,className=''}:{children:ReactNode;className?:string}){return <div className={`flex flex-col gap-4 ${className}`}>{children}</div>}
+import type { ElementType, ReactNode } from 'react';
+
+export function Stack({
+  children,
+  className = '',
+  as: Component = 'div',
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: ElementType;
+}) {
+  return <Component className={`flex flex-col gap-4 ${className}`}>{children}</Component>;
+}

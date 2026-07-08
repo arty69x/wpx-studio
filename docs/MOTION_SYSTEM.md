@@ -1,29 +1,37 @@
 # Motion System
 
 ## Purpose
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Define subtle premium motion for card hover, preview transitions, section reveals, and interaction states.
 
 ## Scope
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Motion is limited to frontend presentation and uses Framer Motion only. It does not trigger persistence, analytics, or external calls.
 
 ## Architecture
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Reusable presets live in `components/motion/presets.ts`. Cards and previews apply local Framer Motion animations.
 
 ## Rules
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Animate transform and opacity first. Avoid layout-shifting width or height animation. Keep preview motion isolated inside preview frames. Respect `prefers-reduced-motion` in global CSS.
 
 ## Specifications
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Required presets are fadeIn, fadeUp, fadeDown, slideLeft, slideRight, scaleIn, blurIn, revealMask, staggerChildren, cardLift, glowHover, and previewMorph.
 
 ## Workflow
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+New motion must map to a documented preset or a detail-specific preview state.
 
 ## Validation Rules
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Hover, focus, active, selected, loading, disabled, fade, slide, scale, blur, reveal, scroll reveal, stagger, card lift, glow hover, and preview transition must remain visually represented.
 
 ## Acceptance Criteria
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
-Implementation is accepted only when the documented route, UI, catalog, structure, motion, responsive, save, export, and validation requirements are visible in the frontend without adding prohibited backend capabilities.
+
+Cards lift on hover, preview state controls visibly change the preview, and motion remains subtle.
 
 ## Definition of Done
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Motion builds without TypeScript errors and does not cause layout shift.

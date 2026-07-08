@@ -1,4 +1,150 @@
 'use client';
-import { useState } from 'react';import Link from 'next/link';import type { ComponentItem } from '@/lib/types';import { validateStructure } from '@/lib/structure-validator';import { ComponentPreview } from './ComponentPreview';import { StructureTree } from './StructureTree';import { SavePanel } from './SavePanel';import { ExportPanel } from './ExportPanel';import { RelatedComponents } from './RelatedComponents';
-export function ComponentDetail({item}:{item:ComponentItem}){const [device,setDevice]=useState('Desktop');const [state,setState]=useState('Default');const validation=validateStructure(item.structure);const width=device==='Desktop'?'w-full':device==='Tablet'?'max-w-[768px]':'max-w-[360px]';return <main className="bg-[#09090B] text-white"><div className="sticky top-0 z-30 border-b border-white/10 bg-[#09090B]/80 backdrop-blur"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4"><Link href="/marketplace" className="text-sm text-zinc-400">← Marketplace</Link><div className="flex gap-2"><button className="rounded-full bg-white px-4 py-2 text-sm text-black">Save</button><button className="rounded-full bg-[#4F7CFF] px-4 py-2 text-sm">Export</button></div></div></div><div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 lg:grid-cols-[1fr_380px]"><section className="space-y-8"><div className="rounded-[32px] border border-white/10 bg-[#111214] p-4"><div className="mb-4 flex flex-wrap justify-between gap-3"><div className="flex gap-2">{['Desktop','Tablet','Mobile'].map(d=><button onClick={()=>setDevice(d)} className={`rounded-full px-3 py-1 text-xs ${device===d?'bg-white text-black':'bg-white/[.06]'}`} key={d}>{d}</button>)}</div><div className="flex gap-2">{['Default','Hover','Active','Selected','Motion'].map(s=><button onClick={()=>setState(s)} className={`rounded-full px-3 py-1 text-xs ${state===s?'bg-[#7C5CFF]':'bg-white/[.06]'}`} key={s}>{s}</button>)}</div></div><div className={`mx-auto transition-all duration-300 ${width}`}><ComponentPreview item={item} state={state}/></div></div><Block title="Overview"><p className="text-zinc-300">{item.description}</p><div className="mt-4 flex flex-wrap gap-2">{item.tags.map(t=><span className="rounded-full bg-white/[.06] px-3 py-1 text-xs" key={t}>{t}</span>)}</div></Block><Block title="Structure"><div className={`mb-4 inline-flex rounded-full px-3 py-1 text-sm ${validation.valid?'bg-emerald-500/15 text-emerald-300':'bg-red-500/15 text-red-300'}`}>{validation.valid?'Structure Valid':'Structure Invalid'}</div><StructureTree node={item.structure}/></Block><Block title="Properties"><div className="grid gap-3 md:grid-cols-3">{item.properties.map(p=><div className="rounded-2xl border border-white/10 p-4" key={p.name}><p className="text-xs text-zinc-500">{p.name}</p><p>{p.value}</p></div>)}</div></Block><Block title="Interactions"><p className="text-zinc-300">idle, hover, focus, active, selected, disabled, and loading are represented in controls and preview states.</p></Block><Block title="Motion"><p className="text-zinc-300">{item.motionType}</p></Block><Block title="Responsive"><p className="text-zinc-300">{item.responsive}</p></Block><Block title="Export"><ExportPanel formats={item.exportFormats}/></Block><Block title="Related"><RelatedComponents category={item.category} slug={item.slug}/></Block></section><aside className="space-y-6"><div className="rounded-3xl border border-white/10 bg-[#18181B] p-6"><h1 className="text-3xl font-semibold">{item.name}</h1><p className="mt-2 text-zinc-400">{item.category} / {item.subCategory}</p><p className="mt-4 text-sm text-zinc-500">Creator: {item.creator} · {item.priceType}</p></div><div className="rounded-3xl border border-white/10 bg-[#18181B] p-6"><h2 className="mb-4 font-semibold">Save UI</h2><SavePanel/></div><div className="rounded-3xl border border-white/10 bg-[#18181B] p-6"><h2 className="mb-4 font-semibold">Variants</h2><div className="flex flex-wrap gap-2">{item.variants.map(v=><span className="rounded-full border border-white/10 px-3 py-1 text-xs" key={v}>{v}</span>)}</div></div></aside></div></main>}
-function Block({title,children}:{title:string;children:React.ReactNode}){return <section className="rounded-[32px] border border-white/10 bg-[#111214] p-6"><h2 className="mb-4 text-xl font-semibold">{title}</h2>{children}</section>}
+
+import Link from 'next/link';
+import { BrandMark } from '@/components/brand/BrandMark';
+import { useMemo, useState } from 'react';
+import type { ComponentItem } from '@/lib/types';
+import { validateStructure } from '@/lib/structure-validator';
+import { Badge } from './Badge';
+import { ComponentPreview } from './ComponentPreview';
+import { ExportPanel } from './ExportPanel';
+import { RelatedComponents } from './RelatedComponents';
+import { SavePanel } from './SavePanel';
+import { StructureTree } from './StructureTree';
+
+const devices = [
+  { label: 'Desktop', width: 'w-full' },
+  { label: 'Tablet', width: 'max-w-[768px]' },
+  { label: 'Mobile', width: 'max-w-[360px]' },
+];
+const states = ['Default', 'Hover', 'Active', 'Selected', 'Motion'];
+
+export function ComponentDetail({ item }: { item: ComponentItem }) {
+  const [device, setDevice] = useState(devices[0]);
+  const [previewState, setPreviewState] = useState('Default');
+  const validation = useMemo(() => validateStructure(item.structure), [item.structure]);
+
+  return (
+    <main className="min-h-screen bg-[#05070D] text-white">
+      <DetailTopBar />
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="space-y-8">
+          <PreviewSection item={item} device={device} state={previewState} onDevice={setDevice} onState={setPreviewState} />
+          <ContentSection title="Overview">
+            <p className="max-w-3xl leading-7 text-zinc-300">{item.description}</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {item.tags.map((tag) => <Badge key={tag}>{tag}</Badge>)}
+            </div>
+          </ContentSection>
+          <ContentSection title="Structure">
+            <div className={`mb-5 inline-flex rounded-full px-3 py-1 text-sm ${validation.valid ? 'bg-emerald-500/15 text-emerald-300' : 'bg-red-500/15 text-red-300'}`}>
+              {validation.valid ? 'Structure Valid' : 'Structure Invalid'}
+            </div>
+            <StructureTree node={item.structure} />
+          </ContentSection>
+          <ContentSection title="Properties">
+            <div className="grid gap-3 md:grid-cols-3">
+              {item.properties.map((property) => (
+                <div key={property.name} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <p className="text-xs text-zinc-500">{property.name}</p>
+                  <p className="mt-1 text-zinc-100">{property.value}</p>
+                </div>
+              ))}
+            </div>
+          </ContentSection>
+          <ContentSection title="Interactions">
+            <p className="text-zinc-300">{item.interactionType}</p>
+          </ContentSection>
+          <ContentSection title="Motion">
+            <p className="text-zinc-300">{item.motionType}</p>
+          </ContentSection>
+          <ContentSection title="Responsive">
+            <p className="text-zinc-300">{item.responsive}</p>
+          </ContentSection>
+          <ContentSection title="Export">
+            <ExportPanel formats={item.exportFormats} />
+          </ContentSection>
+          <ContentSection title="Related">
+            <RelatedComponents category={item.category} slug={item.slug} />
+          </ContentSection>
+        </div>
+        <MetadataPanel item={item} />
+      </div>
+    </main>
+  );
+}
+
+function DetailTopBar() {
+  return (
+    <div className="sticky top-0 z-30 border-b border-white/10 bg-[#05070D]/82 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+        <div className="flex items-center gap-4"><BrandMark compact /><Link href="/marketplace" className="text-sm text-zinc-400 transition hover:text-white">← Marketplace</Link></div>
+        <div className="flex gap-2">
+          <button className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black">Save</button>
+          <button className="rounded-full bg-[#CCFF00] px-4 py-2 text-sm font-semibold text-black">Export</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PreviewSection({ item, device, state, onDevice, onState }: { item: ComponentItem; device: { label: string; width: string }; state: string; onDevice: (device: { label: string; width: string }) => void; onState: (state: string) => void }) {
+  return (
+    <section className="rounded-[32px] border border-white/10 bg-[#090D16] p-4 shadow-2xl shadow-black/20">
+      <div className="mb-4 flex flex-wrap justify-between gap-3">
+        <SegmentedControl values={devices.map((item) => item.label)} active={device.label} onChange={(value) => onDevice(devices.find((item) => item.label === value) ?? devices[0])} />
+        <SegmentedControl values={states} active={state} onChange={onState} />
+      </div>
+      <div className={`mx-auto transition-all duration-300 ${device.width}`}>
+        <ComponentPreview item={item} state={state} />
+      </div>
+    </section>
+  );
+}
+
+function SegmentedControl({ values, active, onChange }: { values: string[]; active: string; onChange: (value: string) => void }) {
+  return (
+    <div className="flex flex-wrap gap-2 rounded-full border border-white/10 bg-black/20 p-1">
+      {values.map((value) => (
+        <button key={value} onClick={() => onChange(value)} className={`rounded-full px-3 py-1 text-xs transition ${active === value ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}>
+          {value}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ContentSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-[32px] border border-white/10 bg-[#090D16] p-6">
+      <h2 className="mb-5 text-xl font-semibold text-white">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function MetadataPanel({ item }: { item: ComponentItem }) {
+  return (
+    <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+      <div className="rounded-3xl border border-white/10 bg-[#0D1320] p-6">
+        <div className="mb-5 flex flex-wrap gap-2">
+          <Badge tone="blue">{item.category}</Badge>
+          <Badge tone="purple">{item.subCategory}</Badge>
+          <Badge tone={item.priceType === 'Premium' ? 'orange' : 'cyan'}>{item.priceType}</Badge>
+        </div>
+        <h1 className="text-3xl font-semibold tracking-tight text-white">{item.name}</h1>
+        <p className="mt-4 text-sm leading-6 text-zinc-400">Creator: {item.creator}</p>
+      </div>
+      <div className="rounded-3xl border border-white/10 bg-[#0D1320] p-6">
+        <h2 className="mb-4 font-semibold text-white">Save UI</h2>
+        <SavePanel />
+      </div>
+      <div className="rounded-3xl border border-white/10 bg-[#0D1320] p-6">
+        <h2 className="mb-4 font-semibold text-white">Variants</h2>
+        <div className="flex flex-wrap gap-2">
+          {item.variants.map((variant) => <Badge key={variant}>{variant}</Badge>)}
+        </div>
+      </div>
+    </aside>
+  );
+}

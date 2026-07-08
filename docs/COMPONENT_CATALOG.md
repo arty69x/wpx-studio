@@ -1,32 +1,41 @@
 # Component Catalog
 
 ## Purpose
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Define the local mock catalog used by the WPX Studio marketplace prototype.
 
 ## Scope
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+The catalog contains every provided reference component name as a real `ComponentItem` record with metadata, preview pattern, structure tree, interaction, motion, responsive behavior, variants, properties, source metadata, and export formats.
 
 ## Architecture
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Catalog data lives in `data/marketplace.ts`. Types live in `lib/types.ts`. Preview rendering varies by `previewPattern`.
 
 ## Rules
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Catalog data is local only. Items cannot reference remote APIs or real export jobs. Existing component names must be preserved.
 
 ## Specifications
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
 
-## Catalog Items
-Interactive 3D Books; Image Bento Gallery; Editorial Video Carousel; Interactive Ticker Link; 3D Loop Carousel; Motion Slideshow; Text Reveal on Scroll; Modern Navbar; 3D Carousel; FX Slider; Tilt Card Group; Infinite GridX; Tricker Component; CinemaScroll; Glassy Style Layout; Cinematic Grid; Animated SVG Underline; Fluid Grid Gallery; Minimalistic Tabs; Liquid Kinetic Nav; Growing Navigation; Hamburger Menu; Asymmetric Grid; Reveal Text; Animation Loader; Phone Scroll Pro; Limitless Pro; Scroll Zoom Reveal; Infinite Gallery; Drift Gallery; Liquid Gradient Background; Grain Overlay; WebGL Particle Text; Random Text Reveal; Split Text Animation; Ripple Reveal; Stack Text Reveal. Each catalog record must include category, subCategory, tags, creator, priceType, interactionType, motionType, responsive behavior, structure tree, export formats, variants, properties, sourceType, and sourceMeta.
+Preview patterns are carousel, navigation, typography, layout, background, and interaction. These patterns create different visual previews and different internal structure nodes while preserving the locked hierarchy.
 
 ## Workflow
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Choose category and subcategory, assign preview pattern, create metadata, generate structure tree, validate structure, and render in list/detail views.
 
 ## Validation Rules
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Every item must include id, slug, name, description, category, subCategory, creator, priceType, tags, interactionType, motionType, responsive, exportFormats, structure, variants, properties, sourceType, sourceMeta, and previewPattern.
 
 ## Acceptance Criteria
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
-Implementation is accepted only when the documented route, UI, catalog, structure, motion, responsive, save, export, and validation requirements are visible in the frontend without adding prohibited backend capabilities.
+
+All provided component names appear in the catalog and render as marketplace cards and detail pages.
 
 ## Definition of Done
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+The catalog builds all static detail paths and passes lint, build, and tests.
+
+## System-Wide Usage
+
+The catalog exports aggregate statistics, category groupings, preview-pattern groupings, and featured item ordering. These derived exports are used across landing, marketplace, detail, preview, structure, motion, export, and footer UI so every catalog item participates in the prototype experience.

@@ -1,3 +1,57 @@
 'use client';
+
 import { categories, subcategories } from '@/data/marketplace';
-export function CategoryTabs({category,setCategory,sub,setSub}:{category:string;setCategory:(v:string)=>void;sub:string;setSub:(v:string)=>void}){return <div className="space-y-4"><div className="flex gap-2 overflow-x-auto pb-1"><button onClick={()=>{setCategory('All');setSub('All')}} className={`rounded-full px-4 py-2 text-sm ${category==='All'?'bg-white text-black':'border border-white/10 text-zinc-300'}`}>All</button>{categories.map(c=><button key={c} onClick={()=>{setCategory(c);setSub('All')}} className={`rounded-full px-4 py-2 text-sm ${category===c?'bg-white text-black':'border border-white/10 text-zinc-300'}`}>{c}</button>)}</div>{category!=='All'&&<div className="flex gap-2 overflow-x-auto"><button onClick={()=>setSub('All')} className={`rounded-full px-3 py-1 text-xs ${sub==='All'?'bg-[#4F7CFF] text-white':'bg-white/[.05]'}`}>All</button>{(subcategories[category]||[]).map(s=><button key={s} onClick={()=>setSub(s)} className={`rounded-full px-3 py-1 text-xs ${sub===s?'bg-[#4F7CFF] text-white':'bg-white/[.05]'}`}>{s}</button>)}</div>}</div>}
+
+export function CategoryTabs({
+  category,
+  setCategory,
+  subcategory,
+  setSubcategory,
+}: {
+  category: string;
+  setCategory: (value: string) => void;
+  subcategory: string;
+  setSubcategory: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        <Tab active={category === 'All'} onClick={() => { setCategory('All'); setSubcategory('All'); }}>
+          All
+        </Tab>
+        {categories.map((item) => (
+          <Tab key={item} active={category === item} onClick={() => { setCategory(item); setSubcategory('All'); }}>
+            {item}
+          </Tab>
+        ))}
+      </div>
+
+      {category !== 'All' && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          <Chip active={subcategory === 'All'} onClick={() => setSubcategory('All')}>All</Chip>
+          {(subcategories[category] ?? []).map((item) => (
+            <Chip key={item} active={subcategory === item} onClick={() => setSubcategory(item)}>
+              {item}
+            </Chip>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Tab({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className={`shrink-0 rounded-full px-4 py-2 text-sm transition ${active ? 'bg-white text-black' : 'border border-white/10 text-zinc-300 hover:border-white/30'}`}>
+      {children}
+    </button>
+  );
+}
+
+function Chip({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className={`shrink-0 rounded-full px-3 py-1 text-xs transition ${active ? 'bg-[#4F7CFF] text-white' : 'bg-white/[0.05] text-zinc-400 hover:text-white'}`}>
+      {children}
+    </button>
+  );
+}

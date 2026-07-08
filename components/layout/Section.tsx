@@ -1,2 +1,13 @@
-import type {ReactNode} from 'react';
-export function Section({children,className=''}:{children:ReactNode;className?:string}){return <section className={`py-16 md:py-24 ${className}`}>{children}</section>}
+import type { ElementType, ReactNode } from 'react';
+
+export function Section({
+  children,
+  className = '',
+  as: Component = 'section',
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: ElementType;
+}) {
+  return <Component className={`py-16 md:py-24 ${className}`}>{children}</Component>;
+}

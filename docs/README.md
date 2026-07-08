@@ -1,29 +1,37 @@
-# Readme
+# WPX Studio Documentation
 
 ## Purpose
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Provide implementation-facing documentation for the focused WPX Studio frontend prototype.
 
 ## Scope
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+These documents cover the landing page, marketplace list, marketplace detail, preview/save/export UI, component catalog, locked structure system, locked interaction/motion system, responsive behavior, validation, and acceptance criteria.
 
 ## Architecture
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+The prototype is implemented with Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, and local mock data. Documentation is production source and must remain aligned with implementation.
 
 ## Rules
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+`LOCKSPEC.md` is the single source of truth. No backend, database, auth, CMS, dashboard, billing, analytics, deployment system, real API, real save, or real export behavior is in scope.
 
 ## Specifications
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Read `LOCKSPEC.md`, `STRUCTURE_ENGINE.md`, `MOTION_SYSTEM.md`, `MARKETPLACE_SPEC.md`, and `COMPONENT_CATALOG.md` before changing UI code.
 
 ## Workflow
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Update documentation first when behavior changes, then update implementation, then run lint, build, and tests.
 
 ## Validation Rules
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Validation rules are documented in `LOCKSPEC.md` and implemented in `lib/structure-validator.ts`.
 
 ## Acceptance Criteria
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
-Implementation is accepted only when the documented route, UI, catalog, structure, motion, responsive, save, export, and validation requirements are visible in the frontend without adding prohibited backend capabilities.
+
+The implemented routes and UI must match the documented locked scope and pass verification commands.
 
 ## Definition of Done
-WPX Studio is a frontend-only Next.js App Router prototype for a dark-first visual component marketplace. The locked scope is landing, marketplace list, marketplace detail, preview/save/export UI, local mock catalog data, the locked structure hierarchy, and the locked interaction/motion system. Backend services, databases, authentication, dashboards, billing, analytics, deployment systems, real APIs, and real export execution are prohibited.
+
+Documentation is complete, implementation is aligned, and `npm run lint`, `npm run build`, and `npm test` pass.

@@ -1,8 +1,8 @@
-# WHISPERX | STUDIO (WPX)
+# WPX Studio
 
 WPX is the official public website for WHISPERX | STUDIO: a premium creative technology platform expressed as a cinematic, interactive product experience.
 
-## Architecture Rules
+## Current Scope
 
 - Runtime surfaces are client-side first and avoid backend processing of user project content.
 - Local preferences and API-key placeholders are stored only in `localStorage`.
