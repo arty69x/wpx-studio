@@ -1,10 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { saveAs } from 'file-saver';
-import { createProductionReport } from '@/lib/wpx/dom/production';
-import { createNextScaffoldZip } from '@/lib/wpx/dom/exporters/next';
-import { createDomProjectZip } from '@/lib/wpx/dom/exporters/package';
+import { validateDomProject } from '@/lib/wpx/dom/validation';
 import type { WPXDomNode, WPXDomProject } from '@/lib/wpx/dom/types';
 
 const countNodes = (node: WPXDomNode): number => 1 + node.children.reduce((sum, child) => sum + countNodes(child), 0);
@@ -12,26 +9,8 @@ const countNodes = (node: WPXDomNode): number => 1 + node.children.reduce((sum, 
 type Props = { project: WPXDomProject };
 
 export function ExportPanel({ project }: Props) {
-  const [busy, setBusy] = useState(false);
-  const report = createProductionReport(project);
+  const report = validateDomProject(project);
   const nodeCount = project.pages.reduce((sum, page) => sum + countNodes(page.root), 0);
-  const downloadZip = async () => {
-    setBusy(true);
-    try {
-      saveAs(await createDomProjectZip(project), 'wpx-dom-export.zip');
-    } finally {
-      setBusy(false);
-    }
-  };
-  const downloadNext = async () => {
-    setBusy(true);
-    try {
-      saveAs(await createNextScaffoldZip(project), 'wpx-next-scaffold.zip');
-    } finally {
-      setBusy(false);
-    }
-  };
-
   return <section className="rounded-[18px] border border-[var(--border)] bg-black/35 p-4">
     <h2 className="text-xs font-black uppercase tracking-[.16em]">DOM Export Readiness</h2>
     <div className="mt-3 grid gap-2 text-sm">
@@ -39,12 +18,8 @@ export function ExportPanel({ project }: Props) {
       <p>Pages: <b>{project.pages.length}</b></p>
       <p>Selected: <b>{project.selectedNodeId ?? 'none'}</b></p>
       <p>Safe asset mode: <b>{project.safeAssetMode ? 'on' : 'off'}</b></p>
-      <p>Status: <b className={report.status === 'ready' ? 'text-[var(--lime)]' : 'text-[var(--pink)]'}>{report.status}</b></p>
+      <p>Status: <b className={report.status === 'pass' ? 'text-[var(--lime)]' : 'text-[var(--pink)]'}>{report.status}</b></p>
     </div>
-    <div className="mt-3 flex flex-wrap gap-2">
-      <button className="control" onClick={() => saveAs(new Blob([JSON.stringify({ project, report }, null, 2)], { type: 'application/json' }), 'wpx-dom-export-preview.json')}>Download DOM JSON</button>
-      <button className="control" disabled={busy} onClick={downloadZip}>{busy ? 'Building ZIP…' : 'Download Static ZIP'}</button>
-      <button className="control" disabled={busy} onClick={downloadNext}>{busy ? 'Building ZIP…' : 'Download Next Scaffold'}</button>
-    </div>
+    <button className="control mt-3" onClick={() => saveAs(new Blob([JSON.stringify({ project, report }, null, 2)], { type: 'application/json' }), 'wpx-dom-export-preview.json')}>Download DOM JSON</button>
   </section>;
 }
