@@ -1,27 +1,24 @@
 # WHISPERX | STUDIO (WPX)
 
-WPX is a client-side-only Next.js workbench for importing HTML from URLs or local files, sanitizing and detecting reusable components, previewing them in a sandboxed iframe, storing workspaces in IndexedDB, and exporting clean ZIP packages.
+WPX is the official public website for WHISPERX | STUDIO: a premium creative technology platform expressed as a cinematic, interactive product experience.
 
 ## Architecture Rules
 
-- All parsing, DOM processing, CSS scoping, link rewriting, dependency graph generation, IndexedDB persistence, ZIP import, and ZIP export run in the browser.
-- The application does not define API routes, Server Actions, Node backends, Express/Nest services, or server-side source processing.
-- A user-supplied proxy endpoint may be configured only for raw network retrieval with `GET /fetch?url={encodedUrl}`.
+- Runtime surfaces are client-side first and avoid backend processing of user project content.
+- Local preferences and API-key placeholders are stored only in `localStorage`.
+- Visual system, template, motion, asset, theme, and creative prompt records are rendered from central typed state in `data/platform.ts`.
+- Existing import/export workbench code remains in `lib/studio.ts` and related modules for client-side parsing, sanitizing, IndexedDB persistence, and ZIP export.
 
-## Implemented Workbench Modules
+## Implemented Platform Modules
 
-- Dashboard and Project Manager with storage quota display and restore controls.
-- URL Import Panel with HTTPS normalization, unsafe-scheme rejection, deduplication, max-20 URL batches, retry and timeout fetch queue, and optional raw proxy support.
-- HTML paste/upload panel with DOMPurify sanitization and DOMParser component detection.
-- Component checklist, append mode, basic merge mode, batch operations, search/replace, and undo/redo snapshots.
-- Sandboxed desktop/tablet/mobile iframe preview with external scripts blocked by default and script-enable status surfaced per component.
-- Inspector Panel, Asset Manager, Diff Viewer, Settings, Plugin Manager, preset/marketplace placeholder, and dependency graph screen.
-- IndexedDB vault named `WPX_Studio_Vault` with `wpx_projects`, `wpx_structures`, `wpx_stylesheets`, and `wpx_assets` stores.
-- css-tree-based CSS scoping, safe asset mode, link rewriting, JSZip export, FileSaver download, and WPX ZIP re-import from `project.json`.
+- Landing with A4 editorial frame, cinematic background, report header, carousel, metadata, and product surface links.
+- Hero-led product visualization where the workspace, carousel, intelligent prompt layer, inspector, command palette, and animated preview exist inside one cinematic scene.
+- Editorial story flow: Discover, Build, Animate, Create, and Deploy.
+- Immersive gallery, design language, trust/technology, final CTA, and footer sections built from the same reusable production components.
+- SEO support through Metadata API, generated sitemap, and robots routes.
+- Local-only settings controls for theme preference and API-key placeholder storage.
 
 ## Verification
-
-Run:
 
 ```bash
 npm install
@@ -30,4 +27,4 @@ npm run build
 npm test
 ```
 
-`npm test` is currently expected to fail until a test script is added; this is documented in `docs/BUILD_NOTES.md`.
+Some optional production package installation may be blocked by registry policy in restricted environments; record exact blockers in `docs/BUILD_NOTES.md`.

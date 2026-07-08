@@ -1,2 +1,50 @@
-@tailwind base;@tailwind components;@tailwind utilities;
-:root{--background:#09090B;--surface-old:#111214;--primary:#4F7CFF;--secondary:#45D6FF;--alert:#FF9E44;--text-main:#FAFAFA;--text-sub:#A1A1AA;--bg:#09090B;--surface:#111214;--card:#18181B;--border:#27272A;--text-primary:#FAFAFA;--text-secondary:#A1A1AA;--text-muted:#71717A;--blue:#4F7CFF;--purple:#7C5CFF;--pink:#E052FF;--cyan:#45D6FF;--orange:#FF9E44}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text-primary)}button,a,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}@media (prefers-reduced-motion:reduce){*,::before,::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #09090B;
+  --surface-old: #111214;
+  --primary: #4F7CFF;
+  --secondary: #45D6FF;
+  --alert: #FF9E44;
+  --text-main: #FAFAFA;
+  --text-sub: #A1A1AA;
+  --bg: #09090B;
+  --surface: #111214;
+  --card: #18181B;
+  --border: #27272A;
+  --text-primary: #FAFAFA;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
+  --blue: #4F7CFF;
+  --purple: #7C5CFF;
+  --pink: #E052FF;
+  --cyan-old: #45D6FF;
+  --orange: #FF9E44;
+  --cinema: #050505;
+  --paper: #f4efe4;
+  --lime: #d9ff3f;
+  --cyan: #45d6ff;
+  --pink: #ff4fd8;
+  --ease-out: cubic-bezier(.2,.8,.2,1);
+  --ease-in-out: cubic-bezier(.4,0,.2,1);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--cinema); }
+body { margin: 0; background: var(--cinema); color: white; }
+button, a, input, select { font: inherit; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+::selection { background: var(--lime); color: black; }
+.font-serif { font-family: Georgia, 'Times New Roman', serif; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@keyframes wpxFloat { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(4vw,-3vh,0) scale(1.12); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
