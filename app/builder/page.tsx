@@ -1,2 +1,5 @@
-import { PlatformPage } from '@/components/ui/platform';
-export default function BuilderPage() { return <PlatformPage kind="builder" />; }
+import { BuilderShell } from '@/components/builder/BuilderShell';
+
+export default function BuilderPage() {
+  return <BuilderShell />;
+}
