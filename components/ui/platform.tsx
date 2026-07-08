@@ -1,235 +1,91 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motionTokens, platformItems, themeTokens } from '@/data/platform';
-import type { PlatformItem } from '@/types/platform';
+import { useEffect, useRef, useState } from 'react';
+import { activities, aiPrompts, allLibrary, assets, motionPresets, projects, wxCategories } from '@/data/whisperx';
 
-type PageKind = 'landing' | 'marketplace' | 'components' | 'builder' | 'motion' | 'ai' | 'assets' | 'tokens' | 'themes' | 'settings';
-type SceneState = 'discover' | 'build' | 'animate' | 'create' | 'deploy';
+type PageKind = 'landing' | 'marketplace' | 'components' | 'builder' | 'motion' | 'ai' | 'assets' | 'tokens' | 'themes' | 'settings' | 'dashboard' | 'docs';
+const nav = [['/', 'Home'], ['/builder', 'Builder'], ['/marketplace', 'Marketplace'], ['/studio', 'AI Studio'], ['/dashboard', 'Dashboard'], ['/docs', 'Docs']];
+const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
-const publicNavigation = ['Opening', 'Story', 'Workspace', 'Gallery', 'Language', 'Trust'];
-const storyChapters: Array<{ state: SceneState; title: string; copy: string }> = [
-  { state: 'discover', title: 'Discover the hidden shape of an interface.', copy: 'The system begins as atmosphere: a quiet frame, a field of signals, and a living archive of visual systems ready to be composed.' },
-  { state: 'build', title: 'Build inside an editorial canvas.', copy: 'Layouts feel like pages. Components arrive as precise materials. The workspace stays cinematic without becoming decorative.' },
-  { state: 'animate', title: 'Animate with restraint and force.', copy: 'Motion is treated as product grammar: reveal, lift, reflection, connection, timeline, and exit all move from the same rhythm.' },
-  { state: 'create', title: 'Create with intelligence in the loop.', copy: 'Creative intelligence appears inside the scene as a prompt layer, not a chatbot bolted onto the edge of the product.' },
-  { state: 'deploy', title: 'Deploy a visual operating system.', copy: 'Every artifact is structured, responsive, accessible, and ready to move from concept to production without losing its aura.' },
-];
-
-function cn(...classes: Array<string | false | undefined>) {
-  return classes.filter(Boolean).join(' ');
-}
-
-function useLocalPreference(key: string, initial: string) {
-  const [value, setValue] = useState(initial);
-
+function ThemeScript() {
   useEffect(() => {
-    const stored = window.localStorage.getItem(key);
-    if (stored) setValue(stored);
-  }, [key]);
-
-  const update = (next: string) => {
-    setValue(next);
-    window.localStorage.setItem(key, next);
-  };
-
-  return [value, update] as const;
+    document.documentElement.dataset.theme = localStorage.getItem('wx-theme') || 'dark';
+  }, []);
+  return null;
 }
 
-export function CinematicBackground() {
-  return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#050505]">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }} className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(217,255,63,.20),transparent_30%),radial-gradient(circle_at_18%_78%,rgba(69,214,255,.18),transparent_32%),radial-gradient(circle_at_88%_70%,rgba(255,79,216,.16),transparent_34%)]" />
-      <div className="absolute inset-0 opacity-[.14] [background-image:linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:56px_56px]" />
-      <div className="absolute inset-0 opacity-[.08] [background-image:linear-gradient(transparent_50%,rgba(255,255,255,.55)_51%,transparent_52%)] [background-size:100%_9px]" />
-    </div>
-  );
-}
-
-export function Button({ children, variant = 'primary', disabled = false, onClick }: { children: React.ReactNode; variant?: 'primary' | 'ghost'; disabled?: boolean; onClick?: () => void }) {
-  return (
-    <motion.button
-      whileHover={disabled ? undefined : { y: -3, boxShadow: '10px 10px 0 rgba(0,0,0,.75)' }}
-      whileTap={disabled ? undefined : { scale: 0.98 }}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn('min-h-12 rounded-full border px-5 text-sm font-semibold uppercase tracking-[.18em] outline-none transition focus-visible:ring-4 focus-visible:ring-[#45d6ff]/40', variant === 'primary' ? 'border-[#d9ff3f] bg-[#d9ff3f] text-black' : 'border-white/15 bg-white/[.04] text-white hover:border-[#45d6ff]')}
-    >
-      {children}
-    </motion.button>
-  );
-}
-
-export function IconButton({ label, children, onClick }: { label: string; children: React.ReactNode; onClick?: () => void }) {
-  return <button aria-label={label} onClick={onClick} className="grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-white/[.04] text-white outline-none transition hover:-translate-y-1 hover:border-[#d9ff3f] focus-visible:ring-4 focus-visible:ring-[#45d6ff]/40">{children}</button>;
-}
-
-export function GlassPanel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <section className={cn('rounded-[2rem] border border-white/12 bg-white/[.055] p-5 shadow-2xl shadow-black/30 backdrop-blur-2xl', className)}>{children}</section>;
-}
-
-export function MotionBadge({ children }: { children: React.ReactNode }) {
-  return <span className="rounded-full border border-white/15 bg-white/[.04] px-3 py-1 font-mono text-[10px] uppercase tracking-[.18em] text-white/70">{children}</span>;
-}
-
-export function SectionNumber({ n, label }: { n: string; label: string }) {
-  return <div className="mb-5 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[.3em] text-[#d9ff3f]"><span>{n}</span><span className="h-px flex-1 bg-[#d9ff3f]/35" /><span>{label}</span></div>;
-}
-
-export function MetadataBar({ items }: { items: string[] }) {
-  return <div className="grid gap-2 border-y border-white/10 py-3 font-mono text-[10px] uppercase tracking-[.22em] text-white/55 sm:grid-cols-3">{items.map((item) => <span key={item}>{item}</span>)}</div>;
-}
-
-function ConnectorLine({ active = false }: { active?: boolean }) {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 620 120" className="absolute inset-x-8 top-1/2 hidden -translate-y-1/2 text-[#d9ff3f]/50 lg:block">
-      <motion.path d="M4 92 C180 10 280 10 360 58 S512 128 616 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="8 10" initial={{ pathLength: 0 }} animate={{ pathLength: active ? 1 : 0.62 }} transition={{ duration: 1.2, ease: 'easeInOut' }} />
-    </svg>
-  );
-}
-
-function PreviewFrame({ item, compact = false }: { item: PlatformItem; compact?: boolean }) {
-  const reduce = useReducedMotion();
-  return (
-    <div className={cn('relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-black p-4', compact ? 'h-40' : 'min-h-[22rem]')}>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(217,255,63,.26),transparent_25%),radial-gradient(circle_at_78%_26%,rgba(69,214,255,.20),transparent_28%),radial-gradient(circle_at_52%_86%,rgba(255,79,216,.18),transparent_30%)]" />
-      <motion.div animate={reduce ? undefined : { x: ['-20%', '120%'] }} transition={{ duration: 2.8, repeat: Infinity, ease: 'linear' }} className="absolute inset-y-0 w-1/3 skew-x-[-18deg] bg-white/10 blur-xl" />
-      <div className="relative flex h-full flex-col justify-between gap-5">
-        <div className="flex justify-between gap-3"><MotionBadge>{item.category}</MotionBadge><MotionBadge>{item.motionPreset}</MotionBadge></div>
-        <div className="grid flex-1 grid-cols-5 items-end gap-2">
-          {[0, 1, 2, 3, 4].map((bar) => <motion.span key={bar} animate={reduce ? undefined : { height: [`${28 + bar * 9}%`, `${58 + bar * 7}%`, `${28 + bar * 9}%`] }} transition={{ duration: 1.6 + bar * 0.12, repeat: Infinity }} className="rounded-t-full border border-white/10 bg-white/15" />)}
-        </div>
-        <div><h4 className="font-serif text-3xl leading-none tracking-[-.06em] text-white">{item.title}</h4><p className="mt-2 text-xs text-white/55">{item.thumbnailStyle}</p></div>
-      </div>
-    </div>
-  );
-}
-
-function ProductScene({ state }: { state: SceneState }) {
-  const item = platformItems.find((entry) => entry.featured) ?? platformItems[0];
-  const [paletteOpen, setPaletteOpen] = useState(false);
-
+function useTrap(open: boolean, onClose: () => void) {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setPaletteOpen(state === 'create');
-  }, [state]);
-
-  return (
-    <div className="relative min-h-[42rem] overflow-hidden rounded-[2.5rem] border border-white/12 bg-white/[.045] p-4 shadow-2xl shadow-black/50 backdrop-blur-2xl md:p-6">
-      <ConnectorLine active={state === 'animate' || state === 'deploy'} />
-      <motion.div layout className="relative mx-auto max-w-5xl rounded-[2rem] border border-white/15 bg-[#090909]/90 p-4 shadow-[0_40px_120px_rgba(0,0,0,.65)]">
-        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
-          <div className="flex gap-2"><span className="h-3 w-3 rounded-full bg-[#ff4fd8]" /><span className="h-3 w-3 rounded-full bg-[#d9ff3f]" /><span className="h-3 w-3 rounded-full bg-[#45d6ff]" /></div>
-          <p className="font-mono text-[10px] uppercase tracking-[.28em] text-white/45">WHISPERX workspace / live scene</p>
-        </div>
-        <div className="grid gap-4 lg:grid-cols-[1fr_19rem]">
-          <motion.div layout className="rounded-[1.5rem] border border-white/10 bg-[#f4efe4] p-4 text-black shadow-[12px_12px_0_#000]">
-            <p className="font-mono text-[10px] uppercase tracking-[.28em]">creative operating surface</p>
-            <motion.h3 key={state} initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-5 font-serif text-[clamp(3rem,8vw,7rem)] leading-[.78] tracking-[-.08em]">{state}</motion.h3>
-            <motion.div drag className="mt-8 rounded-2xl border-2 border-black bg-white p-4 shadow-[8px_8px_0_#000]">
-              <p className="font-mono text-xs uppercase">live component layer</p>
-              <p className="mt-2 max-w-md text-sm">A real reusable scene object with hover, focus, selected, loading, reveal, exit, motion, responsive, accessibility, and variant states.</p>
-            </motion.div>
-          </motion.div>
-          <div className="space-y-4">
-            <PreviewFrame item={item} compact />
-            <GlassPanel className="p-4"><p className="font-mono text-[10px] uppercase tracking-[.24em] text-[#45d6ff]">creative intelligence</p><motion.p key={state} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-3 text-sm text-white/70">Compose a {state} sequence with editorial rhythm, glass depth, and production-ready interaction states.</motion.p></GlassPanel>
-          </div>
-        </div>
-      </motion.div>
-      <AnimatePresence>
-        {paletteOpen ? <motion.div initial={{ opacity: 0, y: 24, scale: .96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 24, scale: .96 }} className="absolute bottom-6 left-1/2 w-[min(92%,34rem)] -translate-x-1/2 rounded-[1.5rem] border border-white/15 bg-black/85 p-4 backdrop-blur-2xl"><p className="font-mono text-[10px] uppercase tracking-[.24em] text-white/40">command palette</p><p className="mt-2 text-sm text-white/75">Generate visual system → inspect structure → animate transitions → prepare deployment.</p></motion.div> : null}
-      </AnimatePresence>
-    </div>
-  );
+    if (!open) return;
+    const node = ref.current;
+    const focusables = () => Array.from(node?.querySelectorAll<HTMLElement>('button,a,input,textarea,[tabindex]:not([tabindex="-1"])') || []);
+    focusables()[0]?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+      if (event.key === 'Tab') {
+        const list = focusables();
+        const first = list[0];
+        const last = list[list.length - 1];
+        if (!first || !last) return;
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+  return ref;
 }
 
-function ImmersiveCarousel({ items }: { items: PlatformItem[] }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const reduce = useReducedMotion();
-  const next = useCallback(() => setIndex((current) => (current + 1) % items.length), [items.length]);
-  const previous = useCallback(() => setIndex((current) => (current - 1 + items.length) % items.length), [items.length]);
-
+function Shell({ children }: { children: React.ReactNode }) {
+  const [command, setCommand] = useState(false);
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
-    if (paused || reduce) return undefined;
-    const timer = window.setInterval(next, 4200);
-    return () => window.clearInterval(timer);
-  }, [next, paused, reduce]);
-
-  return (
-    <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onKeyDown={(event) => { if (event.key === 'ArrowRight') next(); if (event.key === 'ArrowLeft') previous(); }} tabIndex={0} aria-label="Immersive gallery carousel" className="rounded-[2.5rem] border border-white/10 bg-white/[.035] p-4 outline-none focus-visible:ring-4 focus-visible:ring-[#45d6ff]/30">
-      <div className="mb-4 flex items-center justify-between gap-3"><Button variant="ghost" onClick={previous}>Previous</Button><p className="font-mono text-xs text-white/55">{String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</p><Button variant="ghost" onClick={next}>Next</Button></div>
-      <div className="grid gap-4 md:grid-cols-3">
-        {[-1, 0, 1].map((offset) => {
-          const item = items[(index + offset + items.length) % items.length];
-          return <motion.div key={`${item.id}-${offset}`} drag="x" dragConstraints={{ left: 0, right: 0 }} onDragEnd={(_, info) => { if (info.offset.x < -40) next(); if (info.offset.x > 40) previous(); }} animate={{ opacity: offset === 0 ? 1 : 0.42, scale: offset === 0 ? 1 : 0.92 }} transition={reduce ? { duration: 0 } : motionTokens.springSoft}><PreviewFrame item={item} compact /></motion.div>;
-        })}
-      </div>
-      <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${((index + 1) / items.length) * 100}%` }} className="h-full bg-[#d9ff3f]" /></div>
-    </div>
-  );
+    const key = (event: KeyboardEvent) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setCommand(true); } };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, []);
+  return <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]"><ThemeScript /><Ambient /><header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[color:var(--surfaceGlass)] backdrop-blur-2xl"><nav className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4"><Link href="/" className="text-xl font-bold tracking-[-.04em]">WHISPERX <span className="text-[var(--primary)]">Builder</span></Link><div className="hidden items-center gap-2 lg:flex">{nav.map(([href, label]) => <Link className="rounded-full px-4 py-2 text-sm text-[var(--muted)] hover:bg-[var(--surfaceSoft)] hover:text-[var(--foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--primary)]" href={href} key={href}>{label}</Link>)}</div><div className="flex gap-2"><button aria-label="Toggle theme" onClick={() => { const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; document.documentElement.dataset.theme = next; localStorage.setItem('wx-theme', next); }} className="control">☼</button><button aria-label="Open command palette" onClick={() => setCommand(true)} className="control">⌘K</button><button aria-label="Open mobile navigation" onClick={() => setMobile(true)} className="control lg:hidden">☰</button></div></nav></header><CommandPalette open={command} onClose={() => setCommand(false)} /><Drawer title="Navigation" open={mobile} onClose={() => setMobile(false)}>{nav.map(([href, label]) => <Link onClick={() => setMobile(false)} className="panel-link" href={href} key={href}>{label}</Link>)}</Drawer><main>{children}</main><Footer /></div>;
 }
+
+function Ambient() { return <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"><div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_10%,var(--primaryGlow),transparent_32%),radial-gradient(circle_at_82%_20%,var(--specialGlow),transparent_28%),linear-gradient(180deg,var(--background),var(--background))]" /><div className="absolute inset-0 opacity-[.08] [background-image:linear-gradient(var(--borderStrong)_1px,transparent_1px),linear-gradient(90deg,var(--borderStrong)_1px,transparent_1px)] [background-size:64px_64px]" /></div>; }
+function Button({ children, onClick, variant = 'primary', disabled }: { children: React.ReactNode; onClick?: () => void; variant?: 'primary' | 'ghost'; disabled?: boolean }) { return <motion.button whileHover={disabled ? undefined : { y: -2 }} whileTap={disabled ? undefined : { scale: .97 }} disabled={disabled} onClick={onClick} className={cn('min-h-11 rounded-full px-5 text-sm font-semibold outline-none transition focus-visible:ring-4 focus-visible:ring-[var(--primaryGlow)]', variant === 'primary' ? 'bg-[var(--primary)] text-[var(--onPrimary)] shadow-[var(--glowPrimary)] hover:bg-[var(--primaryHover)]' : 'border border-[var(--borderStrong)] bg-[var(--surfaceGlass)] text-[var(--foreground)] hover:bg-[var(--surfaceSoft)]')}>{children}</motion.button>; }
+function Card({ children, className = '', ...props }: React.ComponentProps<typeof motion.section> & { children: React.ReactNode; className?: string }) { return <motion.section {...props} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={cn('rounded-[32px] border border-[var(--border)] bg-[var(--surfaceGlass)] p-6 shadow-2xl shadow-black/10 backdrop-blur-2xl', className)}>{children}</motion.section>; }
+function Kicker({ children }: { children: React.ReactNode }) { return <p className="font-mono text-[10px] font-semibold uppercase tracking-[.18em] text-[var(--primary)]">{children}</p>; }
+function HeroTitle({ children }: { children: React.ReactNode }) { return <h1 className="mt-5 text-[clamp(48px,8vw,112px)] font-bold leading-[.95] tracking-[-.04em]">{children}</h1>; }
 
 function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [query, setQuery] = useState('');
-  const commands = ['Discover visual systems', 'Compose editorial canvas', 'Animate interaction grammar', 'Create intelligent prompt', 'Deploy production artifact'];
-  const matches = commands.filter((command) => command.toLowerCase().includes(query.toLowerCase()));
-
-  useEffect(() => {
-    if (!open) setQuery('');
-  }, [open]);
-
-  return <AnimatePresence>{open ? <motion.div className="fixed inset-0 z-50 bg-black/75 p-4 pt-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Command palette"><div className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[#0b0b0b] p-4"><label className="block"><span className="sr-only">Search commands</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search creative commands..." className="min-h-14 w-full rounded-full border border-white/15 bg-black/35 px-5 text-white outline-none transition placeholder:text-white/35 focus:border-[#45d6ff] focus:ring-4 focus:ring-[#45d6ff]/20" /></label>{matches.length === 0 ? <p className="p-4 text-sm text-white/50">No command matches that signal.</p> : matches.map((command) => <button onClick={onClose} key={command} className="mt-2 block w-full rounded-2xl p-4 text-left hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-[#45d6ff]/30">{command}<span className="block text-xs text-white/45">Reusable production command</span></button>)}</div></motion.div> : null}</AnimatePresence>;
+  const [q, setQ] = useState('');
+  const ref = useTrap(open, onClose);
+  const commands = ['Open builder canvas', 'Search marketplace', 'Generate AI hero', 'Publish preview', 'Toggle light mode', 'Show keyboard shortcuts'];
+  const matches = commands.filter((c) => c.toLowerCase().includes(q.toLowerCase()));
+  return <AnimatePresence>{open && <motion.div className="fixed inset-0 z-50 bg-black/55 p-4 pt-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Command palette"><motion.div ref={ref} initial={{ y: 24, scale: .97 }} animate={{ y: 0, scale: 1 }} exit={{ y: 24, scale: .97 }} className="mx-auto max-w-2xl rounded-[32px] border border-[var(--borderStrong)] bg-[var(--surfaceElevated)] p-4 shadow-2xl"><label htmlFor="command-search" className="sr-only">Search commands</label><input id="command-search" value={q} onChange={(e) => setQ(e.target.value)} className="field" placeholder="Search commands…" /> <p className="px-3 py-2 text-sm text-[var(--muted)]">{matches.length} results · Esc closes · Arrow through browser focus order</p>{matches.map((m) => <button className="panel-link" key={m} onClick={onClose}>{m}<span className="block text-xs text-[var(--muted)]">Production shortcut</span></button>)}</motion.div></motion.div>}</AnimatePresence>;
 }
+function Drawer({ title, open, onClose, children }: { title: string; open: boolean; onClose: () => void; children: React.ReactNode }) { const ref = useTrap(open, onClose); return <AnimatePresence>{open && <motion.div className="fixed inset-0 z-50 bg-black/50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.aside ref={ref} role="dialog" aria-modal="true" aria-label={title} initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} className="ml-auto h-full w-[min(92vw,420px)] bg-[var(--surfaceElevated)] p-5 shadow-2xl"><div className="mb-5 flex items-center justify-between"><h2 className="text-2xl font-bold">{title}</h2><button className="control" onClick={onClose}>×</button></div>{children}</motion.aside></motion.div>}</AnimatePresence>; }
 
-function AppShell({ children }: { children: React.ReactNode }) {
-  const [command, setCommand] = useState(false);
-  return <div className="min-h-screen text-white"><CinematicBackground /><nav className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-black/45 backdrop-blur-2xl"><div className="mx-auto flex max-w-[96rem] items-center justify-between px-4 py-4"><Link href="/" className="font-serif text-2xl tracking-[-.05em]">WHISPERX | STUDIO</Link><div className="hidden gap-2 lg:flex">{publicNavigation.map((item) => <a className="rounded-full px-3 py-2 text-xs uppercase tracking-[.16em] text-white/55 hover:bg-white/10 hover:text-white" href={`#${item.toLowerCase()}`} key={item}>{item}</a>)}</div><IconButton label="Open command palette" onClick={() => setCommand(true)}>⌘</IconButton></div></nav><CommandPalette open={command} onClose={() => setCommand(false)} /><main>{children}</main></div>;
-}
+function PreviewWindow() { return <Card className="overflow-hidden p-0"><div className="flex items-center justify-between border-b border-[var(--border)] p-4"><span className="flex gap-2"><i className="h-3 w-3 rounded-full bg-[var(--danger)]" /><i className="h-3 w-3 rounded-full bg-[var(--warning)]" /><i className="h-3 w-3 rounded-full bg-[var(--success)]" /></span><Kicker>Live application preview</Kicker></div><div className="grid gap-4 p-5 lg:grid-cols-[1fr_280px]"><div className="rounded-[24px] bg-[var(--surfaceSoft)] p-6"><Kicker>Canvas</Kicker><h3 className="mt-16 max-w-xl text-[clamp(38px,7vw,84px)] font-bold leading-[.9] tracking-[-.05em]">Create interfaces that feel alive.</h3><div className="mt-8 grid gap-3 sm:grid-cols-3">{['idle', 'hover', 'selected'].map((s) => <div className="rounded-2xl border border-[var(--borderStrong)] bg-[var(--surface)] p-4" key={s}>{s}</div>)}</div></div><div className="space-y-3">{['Layer panel', 'Floating toolbar', 'Inspector preview', 'Publish toast'].map((x) => <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4" key={x}>{x}</div>)}</div></div></Card>; }
 
-function Opening() {
-  return <section id="opening" className="grid min-h-screen place-items-center px-4 pt-24"><motion.div initial={{ opacity: 0, scale: .96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2 }} className="w-full max-w-[92rem] rounded-[2.5rem] border border-white/10 bg-white/[.035] p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl md:p-8"><MetadataBar items={['quiet technology', 'editorial precision', 'cinematic interface']} /><div className="mt-8 grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-end"><div><p className="font-mono text-xs uppercase tracking-[.35em] text-[#d9ff3f]">official public experience</p><h1 className="mt-5 font-serif text-[clamp(4.8rem,13vw,14rem)] leading-[.75] tracking-[-.1em]">A visual operating system for creative technology.</h1></div><p className="max-w-xl text-xl leading-relaxed text-white/68">The homepage is the product: an immersive field of reusable components, motion grammar, intelligent workflows, and editorial structure.</p></div></motion.div></section>;
-}
+function Landing() { return <Shell><section className="mx-auto grid min-h-[88vh] max-w-[1440px] items-center gap-10 px-6 py-16 lg:grid-cols-[.9fr_1.1fr]"><div><Kicker>Emerald Night / Amber Dawn</Kicker><HeroTitle>Premium creative operating system.</HeroTitle><p className="mt-6 max-w-2xl text-xl leading-relaxed text-[var(--muted)]">WHISPERX Builder combines architecture, editorial typography, cinematic motion, and accessible production UI into a living workspace.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/builder" className="inline-flex min-h-11 items-center rounded-full bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--onPrimary)] shadow-[var(--glowPrimary)] hover:bg-[var(--primaryHover)] focus-visible:ring-4 focus-visible:ring-[var(--primaryGlow)]">Enter builder</Link><Link href="/marketplace" className="inline-flex min-h-11 items-center rounded-full border border-[var(--borderStrong)] bg-[var(--surfaceGlass)] px-5 text-sm font-semibold text-[var(--foreground)] hover:bg-[var(--surfaceSoft)] focus-visible:ring-4 focus-visible:ring-[var(--primaryGlow)]">Browse systems</Link></div></div><PreviewWindow /></section><section className="mx-auto grid max-w-[1440px] gap-5 px-6 py-16 lg:grid-cols-3">{['Product preview', 'Builder canvas', 'AI studio', 'Dashboard stats', 'Gallery showcase', 'Final CTA'].map((x, i) => <Card key={x}><Kicker>{String(i + 1).padStart(2, '0')}</Kicker><h2 className="mt-4 text-4xl font-bold tracking-[-.03em]">{x}</h2><p className="mt-3 text-[var(--muted)]">A responsive, cinematic module with loading, empty, success, error, focus, and reduced-motion behavior.</p></Card>)}</section></Shell>; }
 
-function Hero() {
-  const [state, setState] = useState<SceneState>('discover');
-  return <section id="hero" className="mx-auto grid max-w-[96rem] gap-8 px-4 py-20 md:px-8 lg:grid-cols-[.55fr_1fr]"><div className="space-y-6 lg:sticky lg:top-28 lg:self-start"><SectionNumber n="01" label="Hero" /><h2 className="font-serif text-[clamp(3.6rem,8vw,8rem)] leading-[.78] tracking-[-.08em]">The entire system inside one cinematic scene.</h2><p className="text-lg leading-relaxed text-white/62">No cards. No lists. The product appears as a living workspace where discovery, composition, intelligence, motion, and deployment happen together.</p><div className="flex flex-wrap gap-2">{storyChapters.map((chapter) => <button key={chapter.state} onClick={() => setState(chapter.state)} className={cn('rounded-full border px-4 py-2 text-xs uppercase tracking-[.18em] transition focus-visible:ring-4 focus-visible:ring-[#45d6ff]/30', state === chapter.state ? 'border-[#d9ff3f] bg-[#d9ff3f] text-black' : 'border-white/15 bg-white/[.04] text-white/70 hover:border-[#ff4fd8]')}>{chapter.state}</button>)}</div></div><ProductScene state={state} /></section>;
-}
+function Builder() { const [layer, setLayer] = useState('Hero headline'); const [zoom, setZoom] = useState(100); const [viewport, setViewport] = useState('Desktop'); const [toast, setToast] = useState(''); return <Shell><section className="grid min-h-[calc(100vh-80px)] gap-4 p-4 lg:grid-cols-[260px_1fr_320px]"><Card><Kicker>Layers</Kicker>{['Hero headline', 'CTA cluster', 'Marketplace rail', 'AI result card'].map((l) => <button key={l} onClick={() => setLayer(l)} className={cn('panel-link', layer === l && 'bg-[var(--primarySoft)] text-[var(--foreground)] ring-1 ring-[var(--primary)]')}>{l}</button>)}<Button onClick={() => setToast('Published preview is live.')}>Publish</Button></Card><Card className="relative overflow-hidden"><div className="mb-4 flex flex-wrap items-center gap-2"><select aria-label="Viewport" className="field max-w-40" value={viewport} onChange={(e) => setViewport(e.target.value)}>{['Desktop', 'Tablet', 'Mobile'].map((v) => <option key={v}>{v}</option>)}</select><Button variant="ghost" onClick={() => setZoom(Math.max(50, zoom - 10))}>−</Button><Button variant="ghost" onClick={() => setZoom(100)}>Reset {zoom}%</Button><Button variant="ghost" onClick={() => setZoom(Math.min(150, zoom + 10))}>＋</Button></div><motion.div animate={{ scale: zoom / 100 }} className="origin-top rounded-[32px] border border-[var(--borderStrong)] bg-[var(--surfaceSoft)] p-8"><Kicker>{viewport} canvas / selected {layer}</Kicker><h1 className="mt-12 max-w-3xl text-[clamp(42px,7vw,92px)] font-bold leading-[.9] tracking-[-.05em]">A workspace that moves like cinema and edits like print.</h1><div className="mt-8 flex gap-3"><Button>Generate</Button><Button variant="ghost">Preview</Button></div></motion.div><div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2 rounded-full border border-[var(--border)] bg-[var(--surfaceElevated)] p-2"><Button variant="ghost">Move</Button><Button variant="ghost">Frame</Button><Button variant="ghost">Text</Button></div></Card><Card><Kicker>Inspector</Kicker><label className="mt-4 block text-sm" htmlFor="opacity">Opacity for {layer}</label><input id="opacity" className="mt-2 w-full accent-[var(--primary)]" type="range" /><Button onClick={() => setToast(`Updated ${layer}.`)}>Apply property</Button><div className="mt-6 rounded-2xl bg-[var(--surfaceSoft)] p-4 text-sm text-[var(--muted)]">Command palette, preview window, publish action, selected layer state, zoom, and viewport switcher are interactive.</div></Card></section>{toast && <div role="status" className="fixed bottom-6 right-6 rounded-2xl bg-[var(--success)] p-4 font-semibold text-black shadow-2xl">{toast}</div>}</Shell>; }
 
-function EditorialStory() {
-  return <section id="story" className="mx-auto max-w-[86rem] px-4 py-24 md:px-8"><SectionNumber n="02" label="Editorial Story" /><div className="space-y-20">{storyChapters.map((chapter, index) => <motion.article key={chapter.state} initial={{ opacity: 0, y: 36 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-20%' }} transition={{ duration: .8 }} className={cn('grid gap-8 lg:grid-cols-[.7fr_1fr] lg:items-center', index % 2 ? 'lg:[&>*:first-child]:order-2' : '')}><p className="font-mono text-xs uppercase tracking-[.3em] text-[#45d6ff]">{String(index + 1).padStart(2, '0')} / {chapter.state}</p><div><h3 className="font-serif text-[clamp(3rem,7vw,7rem)] leading-[.82] tracking-[-.07em]">{chapter.title}</h3><p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/62">{chapter.copy}</p></div></motion.article>)}</div></section>;
-}
+function Marketplace() { const [q, setQ] = useState(''); const [cat, setCat] = useState('All'); const [preview, setPreview] = useState<(typeof allLibrary)[number] | null>(null); const filtered = allLibrary.filter((i) => (cat === 'All' || i.category === cat) && `${i.title} ${i.description} ${i.tags.join(' ')}`.toLowerCase().includes(q.toLowerCase())); return <Shell><section className="mx-auto max-w-[1440px] px-6 py-12"><Kicker>Marketplace</Kicker><h1 className="mt-4 text-6xl font-bold tracking-[-.04em]">Install creative systems.</h1><div className="mt-6 grid gap-3 lg:grid-cols-[1fr_auto]"><label><span className="sr-only">Search marketplace</span><input className="field" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search components, templates, motion…" /></label><p className="self-center text-[var(--muted)]">{filtered.length} results</p></div><div className="mt-4 flex gap-2 overflow-x-auto pb-2">{wxCategories.map((c) => <button onClick={() => setCat(c)} className={cn('chip', cat === c && 'chip-active')} key={c}>{c}</button>)}</div>{filtered.length === 0 ? <Card className="mt-8"><h2 className="text-3xl font-bold">No matching systems.</h2><p className="text-[var(--muted)]">Try a broader search or clear active chips.</p></Card> : <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">{filtered.map((i) => <Card key={i.id}><Kicker>{i.category} · {i.status}</Kicker><h2 className="mt-4 text-2xl font-bold">{i.title}</h2><p className="mt-2 line-clamp-2 text-sm text-[var(--muted)]">{i.description}</p><div className="mt-5 flex gap-2"><Button onClick={() => setPreview(i)}>Preview</Button><Button variant="ghost">Install</Button></div></Card>)}</div>}<section className="mt-12"><h2 className="text-4xl font-bold">Motion presets</h2><div className="mt-5 grid gap-4 md:grid-cols-4">{motionPresets.slice(0, 8).map((m) => <Card key={m.id}><span className="text-3xl">{m.icon}</span><h3 className="mt-3 font-bold">{m.title}</h3><p className="text-sm text-[var(--muted)]">{m.duration}ms · {m.token}</p></Card>)}</div></section></section><Drawer title={preview?.title || 'Preview'} open={Boolean(preview)} onClose={() => setPreview(null)}>{preview && <div><Kicker>{preview.category}</Kicker><p className="mt-4 text-[var(--muted)]">{preview.description}</p><Button>Install system</Button></div>}</Drawer></Shell>; }
 
-function VisualExperience() {
-  const visualItems = platformItems.filter((item) => item.featured).slice(0, 6);
-  return <section id="workspace" className="mx-auto max-w-[96rem] px-4 py-24 md:px-8"><SectionNumber n="03" label="Interactive Product Moment" /><div className="grid gap-8 lg:grid-cols-[1fr_.55fr]"><ProductScene state="animate" /><GlassPanel><h2 className="font-serif text-[clamp(3rem,7vw,6.5rem)] leading-[.8] tracking-[-.07em]">Interaction replaces explanation.</h2><p className="mt-6 text-lg leading-relaxed text-white/62">The system demonstrates capability through working product moments: a canvas, an intelligent prompt layer, a preview surface, an inspector, and a command interface.</p><div className="mt-8"><ImmersiveCarousel items={visualItems} /></div></GlassPanel></div></section>;
-}
-
-function CreativeWorkflow() {
-  return <section id="gallery" className="mx-auto max-w-[96rem] px-4 py-24 md:px-8"><SectionNumber n="04" label="Creative Workflow" /><div className="rounded-[2.5rem] border border-white/10 bg-[#f4efe4] p-6 text-black shadow-[18px_18px_0_#000]"><div className="grid gap-10 lg:grid-cols-[.8fr_1fr]"><h2 className="font-serif text-[clamp(4rem,10vw,10rem)] leading-[.75] tracking-[-.09em]">Discover Build Animate Create Deploy</h2><div className="grid content-between gap-6"><p className="text-xl leading-relaxed text-black/70">A continuous workflow, not a set of isolated tools. Every layer is composed from the same production components and motion language used by the public experience.</p><div className="grid gap-3">{storyChapters.map((chapter) => <div key={chapter.state} className="rounded-2xl border-2 border-black bg-white p-4 shadow-[6px_6px_0_#000]"><p className="font-mono text-xs uppercase">{chapter.state}</p><p className="mt-1 text-sm text-black/70">{chapter.copy}</p></div>)}</div></div></div></div></section>;
-}
-
-function DesignLanguage() {
-  return <section id="language" className="mx-auto max-w-[96rem] px-4 py-24 md:px-8"><SectionNumber n="05" label="Design Language" /><div className="grid gap-5 lg:grid-cols-[1fr_1fr]"><h2 className="font-serif text-[clamp(4rem,10vw,10rem)] leading-[.76] tracking-[-.09em]">Luxury is a system of constraints.</h2><div className="space-y-4">{themeTokens.slice(0, 5).map((token) => <motion.div key={token.id} whileHover={{ x: 8 }} className="flex items-center gap-4 rounded-[1.5rem] border border-white/10 bg-white/[.04] p-4"><span className="h-16 w-16 rounded-2xl border border-white/10" style={{ background: token.value.startsWith('#') ? token.value : '#111' }} /><span><strong className="block font-serif text-2xl">{token.name}</strong><span className="text-sm text-white/55">{token.usage}</span></span></motion.div>)}</div></div></section>;
-}
-
-function TrustTechnology() {
-  return <section id="trust" className="mx-auto max-w-[86rem] px-4 py-24 text-center md:px-8"><SectionNumber n="06" label="Trust & Technology" /><h2 className="font-serif text-[clamp(4rem,10vw,11rem)] leading-[.75] tracking-[-.1em]">Built as the product. Not a facade.</h2><p className="mx-auto mt-8 max-w-3xl text-xl leading-relaxed text-white/62">The public website uses the same reusable components, central dataset, motion tokens, local preference layer, accessibility rules, and responsive layout logic that support the product surfaces behind it.</p><div className="mt-10"><Button>Request private preview</Button></div></section>;
-}
-
-function Footer() {
-  return <footer className="border-t border-white/10 px-4 py-10 md:px-8"><div className="mx-auto flex max-w-[96rem] flex-col justify-between gap-6 md:flex-row md:items-center"><p className="font-serif text-3xl">WHISPERX | STUDIO</p><p className="font-mono text-xs uppercase tracking-[.22em] text-white/45">Quiet Technology / Editorial Precision / Invisible Complexity</p></div></footer>;
-}
-
-function PublicWebsite() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  return <AppShell><motion.div style={{ scaleX }} className="fixed left-0 right-0 top-0 z-50 h-1 origin-left bg-[#d9ff3f]" /><Opening /><Hero /><EditorialStory /><VisualExperience /><CreativeWorkflow /><DesignLanguage /><TrustTechnology /><Footer /></AppShell>;
-}
+function Studio() { const reduce = useReducedMotion(); const [text, setText] = useState(''); const [loading, setLoading] = useState(false); const result = 'Generated premium hero with editorial hierarchy, ambient glow, keyboard-safe CTA group, and responsive canvas constraints.'; useEffect(() => { if (!loading) return; setText(''); let i = 0; const t = setInterval(() => { setText(result.slice(0, i++)); if (i > result.length) { clearInterval(t); setLoading(false); } }, reduce ? 1 : 28); return () => clearInterval(t); }, [loading, reduce]); return <Shell><section className="mx-auto grid max-w-[1440px] gap-6 px-6 py-12 lg:grid-cols-[.8fr_1.2fr]"><Card><Kicker>AI Studio</Kicker><h1 className="mt-4 text-6xl font-bold tracking-[-.04em]">Generate with context.</h1><textarea aria-label="AI prompt" className="field mt-6 min-h-40" defaultValue={aiPrompts[0].prompt} /><Button onClick={() => setLoading(true)}>Generate interface</Button><div className="mt-6 flex flex-wrap gap-2">{aiPrompts.slice(0, 5).map((p) => <button className="chip" key={p.id}>{p.title}</button>)}</div></Card><Card><Kicker>{loading ? 'AI thinking' : 'Streaming result'}</Kicker><div className="mt-5 min-h-72 rounded-[28px] bg-[var(--surfaceSoft)] p-6 font-mono text-sm leading-relaxed">{loading && !text ? <span className="animate-pulse">Synthesizing layout rhythm…</span> : text || 'Run a generation to stream production-ready output here.'}</div><Button>Apply to canvas</Button></Card></section></Shell>; }
+function Dashboard() { return <Shell><section className="mx-auto max-w-[1440px] px-6 py-12"><Kicker>Dashboard</Kicker><h1 className="mt-4 text-6xl font-bold tracking-[-.04em]">Operational clarity.</h1><div className="mt-8 grid gap-5 md:grid-cols-4">{[['Projects', 8], ['Components', 60], ['Templates', 20], ['A11y score', 98]].map(([l, v]) => <Card key={l as string}><p className="text-[var(--muted)]">{l}</p><p className="mt-3 text-5xl font-bold tabular-nums">{v}</p></Card>)}</div><div className="mt-8 grid gap-5 lg:grid-cols-2"><Card><h2 className="text-3xl font-bold">Projects</h2>{projects.map((p) => <div className="panel-link" key={p.id}>{p.title}<span className="block text-xs text-[var(--muted)]">{p.status} · {p.updatedAt}</span></div>)}</Card><Card><h2 className="text-3xl font-bold">Activity feed</h2>{activities.map((a) => <div className="panel-link" key={a.id}>{a.message}<span className="block text-xs text-[var(--muted)]">{a.user} · {a.timestamp}</span></div>)}</Card></div></section></Shell>; }
+function Docs() { return <Shell><section className="mx-auto grid max-w-[1440px] gap-6 px-6 py-12 lg:grid-cols-[280px_1fr]"><Card className="lg:sticky lg:top-24 lg:self-start"><Kicker>Docs</Kicker>{['Design tokens', 'Components', 'Motion', 'Code examples', 'Accessibility'].map((x) => <a className="panel-link" href={`#${x.toLowerCase().replaceAll(' ', '-')}`} key={x}>{x}</a>)}</Card><article className="space-y-6"><HeroTitle>Build notes for a cinematic operating system.</HeroTitle>{['Design tokens', 'Components', 'Motion', 'Code examples', 'Accessibility'].map((x) => <Card id={x.toLowerCase().replaceAll(' ', '-')} key={x}><Kicker>{x}</Kicker><h2 className="mt-3 text-4xl font-bold">{x} documentation preview</h2><p className="mt-3 text-[var(--muted)]">Semantic structure, focus-visible rings, reduced motion, search, drawers, command palette, skeleton, empty, error, and success states are documented as first-class product behavior.</p><pre className="mt-5 overflow-auto rounded-2xl bg-[var(--surfaceSoft)] p-4 font-mono text-sm"><code>{`<Button variant="primary" aria-label="Publish preview">Publish</Button>`}</code></pre></Card>)}</article></section></Shell>; }
+function TokensPage() { return <Shell><section className="mx-auto max-w-[1440px] px-6 py-12"><HeroTitle>Tokens, assets, and themes.</HeroTitle><div className="mt-8 grid gap-4 md:grid-cols-3">{assets.map((a) => <Card key={a.id}><Kicker>{a.type}</Kicker><h2 className="text-2xl font-bold">{a.title}</h2><p className="text-[var(--muted)]">{a.thumbnail} · {a.size}</p></Card>)}</div></section></Shell>; }
+function Footer() { return <footer className="border-t border-[var(--border)] px-6 py-10 text-center text-sm text-[var(--muted)]">WHISPERX Builder · Emerald Night and Amber Dawn · Client-side creative workspace</footer>; }
 
 export function PlatformPage({ kind }: { kind: PageKind }) {
-  void kind;
-  return <PublicWebsite />;
+  if (kind === 'builder') return <Builder />;
+  if (kind === 'marketplace' || kind === 'components' || kind === 'motion') return <Marketplace />;
+  if (kind === 'ai') return <Studio />;
+  if (kind === 'dashboard') return <Dashboard />;
+  if (kind === 'docs') return <Docs />;
+  if (kind === 'assets' || kind === 'tokens' || kind === 'themes' || kind === 'settings') return <TokensPage />;
+  return <Landing />;
 }
