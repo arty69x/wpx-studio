@@ -1,49 +1,5 @@
 import { platformItems } from '@/data/platform';
-import type { WPXDomNode, WPXDomProject, WPXPreviewMode } from './types';
-
-export type WPXFilterCriteria = Partial<{
-  type: string;
-  category: string;
-  tag: string;
-  status: string;
-  premium: boolean;
-  featured: boolean;
-  motion: string;
-  token: string;
-  responsiveMode: WPXPreviewMode;
-  accessibilityStatus: string;
-  performanceStatus: string;
-  source: string;
-  updatedAfter: number;
-  updatedBefore: number;
-}>;
-
-const tags = (node: WPXDomNode) => Array.isArray(node.metadata.tags) ? node.metadata.tags as string[] : [];
-const matchesNode = (node: WPXDomNode, criteria: WPXFilterCriteria) => (!criteria.type || node.type === criteria.type)
-  && (!criteria.category || node.metadata.category === criteria.category)
-  && (!criteria.tag || tags(node).includes(criteria.tag))
-  && (!criteria.status || node.metadata.status === criteria.status)
-  && (criteria.premium === undefined || node.metadata.premium === criteria.premium)
-  && (criteria.featured === undefined || node.metadata.featured === criteria.featured)
-  && (!criteria.motion || node.motion?.preset === criteria.motion)
-  && (!criteria.token || Object.keys(node.tokens).includes(criteria.token))
-  && (!criteria.responsiveMode || Boolean(node.responsive?.[criteria.responsiveMode]))
-  && (!criteria.accessibilityStatus || node.metadata.accessibilityStatus === criteria.accessibilityStatus)
-  && (!criteria.performanceStatus || node.metadata.performanceStatus === criteria.performanceStatus)
-  && (!criteria.source || node.source?.kind === criteria.source)
-  && (!criteria.updatedAfter || node.updatedAt >= criteria.updatedAfter)
-  && (!criteria.updatedBefore || node.updatedAt <= criteria.updatedBefore);
-
-export function filterDomNodes(project: WPXDomProject, criteria: WPXFilterCriteria) {
-  const out: WPXDomNode[] = [];
-  const visit = (node: WPXDomNode) => { if (matchesNode(node, criteria)) out.push(node); node.children.forEach(visit); };
-  project.pages.forEach((page) => visit(page.root));
-  return out;
-}
-
-export const filterRegistry = (criteria: WPXFilterCriteria) => platformItems.filter((item) => (!criteria.type || item.type === criteria.type)
-  && (!criteria.category || item.category === criteria.category)
-  && (!criteria.tag || item.tags.includes(criteria.tag))
-  && (!criteria.status || item.status === criteria.status)
-  && (criteria.premium === undefined || item.premium === criteria.premium)
-  && (criteria.featured === undefined || item.featured === criteria.featured));
+import type { WPXDomNode, WPXDomProject, WPXFilterCriteria } from './types';
+const matchesNode = (node: WPXDomNode, c: WPXFilterCriteria) => (!c.type || node.type === c.type) && (!c.category || node.metadata.category === c.category) && (!c.tag || node.metadata.tags?.includes(c.tag)) && (!c.status || node.metadata.status === c.status) && (c.premium === undefined || node.metadata.premium === c.premium) && (c.featured === undefined || node.metadata.featured === c.featured) && (!c.motion || node.motion.preset === c.motion) && (!c.token || Object.keys(node.tokens).includes(c.token)) && (!c.responsiveMode || node.responsive.some((r) => r.mode === c.responsiveMode)) && (!c.accessibilityStatus || node.metadata.accessibilityStatus === c.accessibilityStatus) && (!c.performanceStatus || node.metadata.performanceStatus === c.performanceStatus) && (!c.source || node.source.kind === c.source) && (!c.updatedAfter || node.updatedAt >= c.updatedAfter) && (!c.updatedBefore || node.updatedAt <= c.updatedBefore);
+export function filterDomNodes(project: WPXDomProject, criteria: WPXFilterCriteria) { const out: WPXDomNode[] = []; const visit = (n: WPXDomNode) => { if (matchesNode(n, criteria)) out.push(n); n.children.forEach(visit); }; visit(project.domTree); return out; }
+export const filterRegistry = (criteria: WPXFilterCriteria) => platformItems.filter((i) => (!criteria.type || i.type === criteria.type) && (!criteria.category || i.category === criteria.category) && (!criteria.tag || i.tags.includes(criteria.tag)) && (!criteria.status || i.status === criteria.status) && (criteria.premium === undefined || i.premium === criteria.premium) && (criteria.featured === undefined || i.featured === criteria.featured));

@@ -1,26 +1,4 @@
+import { platformItems, themeTokens } from '@/data/platform';
 import type { WPXDomNode, WPXDomProject, WPXSearchResult } from './types';
-
-function visit(node: WPXDomNode, path: string, query: string, results: WPXSearchResult[]) {
-  const payload = [node.id, node.type, node.name, node.role, node.content, node.className, JSON.stringify(node.metadata)].filter(Boolean).join(' ').toLowerCase();
-  const index = payload.indexOf(query);
-  if (index >= 0) {
-    results.push({
-      id: node.id,
-      type: node.type,
-      path,
-      label: node.name,
-      excerpt: payload.slice(Math.max(0, index - 32), index + query.length + 72),
-      score: Math.max(1, 100 - path.length + (node.name.toLowerCase().includes(query) ? 25 : 0)),
-      actionSuggestions: ['select-node', 'open-inspector'],
-    });
-  }
-  node.children.forEach((child, childIndex) => visit(child, `${path}/${child.type}[${childIndex}]`, query, results));
-}
-
-export function searchDomProject(project: WPXDomProject, query: string): WPXSearchResult[] {
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) return [];
-  const results: WPXSearchResult[] = [];
-  for (const page of project.pages) visit(page.root, `${page.path || '/'}:${page.root.id}`, normalized, results);
-  return results.sort((a, b) => b.score - a.score);
-}
+function walk(node: WPXDomNode, path: string, visit: (node: WPXDomNode, path: string) => void) { visit(node, path); node.children.forEach((child, index) => walk(child, `${path}/${child.type}[${index}]`, visit)); }
+export function searchDomProject(project: WPXDomProject, query: string): WPXSearchResult[] { const q = query.trim().toLowerCase(); if (!q) return []; const results: WPXSearchResult[] = []; walk(project.domTree, 'domTree', (node, path) => { const hay = JSON.stringify([node.name,node.type,node.role,node.content,node.className,node.tokens,node.metadata]).toLowerCase(); if (hay.includes(q)) results.push({ id: node.id, type: 'node', path, label: node.name, excerpt: hay.slice(Math.max(0, hay.indexOf(q)-40), hay.indexOf(q)+80), score: 100 - path.length, actionSuggestions: ['select-node','open-inspector'] }); }); for (const item of platformItems) { const hay = `${item.title} ${item.description} ${item.tags.join(' ')}`.toLowerCase(); if (hay.includes(q)) results.push({ id: item.id, type: item.type, path: `registry/${item.type}/${item.id}`, label: item.title, excerpt: item.description, score: 60, actionSuggestions: ['insert-as-dom-node','preview-template'] }); } for (const token of themeTokens) if (`${token.name} ${token.value} ${token.usage}`.toLowerCase().includes(q)) results.push({ id: token.id, type: 'token', path: `tokens/${token.id}`, label: token.name, excerpt: token.usage, score: 50, actionSuggestions: ['apply-token'] }); return results.sort((a,b) => b.score-a.score); }

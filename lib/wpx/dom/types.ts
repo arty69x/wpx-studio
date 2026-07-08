@@ -1,110 +1,72 @@
-export type WPXPreviewMode = 'desktop' | 'tablet' | 'mobile';
-export type WPXThemeMode = 'dark' | 'light';
-export type WPXDomSourceKind = 'default' | 'prompt' | 'import' | 'template' | 'random' | 'manual';
+import type { DependencyEdge, Stylesheet, WPXAsset, WPXComponent } from '@/lib/studio';
 
-export type WPXDomMotion = {
-  preset?: string;
-  duration?: number;
-  easing?: string;
-  disabled?: boolean;
-};
+export type WPXDomNodeType = 'document' | 'page' | 'section' | 'component' | 'layout' | 'text' | 'media' | 'button' | 'form' | 'collection' | 'slot';
+export type WPXDomRole = 'root' | 'page' | 'navigation' | 'hero' | 'content' | 'cta' | 'asset' | 'footer' | 'utility';
+export type WPXResponsiveMode = 'desktop' | 'tablet' | 'mobile';
+export type WPXPatchAction = 'create' | 'update' | 'add' | 'remove' | 'duplicate' | 'move' | 'wrap' | 'unwrap' | 'replace' | 'select' | 'snapshot';
 
-export type WPXDomSource = {
-  kind: WPXDomSourceKind;
-  ref?: string;
-};
+export type WPXClassAstNode = { token: string; variants: string[]; utility: string; group: string; important?: boolean };
+export type WPXDomSource = { kind: 'default' | 'imported-html' | 'component' | 'template' | 'random' | 'prompt' | 'system'; id?: string; url?: string; raw?: string };
+export type WPXDomMetadata = Record<string, unknown> & { category?: string; tags?: string[]; status?: string; featured?: boolean; premium?: boolean; accessibilityStatus?: string; performanceStatus?: string };
+export type WPXDomEvent = { type: string; action: string; target?: string; payload?: Record<string, unknown> };
+export type WPXDomState = { id: string; name: string; value: unknown };
+export type WPXDomResponsiveRule = { mode: WPXResponsiveMode; className?: string; style?: Record<string, string | number>; layout?: Record<string, unknown> };
 
 export type WPXDomNode = {
   id: string;
-  type: string;
+  type: WPXDomNodeType;
   name: string;
-  role?: string;
+  role: WPXDomRole | string;
   props: Record<string, unknown>;
-  content?: string;
+  content: string | Record<string, unknown> | null;
   tokens: Record<string, string>;
   layout: Record<string, unknown>;
   style: Record<string, string | number>;
-  className?: string;
-  classAst?: unknown;
-  motion?: WPXDomMotion;
-  events?: Record<string, unknown>;
-  states?: Record<string, unknown>;
-  responsive?: Record<string, Partial<WPXDomNode>>;
+  className: string;
+  classAst: WPXClassAstNode[];
+  motion: Record<string, unknown>;
+  events: WPXDomEvent[];
+  states: WPXDomState[];
+  responsive: WPXDomResponsiveRule[];
   children: WPXDomNode[];
-  source?: WPXDomSource;
-  metadata: Record<string, unknown>;
+  source: WPXDomSource;
+  metadata: WPXDomMetadata;
   createdAt: number;
   updatedAt: number;
 };
 
-export type WPXDomPage = {
-  id: string;
-  name: string;
-  path: string;
-  root: WPXDomNode;
-  seo?: Record<string, unknown>;
-};
-
-export type WPXDomPatch = {
-  id: string;
-  label: string;
-  timestamp: number;
-  before: WPXDomProject;
-  after: WPXDomProject;
-  affectedNodeIds: string[];
-};
-
-export type WPXDomCommand = WPXDomPatch;
+export type WPXDomPage = { id: string; name: string; slug: string; title: string; description: string; rootNodeId: string; domTree: WPXDomNode; metadata: WPXDomMetadata; createdAt: number; updatedAt: number };
+export type WPXValidationIssue = { id: string; severity: 'info' | 'warning' | 'error'; path: string; message: string };
+export type WPXValidationReport = { id: string; createdAt: number; status: 'pass' | 'warn' | 'fail'; issues: WPXValidationIssue[] };
+export type WPXProductionReport = { id: string; createdAt: number; status: 'ready' | 'blocked'; checks: WPXValidationIssue[]; files: string[] };
+export type WPXImportSource = { id: string; type: string; label: string; createdAt: number; metadata?: Record<string, unknown> };
+export type WPXExportTarget = { id: string; type: 'html' | 'next' | 'zip' | 'project-json' | 'dom-json'; label: string; createdAt: number };
+export type WPXDomCommandSnapshot = { id: string; label: string; action: WPXPatchAction; timestamp: number; domTree: WPXDomNode; selectedNodeId?: string };
 
 export type WPXDomProject = {
   id: string;
   name: string;
-  activePageId: string;
-  pages: WPXDomPage[];
-  selectedNodeId?: string;
-  previewMode: WPXPreviewMode;
-  themeMode: WPXThemeMode;
-  motionEnabled: boolean;
-  safeAssetMode: boolean;
-  assets: unknown[];
-  designTokens: Record<string, string>;
-  motionTokens: Record<string, unknown>;
-  commandHistory: WPXDomCommand[];
-  redoStack: WPXDomCommand[];
-  validationReports: unknown[];
   createdAt: number;
   updatedAt: number;
+  metadata: WPXDomMetadata;
+  pages: WPXDomPage[];
+  domTree: WPXDomNode;
+  components: WPXComponent[];
+  assets: WPXAsset[];
+  stylesheets: Stylesheet[];
+  dependencyEdges: DependencyEdge[];
+  designTokens: Record<string, string>;
+  motionTokens: Record<string, unknown>;
+  commandHistory: WPXDomCommandSnapshot[];
+  redoStack: WPXDomCommandSnapshot[];
+  importSources: WPXImportSource[];
+  exportTargets: WPXExportTarget[];
+  validationReports: WPXValidationReport[];
+  productionReports: WPXProductionReport[];
+  selectedNodeId?: string;
+  safeAssetMode: boolean;
+  sourceUrls: string[];
 };
 
-export type WPXSearchResult = {
-  id: string;
-  type: string;
-  path: string;
-  label: string;
-  excerpt: string;
-  score: number;
-  actionSuggestions: string[];
-};
-
-export type WPXSuggestion = {
-  id: string;
-  title: string;
-  reason: string;
-  affectedNodeIds: string[];
-  actionType: 'addNode' | 'updateNode' | 'replaceProject';
-  proposedPatch: Partial<WPXDomNode> | WPXDomNode;
-};
-
-export type WPXValidationIssue = {
-  id: string;
-  severity: 'info' | 'warning' | 'error';
-  path: string;
-  message: string;
-};
-
-export type WPXValidationReport = {
-  id: string;
-  status: 'pass' | 'warn' | 'fail';
-  issues: WPXValidationIssue[];
-  createdAt: number;
-};
+export type WPXSearchResult = { id: string; type: string; path: string; label: string; excerpt: string; score: number; actionSuggestions: string[] };
+export type WPXFilterCriteria = Partial<{ type: string; category: string; tag: string; status: string; premium: boolean; featured: boolean; motion: string; token: string; responsiveMode: WPXResponsiveMode; accessibilityStatus: string; performanceStatus: string; source: string; updatedAfter: number; updatedBefore: number }>;

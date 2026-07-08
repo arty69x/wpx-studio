@@ -7,7 +7,6 @@ import { useDomProjectStore } from '@/lib/wpx/dom/store';
 import type { WPXSuggestion } from '@/lib/wpx/dom/types';
 import { CommandBar } from './CommandBar';
 import { ExportPanel } from './ExportPanel';
-import { ImportPanel } from './ImportPanel';
 import { Inspector } from './Inspector';
 import { LayerTree } from './LayerTree';
 import { LivePreview } from './LivePreview';
@@ -15,7 +14,7 @@ import { OneClickPanel } from './OneClickPanel';
 import { SearchPanel } from './SearchPanel';
 import { SuggestionPanel } from './SuggestionPanel';
 
-type Panel = 'search' | 'suggestions' | 'export' | 'oneClick' | 'import' | null;
+type Panel = 'search' | 'suggestions' | 'export' | 'oneClick' | null;
 
 export function BuilderShell() {
   const store = useDomProjectStore();
@@ -31,9 +30,6 @@ export function BuilderShell() {
     const target = suggestion.affectedNodeIds[0] ?? root.id;
     if (suggestion.actionType === 'addNode') store.addNode(target, suggestion.proposedPatch, suggestion.title);
     if (suggestion.actionType === 'updateNode') store.updateNode(target, suggestion.proposedPatch, suggestion.title);
-  };
-  const importNodes = (nodes: Parameters<typeof store.addNode>[1][], label: string) => {
-    nodes.forEach((node, index) => store.addNode(selectedNode?.id ?? root.id, node, `${label} #${index + 1}`));
   };
 
   return <main className="min-h-screen bg-[var(--background)] p-3 text-[var(--foreground)]">
@@ -55,7 +51,6 @@ export function BuilderShell() {
         {panel === 'search' && <SearchPanel project={store.project} onSelect={store.selectNode} />}
         {panel === 'suggestions' && <SuggestionPanel project={store.project} onApply={applySuggestion} />}
         {panel === 'export' && <ExportPanel project={store.project} />}
-        {panel === 'import' && <ImportPanel onImportNodes={importNodes} />}
         {panel === 'oneClick' && <OneClickPanel onBuild={store.setProject} />}
       </div>
       <Inspector node={selectedNode} onUpdate={(patch, label) => selectedNode && store.updateNode(selectedNode.id, patch, label)} />
