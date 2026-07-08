@@ -1,0 +1,22 @@
+import { createDomNode } from './defaults';
+
+export function createSeededRandom(seed = 1) {
+  let state = seed >>> 0;
+  return () => ((state = (state * 1664525 + 1013904223) >>> 0) / 2 ** 32);
+}
+
+export function randomHero(seed = 1) {
+  const random = createSeededRandom(seed);
+  const palettes = [['color-lime', 'color-pink'], ['color-cyan', 'color-paper']];
+  const palette = palettes[Math.floor(random() * palettes.length)];
+  return createDomNode({
+    type: 'section',
+    name: 'Random Hero',
+    role: 'hero',
+    className: 'grid gap-5 rounded-3xl p-10',
+    tokens: { accent: palette[0], secondary: palette[1] },
+    content: 'Generated from deterministic JSON DOM. Random output is data first, preview second.',
+    source: { kind: 'random', ref: `seed-${seed}` },
+    metadata: { category: 'Hero', tags: ['random'], status: 'draft' },
+  });
+}
