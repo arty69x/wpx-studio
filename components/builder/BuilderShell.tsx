@@ -13,10 +13,11 @@ import { Inspector } from './Inspector';
 import { LayerTree } from './LayerTree';
 import { LivePreview } from './LivePreview';
 import { OneClickPanel } from './OneClickPanel';
+import { PromptBuildPanel } from './PromptBuildPanel';
 import { SearchPanel } from './SearchPanel';
 import { SuggestionPanel } from './SuggestionPanel';
 
-type Panel = 'search' | 'suggestions' | 'export' | 'oneClick' | 'import' | 'filter' | null;
+type Panel = 'search' | 'suggestions' | 'export' | 'oneClick' | 'import' | 'filter' | 'prompt' | null;
 
 export function BuilderShell() {
   const store = useDomProjectStore();
@@ -59,6 +60,7 @@ export function BuilderShell() {
         {panel === 'export' && <ExportPanel project={store.project} />}
         {panel === 'import' && <ImportPanel onImportNodes={importNodes} />}
         {panel === 'oneClick' && <OneClickPanel onBuild={store.setProject} />}
+        {panel === 'prompt' && <PromptBuildPanel onBuild={store.setProject} />}
       </div>
       <Inspector node={selectedNode} onUpdate={(patch, label) => selectedNode && store.updateNode(selectedNode.id, patch, label)} />
     </section>

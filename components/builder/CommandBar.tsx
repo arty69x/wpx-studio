@@ -10,7 +10,7 @@ type Props = {
   onRedo: () => void;
   onAddSection: () => void;
   onAddHero: () => void;
-  onTogglePanel: (panel: 'search' | 'suggestions' | 'export' | 'oneClick' | 'import' | 'filter') => void;
+  onTogglePanel: (panel: 'search' | 'suggestions' | 'export' | 'oneClick' | 'import' | 'filter' | 'prompt') => void;
   onPreviewMode: (mode: WPXPreviewMode) => void;
   onThemeToggle: () => void;
   onMotionToggle: () => void;
@@ -26,6 +26,7 @@ export function CommandBar({ project, onUndo, onRedo, onAddSection, onAddHero, o
     <button className="control" onClick={() => onTogglePanel('filter')}>Filter</button>
     <button className="control" onClick={() => onTogglePanel('suggestions')}>Suggestions</button>
     <button className="control" onClick={() => onTogglePanel('oneClick')}>One Click</button>
+    <button className="control" onClick={() => onTogglePanel('prompt')}>Prompt</button>
     <button className="control" onClick={() => onTogglePanel('import')}>Import</button>
     <button className="control" onClick={() => onTogglePanel('export')}>Export</button>
     <div className="ml-auto flex gap-1">

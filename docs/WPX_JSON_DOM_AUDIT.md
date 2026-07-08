@@ -144,3 +144,12 @@ A Tailwind v3-compatible class adapter now exists before any Tailwind v4 upgrade
 - It resolves class conflicts deterministically and exports a per-node `tailwind-class-map.json` in the DOM ZIP package.
 - It exposes token-to-class mapping hooks for future design-token compilation.
 - It keeps css-tree in the analysis path for CSS parsing without changing the existing Tailwind v3 runtime.
+
+
+## Prompt matching engine update
+
+The builder now includes a DOM-first prompt matching path:
+
+- `lib/wpx/dom/match.ts` accepts prompt, style, target page type, optional source/image metadata, and returns matched template, components, tokens, motion, confidence, reasons, and a generated JSON DOM draft.
+- `PromptBuildPanel` previews the match result and applies the generated draft through the DOM project store.
+- Prompt generation still never creates direct JSX; it generates JSON DOM first and lets the renderer produce the preview.

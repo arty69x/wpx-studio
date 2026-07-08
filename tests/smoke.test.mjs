@@ -47,6 +47,7 @@ describe("WPX smoke test", () => {
     assert.ok(readText("lib/wpx/dom/exporters/html.ts").includes("createDomExportManifest"), "missing DOM export manifest");
     assert.ok(readText("lib/wpx/dom/exporters/package.ts").includes("createDomProjectZip"), "missing DOM ZIP exporter");
     assert.ok(readText("lib/wpx/dom/tailwind.ts").includes("resolveClassName"), "missing Tailwind compatibility adapter");
+    assert.ok(readText("lib/wpx/dom/match.ts").includes("matchPromptToDom"), "missing prompt/template match engine");
   });
 
   it("documents package usage and JSON DOM audit plan", () => {
@@ -59,7 +60,7 @@ describe("WPX smoke test", () => {
 
   it("wires Phase 4 Live Builder route and component shell", () => {
     assert.ok(readText("app/builder/page.tsx").includes("BuilderShell"), "builder route must render BuilderShell");
-    for (const file of ["BuilderShell", "LayerTree", "LivePreview", "Inspector", "CommandBar", "SearchPanel", "SuggestionPanel", "ExportPanel", "OneClickPanel", "ImportPanel", "FilterPanel"]) {
+    for (const file of ["BuilderShell", "LayerTree", "LivePreview", "Inspector", "CommandBar", "SearchPanel", "SuggestionPanel", "ExportPanel", "OneClickPanel", "ImportPanel", "FilterPanel", "PromptBuildPanel"]) {
       assert.equal(existsSync(join(root, `components/builder/${file}.tsx`)), true, `missing builder component: ${file}`);
     }
     const renderer = readText("lib/wpx/dom/renderer.tsx");
