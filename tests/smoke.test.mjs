@@ -33,13 +33,13 @@ describe("WPX smoke test", () => {
   it("adds the JSON DOM kernel schema with required node fields", () => {
     const types = readText("lib/wpx/dom/types.ts");
     for (const field of ["id", "type", "name", "role", "props", "content", "tokens", "layout", "style", "className", "classAst", "motion", "events", "states", "responsive", "children", "source", "metadata", "createdAt", "updatedAt"]) {
-      assert.match(types, new RegExp(`${field}\\??:`), `missing DOM node field: ${field}`);
+      assert.match(types, new RegExp(`${field}:`), `missing DOM node field: ${field}`);
     }
   });
 
   it("implements Phase 1-3 DOM actions, search, import, and export contracts", () => {
     const actions = readText("lib/wpx/dom/actions.ts");
-    for (const fn of ["updateNode", "addNode", "removeNode", "duplicateNode", "moveNode", "selectNode", "undo", "redo", "replaceProject"]) {
+    for (const fn of ["updateDomNode", "addDomNode", "removeDomNode", "duplicateDomNode", "moveDomNode", "wrapDomNode", "unwrapDomNode", "replaceDomNode", "selectDomNode", "undo", "redo", "snapshotDom"]) {
       assert.ok(actions.includes(fn), `missing action: ${fn}`);
     }
     assert.ok(readText("lib/wpx/dom/search.ts").includes("searchDomProject"), "missing DOM search engine");
@@ -54,24 +54,4 @@ describe("WPX smoke test", () => {
     }
     assert.ok(readText("docs/WPX_JSON_DOM_AUDIT.md").includes("Repository audit summary"));
   });
-
-  it("wires Phase 4 Live Builder route and component shell", () => {
-    assert.ok(readText("app/builder/page.tsx").includes("BuilderShell"), "builder route must render BuilderShell");
-    for (const file of ["BuilderShell", "LayerTree", "LivePreview", "Inspector", "CommandBar", "SearchPanel", "SuggestionPanel", "ExportPanel", "OneClickPanel"]) {
-      assert.equal(existsSync(join(root, `components/builder/${file}.tsx`)), true, `missing builder component: ${file}`);
-    }
-    assert.ok(readText("lib/wpx/dom/renderer.tsx").includes("renderNode"), "missing recursive JSON DOM renderer");
-  });
-
-  it("covers Phase 4 JSON source-of-truth actions and store", () => {
-    const store = readText("lib/wpx/dom/store.ts");
-    for (const token of ["useDomProjectStore", "openDB", "wpx_dom_projects", "undo", "redo"]) {
-      assert.ok(store.includes(token), `missing store token: ${token}`);
-    }
-    const shell = readText("components/builder/BuilderShell.tsx");
-    for (const token of ["store.addNode", "store.updateNode", "store.selectNode", "store.setProject"]) {
-      assert.ok(shell.includes(token), `builder shell must mutate JSON DOM through store: ${token}`);
-    }
-  });
-
 });

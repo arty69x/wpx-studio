@@ -1,112 +1,23 @@
 import { createDomNode, parseClassAst, wpxNow, wpxUid } from './defaults';
-import type { WPXDomNode, WPXDomProject } from './types';
+import type { WPXDomNode, WPXDomProject, WPXPatchAction } from './types';
 
 const clone = <T>(value: T): T => structuredClone(value);
-const activePage = (project: WPXDomProject) => project.pages.find((page) => page.id === project.activePageId) ?? project.pages[0];
-const touchNode = (node: WPXDomNode): WPXDomNode => ({ ...node, updatedAt: wpxNow() });
-const touchProject = (project: WPXDomProject): WPXDomProject => ({ ...project, updatedAt: wpxNow() });
+const touch = (node: WPXDomNode): WPXDomNode => ({ ...node, updatedAt: wpxNow() });
+export const snapshotDom = (label: string, project: WPXDomProject, action: WPXPatchAction = 'snapshot') => ({ id: wpxUid('cmd'), label, action, timestamp: wpxNow(), domTree: clone(project.domTree), selectedNodeId: project.selectedNodeId });
+const withHistory = (project: WPXDomProject, label: string, action: WPXPatchAction): WPXDomProject => ({ ...project, commandHistory: [...project.commandHistory, snapshotDom(label, project, action)].slice(-100), redoStack: [], updatedAt: wpxNow() });
 
-export function getActiveRoot(project: WPXDomProject) {
-  return activePage(project)?.root;
-}
+export function findNode(node: WPXDomNode, id: string): WPXDomNode | null { if (node.id === id) return node; for (const child of node.children) { const found = findNode(child, id); if (found) return found; } return null; }
+function mapNode(node: WPXDomNode, id: string, mapper: (node: WPXDomNode) => WPXDomNode): WPXDomNode { if (node.id === id) return mapper(node); return touch({ ...node, children: node.children.map((child) => mapNode(child, id, mapper)) }); }
+function removeFrom(node: WPXDomNode, id: string): WPXDomNode { return touch({ ...node, children: node.children.filter((child) => child.id !== id).map((child) => removeFrom(child, id)) }); }
 
-export function findNodeInTree(node: WPXDomNode, nodeId: string): WPXDomNode | undefined {
-  if (node.id === nodeId) return node;
-  for (const child of node.children) {
-    const found = findNodeInTree(child, nodeId);
-    if (found) return found;
-  }
-  return undefined;
-}
-
-export function findNodeById(project: WPXDomProject, nodeId: string) {
-  const root = getActiveRoot(project);
-  return root ? findNodeInTree(root, nodeId) : undefined;
-}
-
-function mapTree(node: WPXDomNode, nodeId: string, mapper: (node: WPXDomNode) => WPXDomNode): WPXDomNode {
-  if (node.id === nodeId) return mapper(node);
-  const children = node.children.map((child) => mapTree(child, nodeId, mapper));
-  return children.some((child, index) => child !== node.children[index]) ? touchNode({ ...node, children }) : node;
-}
-
-function removeFromTree(node: WPXDomNode, nodeId: string): WPXDomNode {
-  const children = node.children.filter((child) => child.id !== nodeId).map((child) => removeFromTree(child, nodeId));
-  return children.length !== node.children.length || children.some((child, index) => child !== node.children[index]) ? touchNode({ ...node, children }) : node;
-}
-
-function replaceActiveRoot(project: WPXDomProject, root: WPXDomNode): WPXDomProject {
-  return touchProject({ ...project, pages: project.pages.map((page) => page.id === project.activePageId ? { ...page, root } : page) });
-}
-
-function withPatch(before: WPXDomProject, after: WPXDomProject, label: string, affectedNodeIds: string[]): WPXDomProject {
-  const command = { id: wpxUid('patch'), label, timestamp: wpxNow(), before: clone(before), after: clone(after), affectedNodeIds };
-  return { ...after, commandHistory: [...before.commandHistory, command].slice(-100), redoStack: [] };
-}
-
-export function updateNode(project: WPXDomProject, nodeId: string, patch: Partial<WPXDomNode>, label = 'Update node'): WPXDomProject {
-  const root = getActiveRoot(project);
-  if (!root || !findNodeInTree(root, nodeId)) return project;
-  const updatedRoot = mapTree(root, nodeId, (node) => touchNode({ ...node, ...patch, id: node.id, children: patch.children ?? node.children, classAst: patch.className !== undefined ? parseClassAst(patch.className) : patch.classAst ?? node.classAst }));
-  return withPatch(project, replaceActiveRoot(project, updatedRoot), label, [nodeId]);
-}
-
-export function addNode(project: WPXDomProject, parentId: string, node: Partial<WPXDomNode>, label = 'Add node'): WPXDomProject {
-  const root = getActiveRoot(project);
-  if (!root || !findNodeInTree(root, parentId)) return project;
-  const child = createDomNode(node);
-  const updatedRoot = mapTree(root, parentId, (parent) => touchNode({ ...parent, children: [...parent.children, child] }));
-  return withPatch(project, { ...replaceActiveRoot(project, updatedRoot), selectedNodeId: child.id }, label, [parentId, child.id]);
-}
-
-export function removeNode(project: WPXDomProject, nodeId: string, label = 'Remove node'): WPXDomProject {
-  const root = getActiveRoot(project);
-  if (!root || root.id === nodeId || !findNodeInTree(root, nodeId)) return project;
-  const updatedRoot = removeFromTree(root, nodeId);
-  return withPatch(project, { ...replaceActiveRoot(project, updatedRoot), selectedNodeId: root.id }, label, [nodeId]);
-}
-
-export function duplicateNode(project: WPXDomProject, nodeId: string, label = 'Duplicate node'): WPXDomProject {
-  const node = findNodeById(project, nodeId);
-  const root = getActiveRoot(project);
-  if (!node || !root) return project;
-  const duplicate = clone(node);
-  duplicate.id = wpxUid('node');
-  duplicate.name = `${node.name} Copy`;
-  duplicate.createdAt = wpxNow();
-  duplicate.updatedAt = wpxNow();
-  return addNode(project, root.id, duplicate, label);
-}
-
-export function moveNode(project: WPXDomProject, nodeId: string, targetParentId: string, index = 0, label = 'Move node'): WPXDomProject {
-  const root = getActiveRoot(project);
-  const node = findNodeById(project, nodeId);
-  if (!root || !node || nodeId === root.id || !findNodeInTree(root, targetParentId)) return project;
-  const without = removeFromTree(root, nodeId);
-  const movedRoot = mapTree(without, targetParentId, (parent) => {
-    const children = [...parent.children];
-    children.splice(Math.max(0, Math.min(index, children.length)), 0, node);
-    return touchNode({ ...parent, children });
-  });
-  return withPatch(project, { ...replaceActiveRoot(project, movedRoot), selectedNodeId: nodeId }, label, [nodeId, targetParentId]);
-}
-
-export function selectNode(project: WPXDomProject, nodeId: string): WPXDomProject {
-  return findNodeById(project, nodeId) ? touchProject({ ...project, selectedNodeId: nodeId }) : project;
-}
-
-export function undo(project: WPXDomProject): WPXDomProject {
-  const command = project.commandHistory.at(-1);
-  if (!command) return project;
-  return { ...command.before, redoStack: [command, ...project.redoStack], commandHistory: project.commandHistory.slice(0, -1) };
-}
-
-export function redo(project: WPXDomProject): WPXDomProject {
-  const command = project.redoStack[0];
-  if (!command) return project;
-  return { ...command.after, commandHistory: [...project.commandHistory, command], redoStack: project.redoStack.slice(1) };
-}
-
-export function replaceProject(before: WPXDomProject, after: WPXDomProject, label = 'Replace project'): WPXDomProject {
-  return withPatch(before, { ...after, commandHistory: before.commandHistory, redoStack: before.redoStack, updatedAt: wpxNow() }, label, after.pages.map((page) => page.root.id));
-}
+export function updateDomNode(project: WPXDomProject, id: string, patch: Partial<WPXDomNode>) { const next = withHistory(project, `Update ${id}`, 'update'); const domTree = mapNode(next.domTree, id, (node) => touch({ ...node, ...patch, id: node.id, classAst: patch.className ? parseClassAst(patch.className) : patch.classAst ?? node.classAst })); return { ...next, domTree, pages: next.pages.map((p) => p.rootNodeId === next.domTree.id ? { ...p, domTree, updatedAt: wpxNow() } : p) }; }
+export function addDomNode(project: WPXDomProject, parentId: string, node: Partial<WPXDomNode>) { const next = withHistory(project, `Add ${node.name ?? 'node'}`, 'add'); const child = createDomNode(node); const domTree = mapNode(next.domTree, parentId, (parent) => touch({ ...parent, children: [...parent.children, child] })); return { ...next, domTree, selectedNodeId: child.id, pages: next.pages.map((p) => p.rootNodeId === next.domTree.id ? { ...p, domTree, updatedAt: wpxNow() } : p) }; }
+export function removeDomNode(project: WPXDomProject, id: string) { const next = withHistory(project, `Remove ${id}`, 'remove'); const domTree = removeFrom(next.domTree, id); return { ...next, domTree, selectedNodeId: next.domTree.id }; }
+export function duplicateDomNode(project: WPXDomProject, id: string) { const source = findNode(project.domTree, id); if (!source) return project; return addDomNode(project, project.domTree.id, { ...clone(source), id: wpxUid('node'), name: `${source.name} Copy`, createdAt: wpxNow(), updatedAt: wpxNow() }); }
+export function replaceDomNode(project: WPXDomProject, id: string, replacement: Partial<WPXDomNode>) { const next = withHistory(project, `Replace ${id}`, 'replace'); const domTree = mapNode(next.domTree, id, () => createDomNode({ ...replacement, id })); return { ...next, domTree }; }
+export const selectDomNode = (project: WPXDomProject, id: string) => ({ ...project, selectedNodeId: id, updatedAt: wpxNow() });
+export function undo(project: WPXDomProject) { const previous = project.commandHistory.at(-1); if (!previous) return project; return { ...project, domTree: previous.domTree, selectedNodeId: previous.selectedNodeId, commandHistory: project.commandHistory.slice(0, -1), redoStack: [...project.redoStack, snapshotDom('Redo snapshot', project, 'snapshot')] }; }
+export function redo(project: WPXDomProject) { const next = project.redoStack.at(-1); if (!next) return project; return { ...project, domTree: next.domTree, selectedNodeId: next.selectedNodeId, commandHistory: [...project.commandHistory, snapshotDom('Undo snapshot', project, 'snapshot')], redoStack: project.redoStack.slice(0, -1) }; }
+export const moveDomNode = (project: WPXDomProject, id: string, newParentId: string) => { const node = findNode(project.domTree, id); return node ? addDomNode(removeDomNode(project, id), newParentId, node) : project; };
+export const wrapDomNode = (project: WPXDomProject, id: string, wrapper: Partial<WPXDomNode>) => replaceDomNode(project, id, createDomNode({ ...wrapper, children: [findNode(project.domTree, id) ?? createDomNode()] }));
+export const unwrapDomNode = (project: WPXDomProject, id: string) => { const node = findNode(project.domTree, id); return node?.children[0] ? replaceDomNode(project, id, node.children[0]) : project; };
