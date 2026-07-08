@@ -35,9 +35,6 @@ function motionProps(node: WPXDomNode, enabled: boolean) {
   return { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { duration } };
 }
 
-const safePropValue = (value: unknown) => typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
-const elementProps = (node: WPXDomNode) => Object.fromEntries(Object.entries(node.props).filter(([key, value]) => !['children', 'className', 'style', 'ref', 'dangerouslySetInnerHTML'].includes(key) && safePropValue(value) !== undefined));
-
 export function renderNode(node: WPXDomNode, context: RenderContext): ReactNode {
   const tag = tagFor(node);
   const selected = context.selectedNodeId === node.id;
@@ -45,7 +42,6 @@ export function renderNode(node: WPXDomNode, context: RenderContext): ReactNode 
   const style = { ...tokenStyles(node), ...node.style } as CSSProperties;
   const className = [node.className, selected && 'outline outline-2 outline-[var(--lime)] outline-offset-2'].filter(Boolean).join(' ');
   const common = {
-    ...elementProps(node),
     className,
     style,
     'data-wpx-node-id': node.id,
