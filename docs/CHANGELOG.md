@@ -4,6 +4,12 @@ All notable changes to this documentation framework are recorded here. The forma
 
 ## Unreleased
 
+- Reworked the public homepage into an official WHISPERX | STUDIO immersive website with Opening, Hero, Editorial Story, Interactive Product Moment, Visual Experience, Creative Workflow, Immersive Gallery, Design Language, Trust & Technology, Final CTA, and Footer sections.
+- Hardened the WHISPERX platform rewrite with controlled command-palette search, carousel pause/auto-advance behavior, modal focus restoration, local-only API-key settings storage, dataset count exports, and sitemap/robots metadata routes.
+- Rewrote the application surface as a WHISPERX | STUDIO production design platform with landing, marketplace, component library, builder canvas, motion lab, AI studio, asset manager, design tokens, theme lab, and settings routes.
+- Added central typed platform dataset for 60 components, 20 templates, 20 motion presets, 20 assets, 10 themes, and 10 AI prompts.
+- Added shared cinematic UI primitives, A4 editorial frame, carousel, filters, command palette, drawer, modal, toast, builder nodes, inspector, prompt cards, asset cards, theme cards, and token swatches.
+
 - Added `AGENTS.md` autonomous engineering agent charter.
 - Updated README with WPX client-side architecture rules and Vercel workflow.
 - Added WPX Technical Specification Manifest v2026.7.5.
