@@ -89,70 +89,49 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 :root, :root[data-theme='dark'] {
   --lime: #c6ff00;
   --pink: #ff2ed1;
-  --violet: #865cff;
   --background: #030406;
   --surface: #090b10;
   --surfaceSoft: #101219;
   --surfaceElevated: #141720;
   --foreground: #f8fafc;
   --muted: #a0a6b2;
-  --mutedStrong: #d7dce5;
   --border: rgba(255,255,255,.11);
   --borderStrong: rgba(255,255,255,.22);
   --primary: var(--lime);
   --primaryHover: #ddff55;
-  --primarySoft: rgba(198,255,0,.12);
   --onPrimary: #050608;
   --primaryGlow: rgba(198,255,0,.3);
   --pinkGlow: rgba(255,46,209,.28);
 }
-
 :root[data-theme='light'] {
   --lime: #a7e900;
   --pink: #ec2aa9;
-  --violet: #704cff;
   --background: #f8f8f4;
   --surface: #ffffff;
   --surfaceSoft: #f1f2ef;
   --surfaceElevated: #ffffff;
   --foreground: #0b0c10;
   --muted: #656b76;
-  --mutedStrong: #2c3038;
   --border: rgba(0,0,0,.1);
   --borderStrong: rgba(0,0,0,.2);
   --primary: var(--lime);
   --primaryHover: #c6ff00;
-  --primarySoft: rgba(166,233,0,.15);
   --onPrimary: #050608;
   --primaryGlow: rgba(166,233,0,.25);
 }
-
 body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
-.wpx-card::before { content: ''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(circle at 18% 0%, rgba(198,255,0,.08), transparent 32%), radial-gradient(circle at 92% 8%, rgba(255,46,209,.08), transparent 28%); }
-.wpx-card::after { content: ''; position:absolute; inset:1px; pointer-events:none; border-radius:inherit; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
-.brand-mark { position: relative; display:inline-block; width:16rem; height:10rem; filter: drop-shadow(0 0 16px rgba(198,255,0,.48)) drop-shadow(0 0 22px rgba(255,46,209,.32)); vertical-align:middle; }
-.brand-mark-md { width:5rem; height:3.25rem; }
-.brand-mark-sm { width:2.6rem; height:1.75rem; }
-.brand-mark span,.brand-mark b,.brand-mark i { position:absolute; top:18%; bottom:18%; width:18%; border-radius:8px; transform-origin:center; }
+.wpx-card::before { content: ''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(circle at 20% 0%, rgba(198,255,0,.08), transparent 30%), radial-gradient(circle at 90% 10%, rgba(255,46,209,.08), transparent 28%); }
+.brand-mark { position: relative; display:inline-block; filter: drop-shadow(0 0 16px rgba(198,255,0,.45)) drop-shadow(0 0 22px rgba(255,46,209,.28)); }
+.brand-mark span,.brand-mark b,.brand-mark i { position:absolute; top:18%; bottom:18%; width:18%; border-radius:7px; transform-origin:center; }
 .brand-mark span { left:8%; background:var(--lime); transform:skewY(-28deg) rotate(-32deg); box-shadow:28px 36px 0 -10px var(--lime); }
-.brand-mark b { left:40%; background:white; transform:rotate(42deg); }
-.brand-mark b::after { content:''; position:absolute; inset:0; border-radius:8px; background:white; transform:rotate(96deg); }
+.brand-mark b { left:40%; background:white; transform:rotate(42deg); box-shadow:0 0 0 999px transparent; }
+.brand-mark b::after { content:''; position:absolute; inset:0; border-radius:7px; background:white; transform:rotate(96deg); }
 .brand-mark i { right:8%; background:var(--pink); transform:skewY(28deg) rotate(32deg); box-shadow:-28px 36px 0 -10px var(--pink); }
-.brand-mark-md span { box-shadow:14px 18px 0 -5px var(--lime); }
-.brand-mark-md i { box-shadow:-14px 18px 0 -5px var(--pink); }
-.brand-mark-sm span { border-radius:4px; box-shadow:7px 9px 0 -2px var(--lime); }
-.brand-mark-sm b,.brand-mark-sm b::after,.brand-mark-sm i { border-radius:4px; }
-.brand-mark-sm i { box-shadow:-7px 9px 0 -2px var(--pink); }
-.ghostx { position:relative; display:block; width:15rem; height:15.75rem; margin:auto; border-radius:52% 48% 44% 56% / 44% 42% 58% 56%; background:radial-gradient(circle at 36% 28%,#fff,#f2f3f6 42%,#c7ccd6 76%); box-shadow: inset -18px -26px 42px rgba(4,5,8,.25), 0 0 36px rgba(255,46,209,.55), 28px 18px 50px rgba(198,255,0,.35); }
-.ghostx-md { width:11rem; height:11.5rem; }
-.ghostx-sm { width:5.5rem; height:6rem; }
+.ghostx { position:relative; width:240px; height:250px; margin:auto; border-radius:52% 48% 44% 56% / 44% 42% 58% 56%; background:radial-gradient(circle at 38% 30%,#fff,#f2f3f6 42%,#c7ccd6 76%); box-shadow: inset -18px -26px 42px rgba(4,5,8,.25), 0 0 36px rgba(255,46,209,.55), 28px 18px 50px rgba(198,255,0,.35); }
 .ghostx::before,.ghostx::after { content:''; position:absolute; background:inherit; border-radius:50%; }
-.ghostx::before { width:27%; height:29%; left:-10%; top:37%; transform:rotate(-32deg); }
-.ghostx::after { width:30%; height:43%; right:-8%; bottom:-10%; transform:rotate(28deg); }
-.ghostx .eye { position:absolute; z-index:2; top:30%; width:16%; height:23%; border-radius:50%; background:radial-gradient(circle at 65% 18%,#fff 0 9%,transparent 10%), radial-gradient(circle at 52% 72%,var(--lime) 0 12%,transparent 13%), #11131a; }
-.ghostx .left { left:26%; } .ghostx .right { right:26%; }
-.ghostx .mouth { position:absolute; z-index:2; left:44%; top:57%; width:12%; height:7%; border-radius:0 0 20px 20px; background:#171922; }
-.ghostx .mouth-happy { height:9%; border-radius:0 0 50% 50%; }
-.ghostx .badge { position:absolute; z-index:2; left:32%; bottom:20%; width:36%; height:22%; display:grid; place-items:center; border-radius:18px; background:#1b1d24; }
-.ghostx-sm .badge { border-radius:10px; }
-.ghostx-focused { box-shadow: inset -18px -26px 42px rgba(4,5,8,.25), 0 0 30px rgba(198,255,0,.55), 22px 16px 42px rgba(255,46,209,.28); }
+.ghostx::before { width:64px; height:70px; left:-24px; top:92px; transform:rotate(-32deg); }
+.ghostx::after { width:72px; height:108px; right:-20px; bottom:-28px; transform:rotate(28deg); }
+.ghostx .eye { position:absolute; z-index:2; top:76px; width:38px; height:56px; border-radius:50%; background:radial-gradient(circle at 65% 18%,#fff 0 9%,transparent 10%), radial-gradient(circle at 52% 72%,var(--lime) 0 12%,transparent 13%), #11131a; }
+.ghostx .left { left:62px; } .ghostx .right { right:62px; }
+.ghostx .mouth { position:absolute; z-index:2; left:106px; top:145px; width:28px; height:16px; border-radius:0 0 20px 20px; background:#171922; }
+.ghostx .badge { position:absolute; z-index:2; left:77px; bottom:50px; width:86px; height:54px; display:grid; place-items:center; border-radius:18px; background:#1b1d24; }
