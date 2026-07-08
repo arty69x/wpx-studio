@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { ComponentItem, PreviewPattern } from '@/lib/types';
 import { cx } from '@/lib/utils';
 
@@ -8,12 +8,14 @@ type PreviewState = 'Default' | 'Hover' | 'Active' | 'Selected' | 'Motion';
 
 export function ComponentPreview({ item, state = 'Default' }: { item: ComponentItem; state?: string }) {
   const previewState = state as PreviewState;
+  const prefersReducedMotion = useReducedMotion();
+  const canLoopMotion = previewState === 'Motion' && !prefersReducedMotion;
 
   return (
     <div className="relative h-full min-h-52 overflow-hidden rounded-[28px] border border-white/10 bg-[#090D16] p-4">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(79,124,255,.26),transparent_34%),radial-gradient(circle_at_80%_20%,rgba(224,82,255,.18),transparent_28%)]" />
       <motion.div
-        animate={getFrameAnimation(previewState)}
+        animate={getFrameAnimation(previewState, canLoopMotion)}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         className={cx(
           'relative h-full rounded-3xl border border-white/10 bg-black/35 p-4 backdrop-blur-md',
@@ -21,7 +23,7 @@ export function ComponentPreview({ item, state = 'Default' }: { item: ComponentI
         )}
       >
         <PreviewChrome item={item} />
-        <PatternPreview pattern={item.previewPattern} state={previewState} />
+        <PatternPreview pattern={item.previewPattern} state={previewState} canLoopMotion={canLoopMotion} />
       </motion.div>
     </div>
   );
@@ -39,8 +41,8 @@ function PreviewChrome({ item }: { item: ComponentItem }) {
   );
 }
 
-function PatternPreview({ pattern, state }: { pattern: PreviewPattern; state: PreviewState }) {
-  const isMotion = state === 'Motion';
+function PatternPreview({ pattern, state, canLoopMotion }: { pattern: PreviewPattern; state: PreviewState; canLoopMotion: boolean }) {
+  const isMotion = state === 'Motion' && canLoopMotion;
   const cellAnimation = isMotion ? { y: [0, -8, 0], opacity: [0.55, 1, 0.55] } : {};
 
   if (pattern === 'carousel') {
@@ -125,9 +127,9 @@ function PatternPreview({ pattern, state }: { pattern: PreviewPattern; state: Pr
   );
 }
 
-function getFrameAnimation(state: PreviewState) {
+function getFrameAnimation(state: PreviewState, canLoopMotion: boolean) {
   if (state === 'Hover') return { scale: 1.025, y: -3 };
   if (state === 'Active') return { scale: 0.975 };
-  if (state === 'Motion') return { scale: [1, 0.99, 1], opacity: [0.92, 1, 1] };
+  if (state === 'Motion' && canLoopMotion) return { scale: [1, 0.99, 1], opacity: [0.92, 1, 1] };
   return { scale: 1, y: 0 };
 }

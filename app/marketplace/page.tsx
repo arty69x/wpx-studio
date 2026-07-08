@@ -6,21 +6,27 @@ import { useMemo, useState } from 'react';
 import { catalogStats, categories, marketplaceItems, previewPatternGroups } from '@/data/marketplace';
 import { CategoryTabs } from '@/components/marketplace/CategoryTabs';
 import { MarketplaceCard } from '@/components/marketplace/MarketplaceCard';
-import { MarketplaceFilters } from '@/components/marketplace/MarketplaceFilters';
+import { MarketplaceFilters, type MarketplaceFilter } from '@/components/marketplace/MarketplaceFilters';
 
 export default function MarketplacePage() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [subcategory, setSubcategory] = useState('All');
   const [sort, setSort] = useState('Featured');
+  const [selectedFilters, setSelectedFilters] = useState<MarketplaceFilter[]>([]);
+
+  function handleFilterChange(filter: MarketplaceFilter, checked: boolean) {
+    setSelectedFilters((current) => (checked ? [...current, filter] : current.filter((item) => item !== filter)));
+  }
 
   const filteredItems = useMemo(() => {
     return marketplaceItems
       .filter((item) => category === 'All' || item.category === category)
       .filter((item) => subcategory === 'All' || item.subCategory === subcategory)
+      .filter((item) => selectedFilters.every((filter) => matchesMarketplaceFilter(item, filter)))
       .filter((item) => `${item.name} ${item.category} ${item.subCategory} ${item.tags.join(' ')}`.toLowerCase().includes(query.toLowerCase()))
       .sort((a, b) => (sort === 'Name' ? a.name.localeCompare(b.name) : 0));
-  }, [category, query, sort, subcategory]);
+  }, [category, query, selectedFilters, sort, subcategory]);
 
   return (
     <main className="min-h-screen bg-[#05070D] text-white">
@@ -61,8 +67,8 @@ export default function MarketplacePage() {
         <CategoryTabs category={category} setCategory={setCategory} subcategory={subcategory} setSubcategory={setSubcategory} />
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[250px_minmax(0,1fr)]">
-          <MarketplaceFilters />
-          <MarketplaceFilters mobile />
+          <MarketplaceFilters selectedFilters={selectedFilters} onFilterChange={handleFilterChange} />
+          <MarketplaceFilters mobile selectedFilters={selectedFilters} onFilterChange={handleFilterChange} />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.map((item) => <MarketplaceCard key={item.id} item={item} />)}
           </div>
@@ -70,4 +76,23 @@ export default function MarketplacePage() {
       </section>
     </main>
   );
+}
+
+function matchesMarketplaceFilter(item: (typeof marketplaceItems)[number], filter: MarketplaceFilter) {
+  const searchableText = [
+    item.priceType,
+    item.responsive,
+    item.interactionType,
+    item.motionType,
+    item.exportFormats.join(' '),
+    item.tags.join(' '),
+  ].join(' ').toLowerCase();
+
+  const filterText = filter.toLowerCase();
+
+  if (filter === 'Free' || filter === 'Premium') return item.priceType === filter;
+  if (filter === 'Responsive') return searchableText.includes('responsive');
+  if (filter === 'Tailwind') return item.exportFormats.includes('Tailwind');
+
+  return searchableText.includes(filterText);
 }
