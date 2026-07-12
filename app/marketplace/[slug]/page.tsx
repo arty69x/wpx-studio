@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { ProductDetailExperience } from '@/components/artyverse/ProductDetailExperience';
 import { artyProducts, getArtyProduct } from '@/data/artyverse-marketplace';
+import './product-detail.css';
 
 export function generateStaticParams() {
   return artyProducts.map((product) => ({ slug: product.slug }));
