@@ -1,2 +1,5 @@
-import { PlatformPage } from '@/components/ui/platform';
-export default function Home() { return <PlatformPage kind="landing" />; }
+import { ArtyverseLanding } from '@/components/artyverse/ArtyverseLanding';
+
+export default function Home() {
+  return <ArtyverseLanding />;
+}
