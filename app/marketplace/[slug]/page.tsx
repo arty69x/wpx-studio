@@ -1,18 +1,16 @@
 import { notFound } from 'next/navigation';
-import { ComponentDetail } from '@/components/marketplace/ComponentDetail';
-import { getItem, marketplaceItems } from '@/data/marketplace';
+import { ProductDetailExperience } from '@/components/artyverse/ProductDetailExperience';
+import { artyProducts, getArtyProduct } from '@/data/artyverse-marketplace';
 
 export function generateStaticParams() {
-  return marketplaceItems.map((item) => ({ slug: item.slug }));
+  return artyProducts.map((product) => ({ slug: product.slug }));
 }
 
-export default async function Detail({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const item = getItem(slug);
+  const product = getArtyProduct(slug);
 
-  if (!item) {
-    notFound();
-  }
+  if (!product) notFound();
 
-  return <ComponentDetail item={item} />;
+  return <ProductDetailExperience product={product} />;
 }
