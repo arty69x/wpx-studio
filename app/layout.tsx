@@ -1,18 +1,19 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './artyverse.css';
 
 export const metadata: Metadata = {
-  title: 'WHISPERX | STUDIO',
-  description: 'Premium AI design platform, component marketplace, motion lab, builder canvas, and design system experience.',
+  title: 'ARTYVERSE X — Collect the beautifully weird',
+  description: 'A playful multi-vendor universe for collectible design, limited drops, verified creators, and products with personality.',
   openGraph: {
-    title: 'WHISPERX | STUDIO',
-    description: 'Quiet technology for cinematic interface systems.',
+    title: 'ARTYVERSE X',
+    description: 'Collect the beautifully weird.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WHISPERX | STUDIO',
-    description: 'A visual operating system for premium AI interface design.',
+    title: 'ARTYVERSE X',
+    description: 'Come for the drop. Stay for the weird.',
   },
 };
 
