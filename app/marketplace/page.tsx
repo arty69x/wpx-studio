@@ -1,2 +1,5 @@
-import { PlatformPage } from '@/components/ui/platform';
-export default function MarketplacePage() { return <PlatformPage kind="marketplace" />; }
+import { MarketplaceExperience } from '@/components/artyverse/MarketplaceCore';
+
+export default function MarketplacePage() {
+  return <MarketplaceExperience />;
+}

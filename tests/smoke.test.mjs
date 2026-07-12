@@ -54,4 +54,32 @@ describe("WPX smoke test", () => {
     }
     assert.ok(readText("docs/WPX_JSON_DOM_AUDIT.md").includes("Repository audit summary"));
   });
+
+  it("ships the ARTYVERSE marketplace, product, cart, and checkout surfaces", () => {
+    for (const path of [
+      "app/marketplace/page.tsx",
+      "app/marketplace/[slug]/page.tsx",
+      "app/cart/page.tsx",
+      "app/checkout/page.tsx",
+      "components/artyverse/MarketplaceCore.tsx",
+      "components/artyverse/ProductDetailExperience.tsx",
+      "components/artyverse/CommerceExperience.tsx",
+      "data/artyverse-marketplace.ts",
+    ]) {
+      assert.equal(existsSync(join(root, path)), true, `missing commerce surface: ${path}`);
+    }
+    assert.ok(readText("app/marketplace/page.tsx").includes("MarketplaceExperience"));
+    assert.ok(readText("app/marketplace/[slug]/page.tsx").includes("ProductDetailExperience"));
+    assert.ok(readText("app/cart/page.tsx").includes("CartExperience"));
+    assert.ok(readText("app/checkout/page.tsx").includes("CheckoutExperience"));
+  });
+
+  it("keeps production motion and reduced-motion support in commerce", () => {
+    const marketplace = readText("components/artyverse/MarketplaceCore.tsx");
+    const detail = readText("components/artyverse/ProductDetailExperience.tsx");
+    const css = readText("app/marketplace/marketplace.css");
+    assert.ok(marketplace.includes("useReducedMotion"));
+    assert.ok(detail.includes("useReducedMotion"));
+    assert.ok(css.includes("prefers-reduced-motion"));
+  });
 });
