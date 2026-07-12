@@ -21,3 +21,8 @@ export function redo(project: WPXDomProject) { const next = project.redoStack.at
 export const moveDomNode = (project: WPXDomProject, id: string, newParentId: string) => { const node = findNode(project.domTree, id); return node ? addDomNode(removeDomNode(project, id), newParentId, node) : project; };
 export const wrapDomNode = (project: WPXDomProject, id: string, wrapper: Partial<WPXDomNode>) => replaceDomNode(project, id, createDomNode({ ...wrapper, children: [findNode(project.domTree, id) ?? createDomNode()] }));
 export const unwrapDomNode = (project: WPXDomProject, id: string) => { const node = findNode(project.domTree, id); return node?.children[0] ? replaceDomNode(project, id, node.children[0]) : project; };
+
+// Compatibility API used by the builder UI.
+export const findNodeById = (project: WPXDomProject, id: string) => findNode(project.domTree, id) ?? undefined;
+export const getActiveRoot = (project: WPXDomProject) => project.pages[0]?.domTree ?? project.domTree;
+export const addNode = addDomNode;
