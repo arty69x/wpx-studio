@@ -1,35 +1,28 @@
 {
-  "name": "wpx-studio",
-  "version": "0.1.0",
+  "name": "artyverse-x-ai-assistant",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint .",
-    "test": "node --test tests/smoke.test.mjs"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "css-tree": "latest",
-    "dompurify": "latest",
-    "file-saver": "latest",
-    "framer-motion": "latest",
-    "idb": "latest",
-    "jszip": "latest",
-    "next": "15",
-    "react": "latest",
-    "react-dom": "latest"
+    "@vitejs/plugin-react": "^4.7.0",
+    "framer-motion": "^12.0.0",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/file-saver": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "autoprefixer": "latest",
-    "eslint": "latest",
-    "eslint-config-next": "15",
-    "postcss": "latest",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.0",
     "tailwindcss": "^3.4.17",
-    "typescript": "latest"
+    "postcss": "^8.4.49",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.0.0"
   }
 }
